@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.skycaster.hellobase.activity.ServerStateActivity">
+
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+        <TextView
+           style="@style/TextViewStyle1"
+            android:text="服务器Mac地址："/>
+        <TextView
+            android:id="@+id/state_tv_mac_address"
+            style="@style/TextViewStyle2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+        <TextView
+            style="@style/TextViewStyle1"
+            android:text="版本号："/>
+        <TextView
+            android:id="@+id/state_tv_version"
+            style="@style/TextViewStyle2"/>
+        <TextView
+            style="@style/TextViewStyle1"
+            android:text="状态："/>
+        <TextView
+            android:id="@+id/state_tv_status"
+            style="@style/TextViewStyle2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+        <TextView
+            style="@style/TextViewStyle1"
+            android:text="反馈时间："/>
+        <TextView
+            android:id="@+id/state_tv_feed_back_time"
+            style="@style/TextViewStyle2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+        <TextView
+            style="@style/TextViewStyle1"
+            android:text="备注："/>
+        <TextView
+            android:id="@+id/state_tv_comments"
+            style="@style/TextViewStyle2"/>
+    </LinearLayout>
+
+    <ToggleButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_18"
+        android:textOff="实时监控网络状态"
+        android:textOn="网络状态监控中..."/>
+
+</LinearLayout>

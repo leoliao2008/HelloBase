@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/main_scroller_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp_2"
+    tools:context="com.skycaster.hellobase.activity.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:background="@color/colorGrey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/main_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/dp_7"/>
+            <Button
+                android:id="@+id/main_btn_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="搜索服务器"/>
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/TextViewStyle1"
+            android:layout_width="match_parent"
+            android:background="@color/colorGrey"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="服务器配置表"
+            />
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/dp_2"
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="服务器MAC地址："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_host_address"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="版本："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_host_version"
+                style="@style/TextViewStyle2"/>
+
+            <TextView
+                android:text="操作码："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_host_op_code"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="运营商："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_vendor_name"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="工作频点："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_frq"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="输出功率（微调）："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_signal_amp"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="输出功率（粗调）："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_signal_fill"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+            <TextView
+                android:text="左频："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_left_tune"
+                style="@style/TextViewStyle2"/>
+
+            <TextView
+                android:text="右频："
+                style="@style/TextViewStyle1"/>
+
+            <TextView
+                android:id="@+id/main_tv_right_tune"
+                style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+        <TextView
+            style="@style/TextViewStyle1"
+            android:layout_width="match_parent"
+            android:background="@color/colorGrey"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="基站清单"
+            />
+
+        <com.skycaster.hellobase.customize.MaxHeightListView
+            android:id="@+id/main_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/main_btn_to_state_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="点击进入服务器状态表"
+            android:textSize="@dimen/sp_18"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

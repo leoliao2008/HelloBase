@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_main_connect"
+          android:icon="@drawable/selector_ic_cloud_24dp"
+          android:title="连接数据库"
+          android:contentDescription="连接数据库"
+          app:showAsAction="always"
+          />
+
+</menu>
