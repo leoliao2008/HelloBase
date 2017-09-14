@@ -1,8 +1,20 @@
 package com.skycaster.hellobase.presenter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ServerStateActivity;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
+import com.skycaster.hellobase.service.ServerConStatusMonitor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,15 +29,32 @@ public class ServerStatePresenter {
     private ServerStateActivity mActivity;
     private DateFormat mDateFormat;
     private StateTable mStateTable;
+    private Receiver mReceiver;
+    private TextView tv_statusReport;
+    private ImageView iv_statusReport;
 
     public ServerStatePresenter(ServerStateActivity activity) {
         mActivity = activity;
     }
 
     public void initData(){
+
+        tv_statusReport=mActivity.getTv_statusReport();
+        iv_statusReport=mActivity.getIv_statusReport();
+
         mDateFormat= new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
-        mStateTable=mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
-        updateActivityUi();
+        mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
+        if(mStateTable!=null){
+            updateActivityUi();
+        }
+
+        mReceiver=new Receiver();
+        IntentFilter intentFilter=new IntentFilter(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
+        mActivity.registerReceiver(mReceiver,intentFilter);
+    }
+
+    private void showLog(String msg) {
+        Log.e(getClass().getSimpleName(),msg);
     }
 
     public void updateActivityUi() {
@@ -39,5 +68,91 @@ public class ServerStatePresenter {
                 mActivity.getTv_comments().setText(mStateTable.getNotes());
             }
         });
+    }
+
+    public void startMonitoring(){
+        Intent intent = new Intent(mActivity, ServerConStatusMonitor.class);
+        intent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
+        mActivity.startService(intent);
+    }
+
+    public void stopMonitoring(){
+        mActivity.stopService(new Intent(mActivity, ServerConStatusMonitor.class));
+    }
+
+    public void onStart() {
+        mActivity.getTgbtn_monitoring().setChecked(mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,false));
+    }
+
+    public void onStop() {
+        if(!mActivity.isFinishing()) {
+            mActivity.getIntent().putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, mActivity.getTgbtn_monitoring().isChecked());
+        }
+        if(mActivity.isFinishing()){
+            mActivity.unregisterReceiver(mReceiver);
+            mReceiver=null;
+        }
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(!mActivity.getTgbtn_monitoring().isChecked()){
+                mActivity.getTgbtn_monitoring().setChecked(true);
+            }
+            int type = intent.getIntExtra(StaticData.EXTRA_INT_EVENT_TYPE, 0);
+            switch (type){
+                case StaticData.EVENT_TYPE_NET_STATUS:
+                    boolean isSuccess = intent.getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SUCCESS, false);
+                    if(isSuccess){
+                        mStateTable = intent.getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
+                        updateActivityUi();
+                    }else {
+                        mActivity.getTv_feedbackTime().setText("获取失败");
+                        String error = intent.getStringExtra(StaticData.EXTRA_STRING_FAIL_INFO);
+                        mActivity.getTv_comments().setText(TextUtils.isEmpty(error)?"获取状态表失败，原因：未知":error);
+                    }
+                    break;
+                case StaticData.EVENT_TYPE_SERVICE_DISMISS:
+                    mActivity.getTgbtn_monitoring().setChecked(false);
+                    break;
+                case 0:
+                default:
+                    break;
+            }
+            updateStatusReport(intent);
+        }
+    }
+
+    private void updateStatusReport(Intent intent) {
+        int status = intent.getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
+        String text;
+        int imageRes;
+        switch (status){
+            case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
+                tv_statusReport.setTextColor(Color.GREEN);
+                text="服务器正常";
+                imageRes= R.drawable.ic_android_robot_1;
+                break;
+            case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
+                tv_statusReport.setTextColor(mActivity.getColor(R.color.colorOrange));
+                text="服务器连接不稳定...";
+                imageRes= R.drawable.ic_android_robot_2;
+                break;
+            case StaticData.EXTRA_INT_NET_STATUS_ERROR:
+                tv_statusReport.setTextColor(Color.RED);
+                text="服务器已经断开";
+                imageRes= R.drawable.ic_android_robot_3;
+                break;
+            case StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE:
+            default:
+                tv_statusReport.setTextColor(Color.BLACK);
+                text="监控已经停止。";
+                imageRes= R.drawable.ic_android_robot_4;
+                break;
+        }
+        tv_statusReport.setText(text);
+        iv_statusReport.setImageResource(imageRes);
     }
 }

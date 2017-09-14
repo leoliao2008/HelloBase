@@ -2,8 +2,10 @@ package com.skycaster.hellobase.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
@@ -19,11 +21,15 @@ public class ServerStateActivity extends BaseActivity {
     private TextView tv_comments;
     private TextView tv_feedbackTime;
     private ServerStatePresenter mPresenter;
+    private ToggleButton tgbtn_monitoring;
+    private TextView tv_statusReport;
+    private ImageView iv_statusReport;
 
-    public static void start(Activity context, StateTable st) {
+
+    public static void start(Activity context, StateTable stateTable) {
         Intent starter = new Intent(context, ServerStateActivity.class);
-        starter.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,st);
-        context.startActivity(starter, ActivityOptionsCompat.makeSceneTransitionAnimation(context).toBundle());
+        starter.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,stateTable);
+        context.startActivity(starter);
     }
 
 
@@ -39,6 +45,9 @@ public class ServerStateActivity extends BaseActivity {
         tv_comments= (TextView) findViewById(R.id.state_tv_comments);
         tv_feedbackTime= (TextView) findViewById(R.id.state_tv_feed_back_time);
         tv_status= (TextView) findViewById(R.id.state_tv_status);
+        tgbtn_monitoring= (ToggleButton) findViewById(R.id.state_toggle_btn_monitoring);
+        tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
+        iv_statusReport= (ImageView) findViewById(R.id.state_iv_status_report);
 
     }
 
@@ -72,4 +81,40 @@ public class ServerStateActivity extends BaseActivity {
     public TextView getTv_feedbackTime() {
         return tv_feedbackTime;
     }
+
+    public ToggleButton getTgbtn_monitoring() {
+        return tgbtn_monitoring;
+    }
+
+    public TextView getTv_statusReport() {
+        return tv_statusReport;
+    }
+
+    public ImageView getIv_statusReport() {
+        return iv_statusReport;
+    }
+
+    public void startMonitoring(View view) {
+        if(tgbtn_monitoring.isChecked()){
+            mPresenter.startMonitoring();
+        }else {
+            mPresenter.stopMonitoring();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.onStart();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPresenter.onStop();
+    }
+
+
+
 }

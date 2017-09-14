@@ -207,9 +207,13 @@ public class MainActivityPresenter {
                     &&!BaseApplication.getConnection().isClosed()
                     &&mConfigTables.size()>0){
                 mMySqlModel.requestStateTable(BaseApplication.getConnection(),((ConfigTable)mSpinner.getSelectedItem()).getHostId());
+            }else {
+                showToast("请先连接服务器。");
+                mProgressDialog.dismiss();
             }
         } catch (SQLException e) {
             showToast(e.getMessage());
+            mProgressDialog.dismiss();
         }
     }
 
