@@ -4,15 +4,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorBlack">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/item3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_company_icon"
-        android:padding="@dimen/dp_7"
+        android:layout_centerVertical="true"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,11 +26,11 @@
             android:layout_toRightOf="@id/item3"
             android:text="正在持续监听服务器状态......"
             android:textColor="@color/colorWhite"
-            android:padding="@dimen/dp_7"
-            android:textSize="17sp"/>
+            android:paddingLeft="@dimen/dp_7"
+            android:textSize="@dimen/sp_15"/>
         <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="5dp"
             android:layout_alignLeft="@id/item4"
             android:layout_below="@id/item4"
             style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
@@ -61,7 +60,7 @@
                 android:id="@+id/remote_view_iv_signal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/vd_ic_signal_excellent_24dp"/>
+                android:src="@drawable/ic_signal_wifi_full_white_24dp"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -73,15 +72,12 @@
                 android:layout_marginBottom="@dimen/dp_2"
                 android:layout_marginRight="@dimen/dp_7"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_30"
-                android:background="@drawable/shape_button_type1"
+                android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/sp_15"
                 android:text="退出监听"/>
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>

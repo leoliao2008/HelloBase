@@ -96,23 +96,27 @@ public class ServerConStatusMonitor extends Service {
                 outDateCount++;
             }
         }
-        switch (outDateCount){
-            case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
-                mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"良好");
-                mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_excellent_24dp);
-                updateRemoteViews();
-                break;
-            case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
-                mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"不稳定");
-                mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_unstable_24dp);
-                updateRemoteViews();
-                break;
-            case StaticData.EXTRA_INT_NET_STATUS_ERROR:
-                mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"异常");
-                mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_error_24dp);
-                updateRemoteViews();
-                break;
+        if(size==3){
+            switch (outDateCount){
+                case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
+                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"良好");
+                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_excellent_24dp);
+                    break;
+                case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
+                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"不稳定");
+                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_unstable_24dp);
+                    break;
+                case StaticData.EXTRA_INT_NET_STATUS_ERROR:
+                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"异常");
+                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_error_24dp);
+                    break;
+            }
+        }else {
+            mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"检测中...");
+            mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.ic_signal_wifi_error_white_24dp);
+            outDateCount=StaticData.EXTRA_INT_NET_STATUS_INITIALIZING;
         }
+        updateRemoteViews();
 
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_NET_STATUS);

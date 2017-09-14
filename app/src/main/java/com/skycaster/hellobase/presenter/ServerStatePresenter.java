@@ -145,6 +145,11 @@ public class ServerStatePresenter {
                 text="服务器已经断开";
                 imageRes= R.drawable.ic_android_robot_3;
                 break;
+            case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:
+                tv_statusReport.setTextColor(Color.GRAY);
+                text="初始化中...";
+                imageRes=R.drawable.ic_android_robot_4;
+                break;
             case StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE:
             default:
                 tv_statusReport.setTextColor(Color.BLACK);

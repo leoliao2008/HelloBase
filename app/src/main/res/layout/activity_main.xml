@@ -160,7 +160,8 @@
         <com.skycaster.hellobase.customize.MaxHeightListView
             android:id="@+id/main_list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/main_btn_to_state_table"
