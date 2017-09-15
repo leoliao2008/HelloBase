@@ -32,6 +32,7 @@ public class ServerStatePresenter {
     private Receiver mReceiver;
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
+    private int mNetStatus;
 
     public ServerStatePresenter(ServerStateActivity activity) {
         mActivity = activity;
@@ -41,11 +42,12 @@ public class ServerStatePresenter {
 
         tv_statusReport=mActivity.getTv_statusReport();
         iv_statusReport=mActivity.getIv_statusReport();
+        mNetStatus=mActivity.getIntent().getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
 
         mDateFormat= new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
         mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
         if(mStateTable!=null){
-            updateActivityUi();
+            updateActivityUi(mStateTable);
         }
 
         mReceiver=new Receiver();
@@ -57,15 +59,15 @@ public class ServerStatePresenter {
         Log.e(getClass().getSimpleName(),msg);
     }
 
-    public void updateActivityUi() {
+    public void updateActivityUi(final StateTable stateTable) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivity.getTv_mac().setText(mStateTable.getHostId());
-                mActivity.getTv_version().setText(String.valueOf(mStateTable.getCurVer()));
-                mActivity.getTv_status().setText(mStateTable.getRunningState());
-                mActivity.getTv_feedbackTime().setText(mDateFormat.format(new Date(mStateTable.getDateTime())));
-                mActivity.getTv_comments().setText(mStateTable.getNotes());
+                mActivity.getTv_mac().setText(stateTable.getHostId());
+                mActivity.getTv_version().setText(String.valueOf(stateTable.getCurVer()));
+                mActivity.getTv_status().setText(stateTable.getRunningState());
+                mActivity.getTv_feedbackTime().setText(mDateFormat.format(new Date(stateTable.getDateTime())));
+                mActivity.getTv_comments().setText(stateTable.getNotes());
             }
         });
     }
@@ -81,7 +83,9 @@ public class ServerStatePresenter {
     }
 
     public void onStart() {
-        mActivity.getTgbtn_monitoring().setChecked(mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,false));
+        boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false);
+        mActivity.getTgbtn_monitoring().setChecked(isServiceRunning);
+        updateStatusReport(mNetStatus);
     }
 
     public void onStop() {
@@ -107,7 +111,7 @@ public class ServerStatePresenter {
                     boolean isSuccess = intent.getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SUCCESS, false);
                     if(isSuccess){
                         mStateTable = intent.getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
-                        updateActivityUi();
+                        updateActivityUi(mStateTable);
                     }else {
                         mActivity.getTv_feedbackTime().setText("获取失败");
                         String error = intent.getStringExtra(StaticData.EXTRA_STRING_FAIL_INFO);
@@ -126,13 +130,17 @@ public class ServerStatePresenter {
     }
 
     private void updateStatusReport(Intent intent) {
-        int status = intent.getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
+        mNetStatus = intent.getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
+        updateStatusReport(mNetStatus);
+    }
+
+    private void updateStatusReport(int netStatus){
         String text;
         int imageRes;
-        switch (status){
+        switch (netStatus){
             case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
                 tv_statusReport.setTextColor(Color.GREEN);
-                text="服务器正常";
+                text="服务器正常。";
                 imageRes= R.drawable.ic_android_robot_1;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
@@ -142,7 +150,7 @@ public class ServerStatePresenter {
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
                 tv_statusReport.setTextColor(Color.RED);
-                text="服务器已经断开";
+                text="服务器异常。";
                 imageRes= R.drawable.ic_android_robot_3;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:

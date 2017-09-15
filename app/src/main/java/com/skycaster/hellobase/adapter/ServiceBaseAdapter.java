@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
@@ -56,8 +57,13 @@ public class ServiceBaseAdapter extends BaseAdapter {
         }
         if(list.size()==0){
             vh.tv_maskNoData.setVisibility(View.VISIBLE);
+            vh.tv_id.setVisibility(View.INVISIBLE);
+            vh.mLinearLayout.setVisibility(View.INVISIBLE);
         }else {
             vh.tv_maskNoData.setVisibility(View.GONE);
+            vh.tv_id.setVisibility(View.VISIBLE);
+            vh.mLinearLayout.setVisibility(View.VISIBLE);
+
             ServiceBase temp = list.get(position);
             vh.tv_id.setText(String.format(Locale.CHINA,"%02d",temp.getId()));
             vh.tv_id.setBackgroundColor(mColors[position%3]);
@@ -77,6 +83,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
         private TextView tv_maskNoData;
         private TextView tv_id;
         private View contentView;
+        private LinearLayout mLinearLayout;
 
         public ViewHolder(View contentView) {
             this.contentView = contentView;
@@ -86,6 +93,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
             tv_type=contentView.findViewById(R.id.item_service_base_tv_ldpc_type);
             tv_id=contentView.findViewById(R.id.item_service_base_tv_id);
             tv_maskNoData=contentView.findViewById(R.id.item_service_base_tv_mask_no_data);
+            mLinearLayout =contentView.findViewById(R.id.item_service_base_container);
         }
 
         public TextView getTv_num() {
@@ -114,6 +122,10 @@ public class ServiceBaseAdapter extends BaseAdapter {
 
         public TextView getTv_id() {
             return tv_id;
+        }
+
+        public LinearLayout getLinearLayout() {
+            return mLinearLayout;
         }
     }
 }

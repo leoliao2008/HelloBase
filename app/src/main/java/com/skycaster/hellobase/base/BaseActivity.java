@@ -2,7 +2,9 @@ package com.skycaster.hellobase.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 /**
  * Created by 廖华凯 on 2017/9/12.
@@ -19,6 +21,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         initViews();
         initData();
         initListener();
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     protected abstract int getRootViewLayoutId();
@@ -29,5 +35,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void initListener();
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

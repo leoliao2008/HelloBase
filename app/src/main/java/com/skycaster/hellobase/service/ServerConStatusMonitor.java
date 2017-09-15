@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -39,6 +41,7 @@ public class ServerConStatusMonitor extends Service {
     private RemoteViews mRemoteViews;
     private ArrayList<StateTable> mStateTables=new ArrayList<>();
     private NotificationCompat.Builder mBuilder;
+    private int mNetStatus =StaticData.EXTRA_INT_NET_STATUS_INITIALIZING;
 
     @Override
     public void onCreate() {
@@ -96,38 +99,63 @@ public class ServerConStatusMonitor extends Service {
                 outDateCount++;
             }
         }
+        String text;
+        int src;
+        int color;
         if(size==3){
             switch (outDateCount){
                 case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
-                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"良好");
-                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_excellent_24dp);
+                    text="良好";
+                    color= Color.GREEN;
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                         src=R.drawable.vd_ic_signal_excellent_24dp;
+                    }else {
+                        src=R.drawable.ic_signal_wifi_full_white_24dp;
+                    }
                     break;
                 case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
-                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"不稳定");
-                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_unstable_24dp);
+                    text="不稳定";
+                    color=Color.YELLOW;
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                        src=R.drawable.vd_ic_signal_unstable_24dp;
+                    }else {
+                        src=R.drawable.ic_signal_wifi_half_white_24dp;
+                    }
                     break;
                 case StaticData.EXTRA_INT_NET_STATUS_ERROR:
-                    mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"异常");
-                    mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.vd_ic_signal_error_24dp);
+                default:
+                    text="异常";
+                    color=Color.RED;
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                        src=R.drawable.vd_ic_signal_error_24dp;
+                    }else {
+                        src=R.drawable.ic_signal_wifi_off_white_24dp;
+                    }
                     break;
             }
         }else {
-            mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,"检测中...");
-            mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,R.drawable.ic_signal_wifi_error_white_24dp);
+            text="请稍候";
+            color=Color.WHITE;
+            src=R.drawable.ic_signal_wifi_initializing_white_24dp;
             outDateCount=StaticData.EXTRA_INT_NET_STATUS_INITIALIZING;
         }
-        updateRemoteViews();
+        mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,text);
+        mRemoteViews.setTextColor(R.id.remote_view_tv_signal,color);
+        mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,src);
+        mNetStatus=outDateCount;
+        updateRemoteViews(mNetStatus);
 
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_NET_STATUS);
         intent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SUCCESS,true);
         intent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,newTable);
-        intent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,outDateCount);
+        intent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,mNetStatus);
         sendBroadcast(intent);
 
     }
 
-    private void updateRemoteViews() {
+    private void updateRemoteViews(int netStatus) {
+        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,getActPendingIntent(netStatus));
         startForeground(123,mBuilder.setContent(mRemoteViews).build());
     }
 
@@ -143,18 +171,14 @@ public class ServerConStatusMonitor extends Service {
 
     private void startForeground(){
         mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentText("正在监控服务器连接状态......")
-                .setSmallIcon(R.drawable.vd_network_check_24dp);
+        mBuilder.setContentText("正在监控服务器连接状态......");
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            mBuilder.setSmallIcon(R.drawable.vd_network_check_24dp);
+        }else {
+            mBuilder.setSmallIcon(R.drawable.ic_signal_wifi_full_white_24dp);
+        }
         mRemoteViews = new RemoteViews(getPackageName(), R.layout.remote_view_net_status);
-        Intent startActIntent = new Intent(this, ServerStateActivity.class);
-        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
-        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
-        PendingIntent startActPi=PendingIntent.getActivity(
-                this,
-                987,
-                startActIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,startActPi);
+        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,getActPendingIntent(mNetStatus));
         Intent stopSevIntent=new Intent(StaticData.ACTION_STOP_SERVICE);
         PendingIntent stopSevPi = PendingIntent.getBroadcast(
                 this,
@@ -162,10 +186,18 @@ public class ServerConStatusMonitor extends Service {
                 stopSevIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
-        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_btn_quit,stopSevPi);
+        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_tv_quit,stopSevPi);
         mBuilder.setContent(mRemoteViews);
         Notification notification = mBuilder.build();
         startForeground(123,notification);
+    }
+
+    private PendingIntent getActPendingIntent(int netStatus) {
+        Intent startActIntent = new Intent(this, ServerStateActivity.class);
+        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
+        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
+        startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, netStatus);
+        return PendingIntent.getActivity(this, 987, startActIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 

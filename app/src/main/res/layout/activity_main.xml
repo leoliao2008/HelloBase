@@ -34,13 +34,27 @@
 
         </LinearLayout>
 
-        <TextView
-            style="@style/TextViewStyle1"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:background="@color/colorGrey"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_2"
-            android:text="服务器配置表"
-            />
+            android:background="@color/colorGrey">
+
+            <TextView
+                style="@style/TextViewStyle1"
+                android:layout_width="match_parent"
+                android:text="服务器配置表"
+                android:layout_gravity="center"
+                />
+
+            <Button
+                android:id="@+id/main_btn_to_state_table"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="状态表"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_marginTop="@dimen/dp_2"
@@ -149,26 +163,19 @@
                 style="@style/TextViewStyle2"/>
 
         </LinearLayout>
+
         <TextView
+            android:layout_marginTop="@dimen/dp_2"
             style="@style/TextViewStyle1"
             android:layout_width="match_parent"
             android:background="@color/colorGrey"
-            android:layout_marginTop="@dimen/dp_2"
             android:text="基站清单"
             />
 
         <com.skycaster.hellobase.customize.MaxHeightListView
             android:id="@+id/main_list_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/main_btn_to_state_table"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="点击进入服务器状态表"
-            android:textSize="@dimen/sp_18"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
