@@ -114,7 +114,7 @@ public class ServerStatePresenter {
                         updateActivityUi(mStateTable);
                     }else {
                         mActivity.getTv_feedbackTime().setText("获取失败");
-                        String error = intent.getStringExtra(StaticData.EXTRA_STRING_FAIL_INFO);
+                        String error = intent.getStringExtra(StaticData.EXTRA_STRING_INFO);
                         mActivity.getTv_comments().setText(TextUtils.isEmpty(error)?"获取状态表失败，原因：未知":error);
                     }
                     break;
@@ -130,7 +130,7 @@ public class ServerStatePresenter {
     }
 
     private void updateStatusReport(Intent intent) {
-        mNetStatus = intent.getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
+        mNetStatus = intent.getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, StaticData.EXTRA_INT_NET_STATUS_INITIALIZING);
         updateStatusReport(mNetStatus);
     }
 
@@ -150,12 +150,18 @@ public class ServerStatePresenter {
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
                 tv_statusReport.setTextColor(Color.RED);
-                text="服务器异常。";
+                text="服务器数据停止更新了。";
                 imageRes= R.drawable.ic_android_robot_3;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:
                 tv_statusReport.setTextColor(Color.GRAY);
                 text="初始化中...";
+                imageRes=R.drawable.ic_android_robot_4;
+                break;
+            case StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED:
+            case StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED:
+                tv_statusReport.setTextColor(Color.RED);
+                text="服务器连接失败。";
                 imageRes=R.drawable.ic_android_robot_4;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE:

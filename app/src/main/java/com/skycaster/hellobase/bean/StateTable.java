@@ -30,6 +30,16 @@ public class StateTable implements Parcelable{
         notes = in.readString();
     }
 
+    public StateTable deepClone(){
+        StateTable st=new StateTable();
+        st.setNotes(notes);
+        st.setRunningState(runningState);
+        st.setDateTime(dateTime);
+        st.setCurVer(curVer);
+        st.setHostId(hostId);
+        return st;
+    }
+
     public static final Creator<StateTable> CREATOR = new Creator<StateTable>() {
         @Override
         public StateTable createFromParcel(Parcel in) {

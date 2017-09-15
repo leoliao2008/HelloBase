@@ -136,31 +136,33 @@ public class MySqlModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Statement statement=null;
-                ResultSet resultSet=null;
-                try {
-                    statement =con.createStatement();
-                    resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
-                    mCallBack.onGetStateTableSuccess(getStateTable(resultSet));
-                } catch (SQLException e) {
-                    showLog("error while running requestStateTable(final Connection con):"+e.getMessage());
-                    mCallBack.onGetStateTableFail(e.getMessage());
-                }finally {
-                    if(resultSet!=null){
-                        try {
-                            resultSet.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                synchronized (MySqlModel.this){
+                    Statement statement=null;
+                    ResultSet resultSet=null;
+                    try {
+                        statement =con.createStatement();
+                        resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
+                        mCallBack.onGetStateTableSuccess(getStateTable(resultSet));
+                    } catch (SQLException e) {
+                        showLog("error while running requestStateTable(final Connection con):"+e.getMessage());
+                        mCallBack.onGetStateTableFail(e.getMessage());
+                    }finally {
+                        if(resultSet!=null){
+                            try {
+                                resultSet.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            resultSet=null;
                         }
-                        resultSet=null;
-                    }
-                    if(statement!=null){
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        if(statement!=null){
+                            try {
+                                statement.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            statement=null;
                         }
-                        statement=null;
                     }
                 }
             }
