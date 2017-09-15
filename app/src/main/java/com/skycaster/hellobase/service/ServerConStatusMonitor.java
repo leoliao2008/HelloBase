@@ -21,6 +21,7 @@ import android.widget.RemoteViews;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ServerStateActivity;
+import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
@@ -97,6 +98,7 @@ public class ServerConStatusMonitor extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mStateTable = intent.getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
         mStateTables.add(mStateTable);
+        BaseApplication.setBoundTable(mStateTable);
         startForeground();
         updateNetStateByStateTable(mStateTable);
         mModel.connectMySql(StaticData.HOST_ADDRESS,StaticData.DATA_BASE_NAME,StaticData.USER_NAME,StaticData.PASSWORD);
@@ -282,6 +284,7 @@ public class ServerConStatusMonitor extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        BaseApplication.setBoundTable(null);
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_SERVICE_DISMISS);
         intent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);

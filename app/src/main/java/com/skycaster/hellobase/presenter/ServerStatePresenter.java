@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ServerStateActivity;
+import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
@@ -48,11 +49,23 @@ public class ServerStatePresenter {
         mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
         if(mStateTable!=null){
             updateActivityUi(mStateTable);
+            //假如已经有前台服务在运行
+            StateTable table = BaseApplication.getBoundTable();
+            if(table !=null){
+                //更新前台服务对象
+                String newStbId=TextUtils.isEmpty(mStateTable.getHostId())?"null":mStateTable.getHostId();
+                String preStbId=TextUtils.isEmpty(table.getHostId())?"null":table.getHostId();
+                if(!newStbId.equals(preStbId)){
+                    stopMonitoring();
+                    startMonitoring();
+                }
+            }
         }
 
         mReceiver=new Receiver();
         IntentFilter intentFilter=new IntentFilter(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         mActivity.registerReceiver(mReceiver,intentFilter);
+
     }
 
     private void showLog(String msg) {
