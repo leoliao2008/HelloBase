@@ -1,5 +1,6 @@
 package com.skycaster.hellobase.model;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -12,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -173,11 +175,21 @@ public class MySqlModel {
         StateTable st=new StateTable();
         try {
             while (resultSet.next()){
-                st.setHostId(resultSet.getString(1));
-                st.setDateTime(resultSet.getTimestamp(2).getTime());
+                String hostId = resultSet.getString(1);
+                hostId= TextUtils.isEmpty(hostId)?"unknown":hostId;
+                st.setHostId(hostId);
+                Timestamp timestamp = resultSet.getTimestamp(2);
+                if(timestamp==null){
+                    timestamp=new Timestamp(0);
+                }
+                st.setDateTime(timestamp.getTime());
                 st.setCurVer(resultSet.getInt(3));
-                st.setRunningState(resultSet.getString(4));
-                st.setNotes(resultSet.getString(5));
+                String runningState = resultSet.getString(4);
+                runningState=TextUtils.isEmpty(runningState)?"unknown":runningState;
+                st.setRunningState(runningState);
+                String notes = resultSet.getString(5);
+                notes=TextUtils.isEmpty(notes)?"unknown":notes;
+                st.setNotes(notes);
             }
         } catch (SQLException e) {
             showLog("error while running getStateTable(ResultSet resultSet): "+e.getMessage());

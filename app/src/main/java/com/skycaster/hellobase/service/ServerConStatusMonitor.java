@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
@@ -75,7 +74,7 @@ public class ServerConStatusMonitor extends Service {
         }
     };
     private NotificationManagerCompat mNotiManager;
-    private NotificationCompat.Builder mHeadUpNotiBuilder;
+//    private NotificationCompat.Builder mHeadUpNotiBuilder;
 
     @Override
     public void onCreate() {
@@ -83,10 +82,10 @@ public class ServerConStatusMonitor extends Service {
         mModel=new MySqlModel(mCallback);
         mNotiManager=NotificationManagerCompat.from(this);
 
-        mHeadUpNotiBuilder = new NotificationCompat.Builder(this);
-        mHeadUpNotiBuilder.setSmallIcon(R.drawable.ic_signal_wifi_alert_white_24dp)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_signal_wifi_alert_white_48dp))
-                .setContentTitle("连接异常！");
+//        mHeadUpNotiBuilder = new NotificationCompat.Builder(this);
+//        mHeadUpNotiBuilder.setSmallIcon(R.drawable.ic_signal_wifi_alert_white_24dp)
+//                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_signal_wifi_alert_white_48dp))
+//                .setContentTitle("连接异常！");
 
         mReceiver=new Receiver();
         IntentFilter intentFilter=new IntentFilter(StaticData.ACTION_STOP_SERVICE);
@@ -153,7 +152,7 @@ public class ServerConStatusMonitor extends Service {
                 src=R.drawable.ic_signal_wifi_initializing_white_24dp;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
-                text="数据正常更新";
+                text="更新正常";
                 color= Color.GREEN;
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
                     src=R.drawable.vd_ic_signal_excellent_24dp;
@@ -162,7 +161,7 @@ public class ServerConStatusMonitor extends Service {
                 }
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
-                text="数据更新缓慢";
+                text="更新缓慢";
                 color=Color.YELLOW;
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
                     src=R.drawable.vd_ic_signal_unstable_24dp;
@@ -171,7 +170,7 @@ public class ServerConStatusMonitor extends Service {
                 }
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
-                text="数据停止更新";
+                text="停止更新";
                 color=Color.RED;
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
                     src=R.drawable.vd_ic_signal_error_24dp;
@@ -182,7 +181,7 @@ public class ServerConStatusMonitor extends Service {
             case StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED:
             case StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED:
             default:
-                text="联不上服务器";
+                text="链接中断";
                 color=Color.RED;
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
                     src=R.drawable.vd_ic_signal_error_24dp;
@@ -208,17 +207,17 @@ public class ServerConStatusMonitor extends Service {
         sendBroadcast(intent);
     }
 
-    private void headUpNotification(String msg){
-        mHeadUpNotiBuilder.setContentText(msg);
-        Intent startActIntent = new Intent(this, ServerStateActivity.class);
-        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
-        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
-        startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, mNetState);
-        PendingIntent pi=PendingIntent.getActivity(this,753,startActIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        mHeadUpNotiBuilder.setFullScreenIntent(pi,true);
-        mHeadUpNotiBuilder.setAutoCancel(true);
-        mNotiManager.notify(963, mHeadUpNotiBuilder.build());
-    }
+//    private void headUpNotification(String msg){
+//        mHeadUpNotiBuilder.setContentText(msg);
+//        Intent startActIntent = new Intent(this, ServerStateActivity.class);
+//        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
+//        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
+//        startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, mNetState);
+//        PendingIntent pi=PendingIntent.getActivity(this,753,startActIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+//        mHeadUpNotiBuilder.setFullScreenIntent(pi,true);
+//        mHeadUpNotiBuilder.setAutoCancel(true);
+//        mNotiManager.notify(963, mHeadUpNotiBuilder.build());
+//    }
 
     private void startForeground(){
         mNotiBuilder = new NotificationCompat.Builder(this);

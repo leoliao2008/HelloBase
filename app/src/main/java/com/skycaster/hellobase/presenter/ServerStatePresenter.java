@@ -1,12 +1,16 @@
 package com.skycaster.hellobase.presenter;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +18,8 @@ import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ServerStateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.customize.MutableColorSpan;
+import com.skycaster.hellobase.customize.MutableSizeSpan;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
 
@@ -34,12 +40,17 @@ public class ServerStatePresenter {
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
     private int mNetStatus;
+    private TextView tv_updateTime;
+    private float mTextSize;
 
     public ServerStatePresenter(ServerStateActivity activity) {
         mActivity = activity;
     }
 
     public void initData(){
+
+        tv_updateTime=mActivity.getTv_feedbackTime();
+        mTextSize = tv_updateTime.getTextSize();
 
         tv_statusReport=mActivity.getTv_statusReport();
         iv_statusReport=mActivity.getIv_statusReport();
@@ -58,6 +69,8 @@ public class ServerStatePresenter {
                 if(!newStbId.equals(preStbId)){
                     stopMonitoring();
                     startMonitoring();
+                }else {
+                    mNetStatus=mNetStatus==StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE?StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:mNetStatus;
                 }
             }
         }
@@ -79,7 +92,8 @@ public class ServerStatePresenter {
                 mActivity.getTv_mac().setText(stateTable.getHostId());
                 mActivity.getTv_version().setText(String.valueOf(stateTable.getCurVer()));
                 mActivity.getTv_status().setText(stateTable.getRunningState());
-                mActivity.getTv_feedbackTime().setText(mDateFormat.format(new Date(stateTable.getDateTime())));
+//                mActivity.getTv_feedbackTime().setText(mDateFormat.format(new Date(stateTable.getDateTime())));
+                feedbackTimeAnimation(stateTable);
                 mActivity.getTv_comments().setText(stateTable.getNotes());
             }
         });
@@ -96,7 +110,7 @@ public class ServerStatePresenter {
     }
 
     public void onStart() {
-        boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false);
+        boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false)||BaseApplication.getBoundTable()!=null;
         mActivity.getTgbtn_monitoring().setChecked(isServiceRunning);
         updateStatusReport(mNetStatus);
     }
@@ -128,7 +142,7 @@ public class ServerStatePresenter {
                     }else {
                         mActivity.getTv_feedbackTime().setText("获取失败");
                         String error = intent.getStringExtra(StaticData.EXTRA_STRING_INFO);
-                        mActivity.getTv_comments().setText(TextUtils.isEmpty(error)?"获取状态表失败，原因：未知":error);
+                        mActivity.getTv_comments().setText(TextUtils.isEmpty(error)?"获取状态表失败，原因：未知":"获取状态表失败，原因："+error);
                     }
                     break;
                 case StaticData.EVENT_TYPE_SERVICE_DISMISS:
@@ -157,7 +171,7 @@ public class ServerStatePresenter {
                 imageRes= R.drawable.ic_android_robot_1;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
-                tv_statusReport.setTextColor(mActivity.getColor(R.color.colorOrange));
+                tv_statusReport.setTextColor(mActivity.getResources().getColor(R.color.colorOrange));
                 text="服务器连接不稳定...";
                 imageRes= R.drawable.ic_android_robot_2;
                 break;
@@ -186,5 +200,30 @@ public class ServerStatePresenter {
         }
         tv_statusReport.setText(text);
         iv_statusReport.setImageResource(imageRes);
+    }
+
+    private void feedbackTimeAnimation(StateTable stateTable){
+        String time = mDateFormat.format(new Date(stateTable.getDateTime()));
+        if(time.trim().equals(tv_updateTime.getText().toString().trim())){
+            return;
+        }
+        final SpannableString sp=new SpannableString(time);
+        final MutableSizeSpan sizeSpan = new MutableSizeSpan((int) mTextSize, true);
+        sp.setSpan(sizeSpan,0,time.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final MutableColorSpan colorSpan = new MutableColorSpan(Color.RED,255);
+        sp.setSpan(colorSpan,0,time.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ValueAnimator valueAnimator=ValueAnimator.ofFloat(0,1f);
+        valueAnimator.setInterpolator(new BounceInterpolator());
+        valueAnimator.setDuration(500);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float fraction = animation.getAnimatedFraction();
+                colorSpan.setAlpha((int) (255*fraction));
+                sizeSpan.setSize((int) (mTextSize+(22-mTextSize)*fraction));
+                tv_updateTime.setText(sp);
+            }
+        });
+        valueAnimator.start();
     }
 }

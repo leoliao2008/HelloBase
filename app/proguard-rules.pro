@@ -18,8 +18,15 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
+
+#-keep class mysql-connector-java-5.1.36-bin.{*;}
+#-keep interface mysql-connector-java-5.1.36-bin.{*;}
+#-keep class org.hibernate.service.jdbc.{*;}
+#-keep interface org.hibernate.service.jdbc.{*;}
+
+
