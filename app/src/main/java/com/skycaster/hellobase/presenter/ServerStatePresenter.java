@@ -43,6 +43,8 @@ public class ServerStatePresenter {
     private TextView tv_updateTime;
     private float mTextSize;
 
+
+
     public ServerStatePresenter(ServerStateActivity activity) {
         mActivity = activity;
     }
@@ -51,6 +53,8 @@ public class ServerStatePresenter {
 
         tv_updateTime=mActivity.getTv_feedbackTime();
         mTextSize = tv_updateTime.getTextSize();
+
+
 
         tv_statusReport=mActivity.getTv_statusReport();
         iv_statusReport=mActivity.getIv_statusReport();
@@ -80,6 +84,7 @@ public class ServerStatePresenter {
         mActivity.registerReceiver(mReceiver,intentFilter);
 
     }
+
 
     private void showLog(String msg) {
         Log.e(getClass().getSimpleName(),msg);
@@ -208,7 +213,7 @@ public class ServerStatePresenter {
             return;
         }
         final SpannableString sp=new SpannableString(time);
-        final MutableSizeSpan sizeSpan = new MutableSizeSpan((int) mTextSize, true);
+        final MutableSizeSpan sizeSpan = new MutableSizeSpan((int) mTextSize, false);
         sp.setSpan(sizeSpan,0,time.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         final MutableColorSpan colorSpan = new MutableColorSpan(Color.RED,255);
         sp.setSpan(colorSpan,0,time.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -220,7 +225,7 @@ public class ServerStatePresenter {
             public void onAnimationUpdate(ValueAnimator animation) {
                 float fraction = animation.getAnimatedFraction();
                 colorSpan.setAlpha((int) (255*fraction));
-                sizeSpan.setSize((int) (mTextSize+(22-mTextSize)*fraction));
+                sizeSpan.setSize((int) (mTextSize+3*fraction));
                 tv_updateTime.setText(sp);
             }
         });

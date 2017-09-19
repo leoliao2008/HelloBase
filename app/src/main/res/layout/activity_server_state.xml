@@ -14,7 +14,7 @@
         style="@style/LinearLayoutStyle1">
         <TextView
            style="@style/TextViewStyle1"
-            android:text="服务器Mac地址："/>
+            android:text="基地器ID："/>
         <TextView
             android:id="@+id/state_tv_mac_address"
             style="@style/TextViewStyle2"/>
@@ -28,12 +28,15 @@
         <TextView
             android:id="@+id/state_tv_version"
             style="@style/TextViewStyle2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
         <TextView
             style="@style/TextViewStyle1"
             android:text="状态："/>
         <TextView
             android:id="@+id/state_tv_status"
-            android:layout_width="wrap_content"
             style="@style/TextViewStyle2"/>
     </LinearLayout>
 

@@ -8,6 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/dp_2"
+    android:scrollbars="none"
     tools:context="com.skycaster.hellobase.activity.MainActivity">
 
     <LinearLayout
@@ -16,7 +17,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:background="@color/colorGrey"
+            android:background="@color/colorBg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
@@ -30,21 +31,22 @@
                 android:id="@+id/main_btn_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="搜索服务器"/>
+                android:text="搜索基地器"/>
 
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_2"
-            android:background="@color/colorGrey">
+            android:background="@color/colorPrimary">
 
             <TextView
                 style="@style/TextViewStyle1"
                 android:layout_width="match_parent"
-                android:text="服务器配置表"
+                android:text="基地器配置表"
+                android:background="@color/colorPrimary"
                 android:layout_gravity="center"
+                android:textColor="@color/colorWhite"
                 />
 
             <Button
@@ -57,11 +59,10 @@
         </FrameLayout>
 
         <LinearLayout
-            android:layout_marginTop="@dimen/dp_2"
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="服务器MAC地址："
+                android:text="基地器ID："
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -80,6 +81,11 @@
             <TextView
                 android:id="@+id/main_tv_host_version"
                 style="@style/TextViewStyle2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
 
             <TextView
                 android:text="操作码："
@@ -154,6 +160,12 @@
                 android:id="@+id/main_tv_left_tune"
                 style="@style/TextViewStyle2"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LinearLayoutStyle1">
+
+
             <TextView
                 android:text="右频："
                 style="@style/TextViewStyle1"/>
@@ -165,17 +177,18 @@
         </LinearLayout>
 
         <TextView
-            android:layout_marginTop="@dimen/dp_2"
             style="@style/TextViewStyle1"
             android:layout_width="match_parent"
-            android:background="@color/colorGrey"
-            android:text="基站清单"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorWhite"
+            android:text="事务清单"
             />
 
         <com.skycaster.hellobase.customize.MaxHeightListView
             android:id="@+id/main_list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@color/colorBg"/>
 
     </LinearLayout>
 

@@ -16,4 +16,6 @@
     <dimen name="dp_90">90dp</dimen>
     <dimen name="sp_17">17sp</dimen>
     <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_1">1dp</dimen>
+    <dimen name="dp_0.5">0.5dp</dimen>
 </resources>

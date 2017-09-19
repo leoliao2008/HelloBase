@@ -74,7 +74,8 @@ public class ServerConStatusMonitor extends Service {
         }
     };
     private NotificationManagerCompat mNotiManager;
-//    private NotificationCompat.Builder mHeadUpNotiBuilder;
+    private Thread mLoopThread;
+    //    private NotificationCompat.Builder mHeadUpNotiBuilder;
 
     @Override
     public void onCreate() {
@@ -207,6 +208,7 @@ public class ServerConStatusMonitor extends Service {
         sendBroadcast(intent);
     }
 
+
 //    private void headUpNotification(String msg){
 //        mHeadUpNotiBuilder.setContentText(msg);
 //        Intent startActIntent = new Intent(this, ServerStateActivity.class);
@@ -259,25 +261,29 @@ public class ServerConStatusMonitor extends Service {
 
     private void startLooping() {
         isContinue.set(true);
-        new Thread(new Runnable() {
+        mLoopThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (isContinue.get()){
+                while (isContinue.get()) {
+                    if(mLoopThread!=null&&mLoopThread.isInterrupted()){
+                        break;
+                    }
                     try {
-                        mModel.requestStateTable(mConnection,mStateTable.getHostId());
-                        SystemClock.sleep(5000);
-                    }catch (Exception e){
+                        mModel.requestStateTable(mConnection, mStateTable.getHostId());
+                        SystemClock.sleep(30000);
+                    } catch (Exception e) {
                         try {
                             mConnection.close();
                         } catch (SQLException e1) {
                             e1.printStackTrace();
                         }
-                        mConnection=null;
+                        mConnection = null;
                         mCallback.onSqlConnectionFail(e.getMessage());
                     }
                 }
             }
-        }).start();
+        });
+        mLoopThread.start();
     }
 
     @Override
@@ -293,6 +299,11 @@ public class ServerConStatusMonitor extends Service {
             mReceiver=null;
         }
         isContinue.set(false);
+
+        if(mLoopThread!=null){
+            mLoopThread.interrupt();
+        }
+
         //在连接未成功的情况下退出时，不要清除通知栏，让用户知道连接失败了。
         stopForeground(mConnection!=null);
         if(mConnection!=null){

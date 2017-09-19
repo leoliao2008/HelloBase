@@ -15,31 +15,36 @@
 
 
     <style name="TextViewStyle1">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/dp_7</item>
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">@dimen/sp_18</item>
         <item name="android:gravity">center</item>
+        <item name="android:background">@color/colorBg</item>
+        <item name="android:layout_marginRight">@dimen/dp_1</item>
+
     </style>
 
     <style name="TextViewStyle2">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textSize">@dimen/sp_18</item>
         <item name="android:padding">@dimen/dp_7</item>
-        <item name="android:layout_margin">5dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@color/colorWhite</item>
+        <item name="android:background">@color/colorBg</item>
     </style>
 
 
     <style name="LinearLayoutStyle1">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/colorGrey</item>
+        <item name="android:background">@color/colorDivider</item>
         <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/dp_0.5</item>
+
     </style>
 
 </resources>
