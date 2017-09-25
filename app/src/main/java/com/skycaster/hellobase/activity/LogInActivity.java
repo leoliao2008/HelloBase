@@ -2,7 +2,6 @@ package com.skycaster.hellobase.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.percent.PercentFrameLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.presenter.LogInActivityPresenter;
 
 public class LogInActivity extends BaseActivity {
-    private PercentFrameLayout mRootView;
     private EditText edt_ip;
     private EditText edt_port;
     private EditText edt_pw;
@@ -40,7 +38,6 @@ public class LogInActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        mRootView= (PercentFrameLayout) findViewById(R.id.activity_log_in_root_view);
         edt_ip= (EditText) findViewById(R.id.activity_log_in_edt_ip);
         edt_port= (EditText) findViewById(R.id.activity_log_in_edt_port);
         edt_pw= (EditText) findViewById(R.id.activity_log_in_edt_pw);
