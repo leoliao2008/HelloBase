@@ -1,15 +1,18 @@
 package com.skycaster.hellobase.presenter;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.skycaster.hellobase.activity.ConfigTableActivity;
+import com.skycaster.hellobase.activity.EditConfigActivity;
 import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
-import com.skycaster.hellobase.bean.BaseServer;
+import com.skycaster.hellobase.bean.ServerBase;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.customize.MaxHeightListView;
+import com.skycaster.hellobase.data.StaticData;
 
 import java.util.ArrayList;
 
@@ -22,7 +25,7 @@ public class ConfigTableActivityPresenter {
 //    private MySqlModel mMySqlModel;
     private ProgressDialog mProgressDialog;
     private MaxHeightListView mListView;
-    private ArrayList<BaseServer> list=new ArrayList<>();
+    private ArrayList<ServerBase> list=new ArrayList<>();
     private ServiceBaseAdapter mAdapter;
     private ConfigTable mConfigTable;
 //    private AppCompatSpinner mSpinner;
@@ -220,7 +223,7 @@ public class ConfigTableActivityPresenter {
         mActivity.getTv_fill().setText(String.valueOf(table.getSignFill()));
         mActivity.getTv_leftTune().setText(String.valueOf(table.getToneLeft()));
         mActivity.getTv_rightTune().setText(String.valueOf(table.getToneRight()));
-        ArrayList<BaseServer> bases = table.getServiceBases();
+        ArrayList<ServerBase> bases = table.getServiceBases();
         list.clear();
         if(bases!=null){
             list.addAll(bases);
@@ -251,6 +254,18 @@ public class ConfigTableActivityPresenter {
     }
 
     public void editConfigSetting() {
-        //// TODO: 2017/9/25  
+        Intent intent=new Intent(mActivity, EditConfigActivity.class);
+        intent.putExtra(StaticData.EXTRA_DATA_CONFIG_TABLE,mConfigTable);
+        mActivity.startActivityForResult(intent,StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE);
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE){
+            if(resultCode==StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_OK){
+                ConfigTable configTable=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
+                updateActivityUi(configTable);
+            }
+        }
     }
 }

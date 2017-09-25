@@ -57,4 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showLog(String msg){
         Log.e(getClass().getSimpleName(),msg);
     }
+
+
 }

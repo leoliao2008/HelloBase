@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by 廖华凯 on 2017/9/12.
  */
 
-public class BaseServer implements Parcelable {
+public class ServerBase implements Parcelable {
     private int id;
 //    s0_form_code	  integer not null default 33,-- 此项不用翻译
 //    s0_ldpc_num		  integer not null default 15, -- 业务0 LDCP码字个数
@@ -20,10 +20,10 @@ public class BaseServer implements Parcelable {
     private int intvSize;
     private int qamType;
 
-    public BaseServer() {
+    public ServerBase() {
     }
 
-    public BaseServer(Parcel in){
+    public ServerBase(Parcel in){
         id=in.readInt();
         formCode=in.readInt();
         ldpcNum=in.readInt();
@@ -95,15 +95,15 @@ public class BaseServer implements Parcelable {
         dest.writeInt(qamType);
     }
 
-    public static final Creator<BaseServer> CREATOR=new Creator<BaseServer>() {
+    public static final Creator<ServerBase> CREATOR=new Creator<ServerBase>() {
         @Override
-        public BaseServer createFromParcel(Parcel source) {
-            return new BaseServer(source) ;
+        public ServerBase createFromParcel(Parcel source) {
+            return new ServerBase(source) ;
         }
 
         @Override
-        public BaseServer[] newArray(int size) {
-            return new BaseServer[size];
+        public ServerBase[] newArray(int size) {
+            return new ServerBase[size];
         }
     } ;
 

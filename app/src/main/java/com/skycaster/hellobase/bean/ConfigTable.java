@@ -19,7 +19,7 @@ public class ConfigTable implements Parcelable{
     private int signFill=0;
     private int toneLeft=0;
     private int toneRight=0;
-    private ArrayList<BaseServer> mServiceBases=new ArrayList<>();
+    private ArrayList<ServerBase> mServiceBases=new ArrayList<>();
 
     public void setHostId(String hostId) {
         this.hostId = hostId;
@@ -57,7 +57,7 @@ public class ConfigTable implements Parcelable{
         this.toneRight = toneRight;
     }
 
-    public void setServiceBases(ArrayList<BaseServer> serviceBases) {
+    public void setServiceBases(ArrayList<ServerBase> serviceBases) {
         mServiceBases.addAll(serviceBases);
     }
 
@@ -97,7 +97,7 @@ public class ConfigTable implements Parcelable{
         return toneRight;
     }
 
-    public ArrayList<BaseServer> getServiceBases() {
+    public ArrayList<ServerBase> getServiceBases() {
         return mServiceBases;
     }
 
@@ -149,7 +149,7 @@ public class ConfigTable implements Parcelable{
         this.signFill = in.readInt();
         this.toneLeft = in.readInt();
         this.toneRight = in.readInt();
-        this.mServiceBases = in.createTypedArrayList(BaseServer.CREATOR);
+        this.mServiceBases = in.createTypedArrayList(ServerBase.CREATOR);
     }
 
     public static final Creator<ConfigTable> CREATOR = new Creator<ConfigTable>() {

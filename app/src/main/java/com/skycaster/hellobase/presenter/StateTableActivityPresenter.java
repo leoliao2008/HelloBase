@@ -63,6 +63,8 @@ public class StateTableActivityPresenter {
                     table=tables.get(0);
                 }else {
                     table=new ConfigTable();
+                    table.setHostId(mStateTable.getHostId());
+                    table.setSpecVer(mStateTable.getCurVer());
                 }
                 if(mProgressDialog!=null){
                     mProgressDialog.dismiss();

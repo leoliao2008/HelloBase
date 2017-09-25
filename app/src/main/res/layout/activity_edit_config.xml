@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+android:keepScreenOn="true"
+android:id="@+id/activity_edit_config_scroll_view"
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:scrollbars="none"
+android:background="@color/colorBg"
+tools:context="com.skycaster.hellobase.activity.EditConfigActivity">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            style="@style/TextViewStyle1"
+            android:layout_width="match_parent"
+            android:text="激励器配置表"
+            android:background="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+        />
+
+
+    </FrameLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="激励器ID"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/activity_edit_config_edt_id"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="固件版本"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/activity_edit_config_edt_version"
+            android:inputType="number"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="操作码"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:enabled="false"
+            android:inputType="number"
+            android:id="@+id/activity_edit_config_edt_ops_code"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="运营商"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:id="@+id/activity_edit_config_edt_vendor"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="工作频点"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:inputType="numberDecimal"
+            android:id="@+id/activity_edit_config_edt_frq"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="输出功率（微调）"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/activity_edit_config_edt_amp"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="输出功率（粗调）"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/activity_edit_config_edt_fill"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+        <TextView
+            android:text="左频"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/activity_edit_config_edt_left_tune"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/LinearLayoutStyle1">
+
+
+        <TextView
+            android:text="右频"
+            style="@style/TextViewStyle1"/>
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/activity_edit_config_edt_right_tune"
+            style="@style/EditTextStyle2"/>
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/TextViewStyle1"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:text="业务配置清单"
+    />
+
+    <com.skycaster.hellobase.customize.MaxHeightListView
+        android:id="@+id/activity_edit_config_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBg"
+        android:divider="@color/colorDivider"
+        android:dividerHeight="@dimen/dp_1"/>
+
+    <Button
+        android:id="@+id/activity_edit_config_btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="确定修改"/>
+
+</LinearLayout>
+
+
+</ScrollView>

@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.bean.BaseServer;
+import com.skycaster.hellobase.bean.ServerBase;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -19,11 +19,11 @@ import java.util.Locale;
  */
 
 public class ServiceBaseAdapter extends BaseAdapter {
-    private ArrayList<BaseServer> list;
+    private ArrayList<ServerBase> list;
     private Context mContext;
     private int[] mColors =new int[]{Color.parseColor("#FFFF00"),Color.parseColor("#0E7038"),Color.parseColor("#FFAA25")};
 
-    public ServiceBaseAdapter(ArrayList<BaseServer> list, Context context) {
+    public ServiceBaseAdapter(ArrayList<ServerBase> list, Context context) {
         this.list = list;
         mContext = context;
     }
@@ -64,7 +64,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
             vh.tv_id.setVisibility(View.VISIBLE);
             vh.mRelativeLayout.setVisibility(View.VISIBLE);
 
-            BaseServer temp = list.get(position);
+            ServerBase temp = list.get(position);
             vh.tv_id.setText(String.format(Locale.CHINA,"%02d",temp.getId()));
             vh.tv_id.setBackgroundColor(mColors[position%3]);
             vh.tv_num.setText(String.valueOf(temp.getLdpcNum()));

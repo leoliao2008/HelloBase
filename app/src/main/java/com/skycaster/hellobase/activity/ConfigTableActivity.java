@@ -42,7 +42,7 @@ public class ConfigTableActivity extends BaseActivity {
 
     @Override
     protected int getRootViewLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.activity_config_table;
     }
 
     @Override
@@ -156,5 +156,10 @@ public class ConfigTableActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         mPresenter.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.onActivityResult(requestCode,resultCode,data);
     }
 }

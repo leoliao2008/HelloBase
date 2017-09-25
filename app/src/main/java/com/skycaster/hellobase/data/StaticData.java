@@ -33,4 +33,7 @@ public interface StaticData {
     String SP_IS_SHOW_PW = "SP_IS_SHOW_PW";
     String SP_PW = "SP_PW";
     String SP_USER_NAME = "SP_USER_NAME";
+    String EXTRA_DATA_CONFIG_TABLE = "EXTRA_DATA_CONFIG_TABLE";
+    int REQUEST_CODE_EDIT_CONFIG_TABLE = 357;
+    int RESULT_CODE_EDIT_CONFIG_TABLE_OK = 753;
 }

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.skycaster.hellobase.bean.ConfigTable;
-import com.skycaster.hellobase.bean.BaseServer;
+import com.skycaster.hellobase.bean.ServerBase;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 
@@ -119,12 +119,12 @@ public class MySqlModel {
         return list;
     }
 
-    private ArrayList<BaseServer> getServiceBases(ResultSet resultSet) throws SQLException {
-        ArrayList<BaseServer> list=new ArrayList<>();
+    private ArrayList<ServerBase> getServiceBases(ResultSet resultSet) throws SQLException {
+        ArrayList<ServerBase> list=new ArrayList<>();
         int id=0;
         try {
             while (id<8){
-                BaseServer serviceBase=new BaseServer();
+                ServerBase serviceBase=new ServerBase();
                 serviceBase.setId(id);
                 serviceBase.setFormCode(resultSet.getInt("s"+id+"_form_code"));
                 serviceBase.setLdpcNum(resultSet.getInt("s"+id+"_ldpc_num"));
