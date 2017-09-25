@@ -3,6 +3,8 @@ package com.skycaster.hellobase.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.skycaster.hellobase.data.StaticData;
+
 /**
  * Created by 廖华凯 on 2017/9/13.
  */
@@ -18,6 +20,7 @@ public class StateTable implements Parcelable{
     private String runningState;
     private long dateTime;
     private String notes;
+    private int stateCode= StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE;
 
     public StateTable() {
     }
@@ -28,6 +31,7 @@ public class StateTable implements Parcelable{
         runningState = in.readString();
         dateTime=in.readLong();
         notes = in.readString();
+        stateCode=in.readInt();
     }
 
     public StateTable deepClone(){
@@ -37,6 +41,7 @@ public class StateTable implements Parcelable{
         st.setDateTime(dateTime);
         st.setCurVer(curVer);
         st.setHostId(hostId);
+        st.setStateCode(stateCode);
         return st;
     }
 
@@ -92,6 +97,14 @@ public class StateTable implements Parcelable{
         this.notes = notes;
     }
 
+    public int getStateCode() {
+        return stateCode;
+    }
+
+    public void setStateCode(int stateCode) {
+        this.stateCode = stateCode;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -104,16 +117,18 @@ public class StateTable implements Parcelable{
         dest.writeString(runningState);
         dest.writeLong(dateTime);
         dest.writeString(notes);
+        dest.writeInt(stateCode);
     }
 
     @Override
     public String toString() {
         return "StateTable{" +
                 "hostId='" + hostId + '\'' +
-                ", curVer='" + curVer + '\'' +
+                ", curVer=" + curVer +
                 ", runningState='" + runningState + '\'' +
                 ", dateTime=" + dateTime +
                 ", notes='" + notes + '\'' +
+                ", stateCode=" + stateCode +
                 '}';
     }
 }

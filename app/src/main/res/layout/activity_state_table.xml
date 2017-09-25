@@ -7,14 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.skycaster.hellobase.activity.ServerStateActivity">
-
+    tools:context="com.skycaster.hellobase.activity.StateTableActivity"
+    android:background="@color/colorWhite">
 
     <LinearLayout
         style="@style/LinearLayoutStyle1">
         <TextView
            style="@style/TextViewStyle1"
-            android:text="基地器ID："/>
+            android:text="激励器ID"/>
         <TextView
             android:id="@+id/state_tv_mac_address"
             style="@style/TextViewStyle2"/>
@@ -24,7 +24,7 @@
         style="@style/LinearLayoutStyle1">
         <TextView
             style="@style/TextViewStyle1"
-            android:text="版本号："/>
+            android:text="固件版本"/>
         <TextView
             android:id="@+id/state_tv_version"
             style="@style/TextViewStyle2"/>
@@ -34,7 +34,7 @@
         style="@style/LinearLayoutStyle1">
         <TextView
             style="@style/TextViewStyle1"
-            android:text="状态："/>
+            android:text="当前状态"/>
         <TextView
             android:id="@+id/state_tv_status"
             style="@style/TextViewStyle2"/>
@@ -44,7 +44,7 @@
         style="@style/LinearLayoutStyle1">
         <TextView
             style="@style/TextViewStyle1"
-            android:text="反馈时间："/>
+            android:text="反馈时间"/>
         <TextView
             android:id="@+id/state_tv_feed_back_time"
             style="@style/TextViewStyle2"/>
@@ -54,12 +54,12 @@
         style="@style/LinearLayoutStyle1">
         <TextView
             style="@style/TextViewStyle1"
-            android:text="备注："/>
+            android:text="备注"/>
         <TextView
             android:id="@+id/state_tv_comments"
-            android:gravity="start"
             style="@style/TextViewStyle2"/>
     </LinearLayout>
+
 
     <ToggleButton
         android:id="@+id/state_toggle_btn_monitoring"
@@ -70,28 +70,49 @@
         android:textOff="实时监控网络状态"
         android:textOn="网络状态监控中..."/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/state_iv_status_report"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/state_iv_status_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_company_logo_big"
+                android:padding="@dimen/dp_7"
+                android:layout_margin="@dimen/dp_7"/>
+            <TextView
+                android:id="@+id/state_tv_status_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/sp_25"
+                android:padding="@dimen/dp_7"
+                android:text="未开始监控..."/>
+
+
+        </LinearLayout>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/state_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_android_robot_4"
-            android:padding="@dimen/dp_7"
-            android:layout_margin="@dimen/dp_7"/>
-        <TextView
-            android:id="@+id/state_tv_status_report"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/sp_25"
-            android:padding="@dimen/dp_7"
-            android:text="未开始监控..."/>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/dp_16"
+            app:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/selector_ic_setting_24dp"
+            />
+    </RelativeLayout>
 
-    </LinearLayout>
+
 
 
 </LinearLayout>

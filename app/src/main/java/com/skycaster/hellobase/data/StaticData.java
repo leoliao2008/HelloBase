@@ -5,10 +5,10 @@ package com.skycaster.hellobase.data;
  */
 
 public interface StaticData {
-    String HOST_ADDRESS="183.56.182.140:9527";
+//    String HOST_ADDRESS="183.56.182.140:9527";
     String DATA_BASE_NAME="KinHoodCloud";
-    String USER_NAME="admin";
-    String PASSWORD="skycaster";
+//    String USER_NAME="admin";
+//    String PASSWORD="skycaster";
     String EXTRA_DATA_STATE_TABLE="EXTRA_DATA_STATE_TABLE";
     String ACTION_SEVER_CON_STATUS_MONITOR ="ACTION_SEVER_CON_STATUS_MONITOR" ;
     String EXTRA_INT_EVENT_TYPE="EXTRA_INT_EVENT_TYPE";
@@ -26,4 +26,11 @@ public interface StaticData {
     int EXTRA_INT_NET_STATUS_INITIALIZING=4;
     int EXTRA_INT_NET_STATUS_LINK_FAILED = 5;
     int EXTRA_INT_NET_STATUS_TABLE_FAILED=6;
+    String SP_NAME="Config";
+    String SP_IP = "SP_IP";
+    String SP_PORT = "SP_PORT";
+    String SP_IS_KEEP_INPUT = "SP_IS_KEEP_INPUT";
+    String SP_IS_SHOW_PW = "SP_IS_SHOW_PW";
+    String SP_PW = "SP_PW";
+    String SP_USER_NAME = "SP_USER_NAME";
 }

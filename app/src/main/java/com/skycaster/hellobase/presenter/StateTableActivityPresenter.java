@@ -1,6 +1,7 @@
 package com.skycaster.hellobase.presenter;
 
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,16 +16,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.ServerStateActivity;
+import com.skycaster.hellobase.activity.ConfigTableActivity;
+import com.skycaster.hellobase.activity.StateTableActivity;
 import com.skycaster.hellobase.base.BaseApplication;
+import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.customize.MutableColorSpan;
 import com.skycaster.hellobase.customize.MutableSizeSpan;
 import com.skycaster.hellobase.data.StaticData;
+import com.skycaster.hellobase.interf.MySqlModelCallBack;
+import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -32,8 +38,8 @@ import java.util.Locale;
  * Created by 廖华凯 on 2017/9/13.
  */
 
-public class ServerStatePresenter {
-    private ServerStateActivity mActivity;
+public class StateTableActivityPresenter {
+    private StateTableActivity mActivity;
     private DateFormat mDateFormat;
     private StateTable mStateTable;
     private Receiver mReceiver;
@@ -42,11 +48,41 @@ public class ServerStatePresenter {
     private int mNetStatus;
     private TextView tv_updateTime;
     private float mTextSize;
+    private MySqlModel mMySqlModel;
+    private ProgressDialog mProgressDialog;
 
 
 
-    public ServerStatePresenter(ServerStateActivity activity) {
+    public StateTableActivityPresenter(StateTableActivity activity) {
         mActivity = activity;
+        mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
+            @Override
+            public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
+                final ConfigTable table;
+                if(tables.size()>0){
+                    table=tables.get(0);
+                }else {
+                    table=new ConfigTable();
+                }
+                if(mProgressDialog!=null){
+                    mProgressDialog.dismiss();
+                }
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConfigTableActivity.start(mActivity,table);
+                    }
+                });
+            }
+
+            @Override
+            public void onGetConfigTableFail(String msg) {
+                if(mProgressDialog!=null){
+                    mProgressDialog.dismiss();
+                }
+                mActivity.showToast(msg);
+            }
+        });
     }
 
     public void initData(){
@@ -74,7 +110,7 @@ public class ServerStatePresenter {
                     stopMonitoring();
                     startMonitoring();
                 }else {
-                    mNetStatus=mNetStatus==StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE?StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:mNetStatus;
+                    mNetStatus=table.getStateCode();
                 }
             }
         }
@@ -204,7 +240,7 @@ public class ServerStatePresenter {
                 break;
         }
         tv_statusReport.setText(text);
-        iv_statusReport.setImageResource(imageRes);
+//        iv_statusReport.setImageResource(imageRes);
     }
 
     private void feedbackTimeAnimation(StateTable stateTable){
@@ -230,5 +266,17 @@ public class ServerStatePresenter {
             }
         });
         valueAnimator.start();
+    }
+
+    public void toConfigTable(){
+//        ConfigTableActivity.start(mActivity);
+        mProgressDialog = ProgressDialog.show(
+                mActivity,
+                "连接数据库",
+                "连接数据库中，请稍候......",
+                true,
+                false
+        );
+        mMySqlModel.requestConfigTable(BaseApplication.getConnection(),mStateTable.getHostId());
     }
 }

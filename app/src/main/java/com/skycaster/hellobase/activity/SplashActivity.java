@@ -38,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
         tv_version.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MainActivity.start(SplashActivity.this);
+                LogInActivity.start(SplashActivity.this);
             }
         },2000);
         tv_version.postDelayed(new Runnable() {
@@ -47,6 +47,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
             }
         },3000);
+
     }
 
     @Override

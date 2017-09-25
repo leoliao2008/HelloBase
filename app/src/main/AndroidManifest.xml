@@ -3,6 +3,8 @@
           package="com.skycaster.hellobase">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
 
     <application
         android:name=".base.BaseApplication"
@@ -22,17 +24,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:label="配置表">
+            android:name=".activity.ConfigTableActivity"
+            android:label="配置表"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".activity.ServerStateActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
-            android:label="状态表">
+            android:name=".activity.StateTableActivity"
+            android:label="状态信息"
+            android:taskAffinity=".activity.StateTableActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
         </activity>
+
         <service android:name=".service.ServerConStatusMonitor"/>
+        <activity
+            android:name=".activity.LogInActivity"
+            android:theme="@style/LoginPageTheme"
+            android:label="登陆"/>
+        <activity android:name=".activity.StateTableListActivity"
+            android:label="激励器清单"/>
     </application>
 
 </manifest>

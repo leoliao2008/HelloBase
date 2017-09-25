@@ -1,12 +1,15 @@
 package com.skycaster.hellobase.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * Created by 廖华凯 on 2017/9/12.
  */
 
-public class ConfigTable {
+public class ConfigTable implements Parcelable{
     private String hostId="null";
     private int specVer;
     private String opCode="null";
@@ -16,8 +19,7 @@ public class ConfigTable {
     private int signFill=0;
     private int toneLeft=0;
     private int toneRight=0;
-    private ArrayList<ServiceBase> mServiceBases;
-
+    private ArrayList<BaseServer> mServiceBases=new ArrayList<>();
 
     public void setHostId(String hostId) {
         this.hostId = hostId;
@@ -55,8 +57,8 @@ public class ConfigTable {
         this.toneRight = toneRight;
     }
 
-    public void setServiceBases(ArrayList<ServiceBase> serviceBases) {
-        mServiceBases = serviceBases;
+    public void setServiceBases(ArrayList<BaseServer> serviceBases) {
+        mServiceBases.addAll(serviceBases);
     }
 
     public String getHostId() {
@@ -95,7 +97,7 @@ public class ConfigTable {
         return toneRight;
     }
 
-    public ArrayList<ServiceBase> getServiceBases() {
+    public ArrayList<BaseServer> getServiceBases() {
         return mServiceBases;
     }
 
@@ -114,4 +116,51 @@ public class ConfigTable {
                 ", mServiceBases=" + mServiceBases +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.hostId);
+        dest.writeInt(this.specVer);
+        dest.writeString(this.opCode);
+        dest.writeString(this.theOwner);
+        dest.writeDouble(this.centerFreq);
+        dest.writeInt(this.signalAmp);
+        dest.writeInt(this.signFill);
+        dest.writeInt(this.toneLeft);
+        dest.writeInt(this.toneRight);
+        dest.writeTypedList(this.mServiceBases);
+    }
+
+    public ConfigTable() {
+    }
+
+    protected ConfigTable(Parcel in) {
+        this.hostId = in.readString();
+        this.specVer = in.readInt();
+        this.opCode = in.readString();
+        this.theOwner = in.readString();
+        this.centerFreq = in.readDouble();
+        this.signalAmp = in.readInt();
+        this.signFill = in.readInt();
+        this.toneLeft = in.readInt();
+        this.toneRight = in.readInt();
+        this.mServiceBases = in.createTypedArrayList(BaseServer.CREATOR);
+    }
+
+    public static final Creator<ConfigTable> CREATOR = new Creator<ConfigTable>() {
+        @Override
+        public ConfigTable createFromParcel(Parcel source) {
+            return new ConfigTable(source);
+        }
+
+        @Override
+        public ConfigTable[] newArray(int size) {
+            return new ConfigTable[size];
+        }
+    };
 }

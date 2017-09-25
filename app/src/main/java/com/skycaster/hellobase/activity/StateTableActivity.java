@@ -2,6 +2,7 @@ package com.skycaster.hellobase.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,23 +12,24 @@ import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
-import com.skycaster.hellobase.presenter.ServerStatePresenter;
+import com.skycaster.hellobase.presenter.StateTableActivityPresenter;
 
-public class ServerStateActivity extends BaseActivity {
+public class StateTableActivity extends BaseActivity {
 
     private TextView tv_mac;
     private TextView tv_version;
     private TextView tv_status;
     private TextView tv_comments;
     private TextView tv_feedbackTime;
-    private ServerStatePresenter mPresenter;
+    private StateTableActivityPresenter mPresenter;
     private ToggleButton tgbtn_monitoring;
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
+    private FloatingActionButton mFab;
 
 
     public static void start(Activity context, StateTable stateTable) {
-        Intent starter = new Intent(context, ServerStateActivity.class);
+        Intent starter = new Intent(context, StateTableActivity.class);
         starter.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,stateTable);
         context.startActivity(starter);
     }
@@ -35,7 +37,7 @@ public class ServerStateActivity extends BaseActivity {
 
     @Override
     protected int getRootViewLayoutId() {
-        return R.layout.activity_server_state;
+        return R.layout.activity_state_table;
     }
 
     @Override
@@ -48,17 +50,24 @@ public class ServerStateActivity extends BaseActivity {
         tgbtn_monitoring= (ToggleButton) findViewById(R.id.state_toggle_btn_monitoring);
         tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
         iv_statusReport= (ImageView) findViewById(R.id.state_iv_status_report);
+        mFab= (FloatingActionButton) findViewById(R.id.state_fab);
 
     }
 
     @Override
     protected void initData() {
-        mPresenter=new ServerStatePresenter(this);
+        mPresenter=new StateTableActivityPresenter(this);
         mPresenter.initData();
     }
 
     @Override
     protected void initListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.toConfigTable();
+            }
+        });
 
     }
 

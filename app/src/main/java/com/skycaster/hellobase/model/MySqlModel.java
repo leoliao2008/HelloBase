@@ -1,10 +1,11 @@
 package com.skycaster.hellobase.model;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.skycaster.hellobase.bean.ConfigTable;
-import com.skycaster.hellobase.bean.ServiceBase;
+import com.skycaster.hellobase.bean.BaseServer;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 
@@ -54,7 +55,7 @@ public class MySqlModel {
         }).start();
     }
 
-    public void requestConfigTable(final Connection con){
+    public void requestConfigTable(final Connection con, @Nullable final String mac){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -62,7 +63,12 @@ public class MySqlModel {
                 ResultSet resultSet=null;
                 try {
                     statement = con.createStatement();
-                    resultSet = statement.executeQuery("SELECT * FROM ConfigTable");
+                    if(mac!=null){
+                        resultSet = statement.executeQuery("SELECT * FROM ConfigTable WHERE HostId='"+mac+"'");
+                    }else {
+                        resultSet =statement.executeQuery("SELECT * FROM ConfigTable");
+                    }
+
                     mCallBack.onGetConfigTableSuccess(getConfigTable(resultSet));
                 } catch (SQLException e) {
                     showLog(e.getMessage());
@@ -89,52 +95,53 @@ public class MySqlModel {
         }).start();
     }
 
-    private ArrayList<ConfigTable> getConfigTable(ResultSet resultSet) {
+    private ArrayList<ConfigTable> getConfigTable(ResultSet resultSet) throws SQLException {
         ArrayList<ConfigTable> list=new ArrayList<>();
         try {
             while (resultSet.next()){
                 ConfigTable tb=new ConfigTable();
-                tb.setHostId(resultSet.getString(1));
-                tb.setSpecVer(resultSet.getInt(2));
-                tb.setOpCode(resultSet.getString(3));
-                tb.setTheOwner(resultSet.getString(4));
-                tb.setCenterFreq(resultSet.getDouble(5));
-                tb.setSignalAmp(resultSet.getInt(6));
-                tb.setSignFill(resultSet.getInt(7));
-                tb.setToneLeft(resultSet.getInt(8));
-                tb.setToneRight(resultSet.getInt(9));
+                tb.setHostId(resultSet.getString("HostId"));
+                tb.setSpecVer(resultSet.getInt("SpecVer"));
+                tb.setOpCode(resultSet.getString("OpCode"));
+                tb.setTheOwner(resultSet.getString("TheOwner"));
+                tb.setCenterFreq(resultSet.getDouble("center_freq"));
+                tb.setSignalAmp(resultSet.getInt("signal_amp"));
+                tb.setSignFill(resultSet.getInt("sign_fill"));
+                tb.setToneLeft(resultSet.getInt("tone_index_left"));
+                tb.setToneRight(resultSet.getInt("tone_index_right"));
                 tb.setServiceBases(getServiceBases(resultSet));
                 list.add(tb);
             }
         } catch (SQLException e) {
-            showLog("error during getConfigTable(ResultSet resultSet) "+e.getMessage());
+            showLog("error during getConfigTable(ResultSet resultSet) :"+e.getMessage());
+            throw e;
         }
         return list;
     }
 
-    private ArrayList<ServiceBase> getServiceBases(ResultSet resultSet) {
-        ArrayList<ServiceBase> list=new ArrayList<>();
+    private ArrayList<BaseServer> getServiceBases(ResultSet resultSet) throws SQLException {
+        ArrayList<BaseServer> list=new ArrayList<>();
         int id=0;
-        int cursor=10;
         try {
             while (id<8){
-                ServiceBase serviceBase=new ServiceBase();
+                BaseServer serviceBase=new BaseServer();
                 serviceBase.setId(id);
-                serviceBase.setFormCode(resultSet.getInt(cursor++));
-                serviceBase.setLdpcNum(resultSet.getInt(cursor++));
-                serviceBase.setLdpcRate(resultSet.getInt(cursor++));
-                serviceBase.setIntvSize(resultSet.getInt(cursor++));
-                serviceBase.setQamType(resultSet.getInt(cursor++));
+                serviceBase.setFormCode(resultSet.getInt("s"+id+"_form_code"));
+                serviceBase.setLdpcNum(resultSet.getInt("s"+id+"_ldpc_num"));
+                serviceBase.setLdpcRate(resultSet.getInt("s"+id+"_ldpc_rate"));
+                serviceBase.setIntvSize(resultSet.getInt("s"+id+"_intv_size"));
+                serviceBase.setQamType(resultSet.getInt("s"+id+"_qam_type"));
+                list.add(serviceBase);
                 id++;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            showLog(e.getMessage());
+            showLog("error during getServiceBases(ResultSet resultSet) "+e.getMessage());
+            throw e;
         }
         return list;
     }
 
-    public void requestStateTable(final Connection con, final String mac){
+    public void requestStateTables(final Connection con, @Nullable final String mac){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -143,11 +150,16 @@ public class MySqlModel {
                     ResultSet resultSet=null;
                     try {
                         statement =con.createStatement();
-                        resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
-                        mCallBack.onGetStateTableSuccess(getStateTable(resultSet));
+                        if(mac!=null){
+                            resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
+                        }else {
+                            resultSet=statement.executeQuery("SELECT * FROM StateTable");
+                        }
+                        ArrayList<StateTable> tableList = getStateTableList(resultSet);
+                        mCallBack.onGetStateTablesSuccess(tableList);
                     } catch (SQLException e) {
-                        showLog("error while running requestStateTable(final Connection con):"+e.getMessage());
-                        mCallBack.onGetStateTableFail(e.getMessage());
+                        showLog("error while running requestStateTables(final Connection con):"+e.getMessage());
+                        mCallBack.onGetStateTablesFail(e.getMessage());
                     }finally {
                         if(resultSet!=null){
                             try {
@@ -171,30 +183,38 @@ public class MySqlModel {
         }).start();
     }
 
-    private StateTable getStateTable(ResultSet resultSet) {
-        StateTable st=new StateTable();
+
+    private ArrayList<StateTable> getStateTableList(ResultSet resultSet) {
+        ArrayList<StateTable> list=new ArrayList<>();
         try {
             while (resultSet.next()){
-                String hostId = resultSet.getString(1);
+                StateTable st=new StateTable();
+                String hostId = resultSet.getString("HostId");
                 hostId= TextUtils.isEmpty(hostId)?"unknown":hostId;
                 st.setHostId(hostId);
-                Timestamp timestamp = resultSet.getTimestamp(2);
+                Timestamp timestamp = resultSet.getTimestamp("FeedbackTime");
                 if(timestamp==null){
                     timestamp=new Timestamp(0);
                 }
                 st.setDateTime(timestamp.getTime());
-                st.setCurVer(resultSet.getInt(3));
-                String runningState = resultSet.getString(4);
+                st.setCurVer(resultSet.getInt("CurVer"));
+                String runningState = resultSet.getString("StateCode");
                 runningState=TextUtils.isEmpty(runningState)?"unknown":runningState;
                 st.setRunningState(runningState);
-                String notes = resultSet.getString(5);
+                String notes = resultSet.getString("Notes");
                 notes=TextUtils.isEmpty(notes)?"unknown":notes;
                 st.setNotes(notes);
+                list.add(st);
             }
         } catch (SQLException e) {
-            showLog("error while running getStateTable(ResultSet resultSet): "+e.getMessage());
+            showLog("error while running getStateTableList(ResultSet resultSet): "+e.getMessage());
+            try {
+                throw e;
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
-        return st;
+        return list;
     }
 
 

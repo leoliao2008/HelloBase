@@ -19,7 +19,8 @@ public class MySqlModelCallBack {
 
     public void onGetConfigTableFail(String msg){}
 
-    public void onGetStateTableSuccess(StateTable stateTable){}
+    public void onGetStateTablesSuccess(ArrayList<StateTable> stateTables){}
 
-    public void onGetStateTableFail(String msg){}
+    public void onGetStateTablesFail(String msg){}
+
 }

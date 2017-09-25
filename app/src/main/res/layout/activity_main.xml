@@ -7,33 +7,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/dp_2"
     android:scrollbars="none"
-    tools:context="com.skycaster.hellobase.activity.MainActivity">
+    android:background="@color/colorBg"
+    tools:context="com.skycaster.hellobase.activity.ConfigTableActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:background="@color/colorBg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/main_spinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="@dimen/dp_7"/>
-            <Button
-                android:id="@+id/main_btn_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="搜索基地器"/>
+        <!--<LinearLayout-->
+            <!--android:background="@color/colorBg"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center_vertical">-->
+            <!--<android.support.v7.widget.AppCompatSpinner-->
+                <!--android:id="@+id/main_spinner"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_margin="@dimen/dp_7"/>-->
+            <!--<Button-->
+                <!--android:id="@+id/main_btn_connect"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="搜索激励器"/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -43,18 +43,18 @@
             <TextView
                 style="@style/TextViewStyle1"
                 android:layout_width="match_parent"
-                android:text="基地器配置表"
+                android:text="激励器配置表"
                 android:background="@color/colorPrimary"
                 android:layout_gravity="center"
                 android:textColor="@color/colorWhite"
                 />
 
-            <Button
-                android:id="@+id/main_btn_to_state_table"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="状态表"/>
+            <!--<Button-->
+                <!--android:id="@+id/main_btn_to_state_table"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="end"-->
+                <!--android:text="状态表"/>-->
 
         </FrameLayout>
 
@@ -62,7 +62,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="基地器ID："
+                android:text="激励器ID"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -75,7 +75,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="版本："
+                android:text="固件版本"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -88,7 +88,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="操作码："
+                android:text="操作码"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -101,7 +101,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="运营商："
+                android:text="运营商"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -114,7 +114,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="工作频点："
+                android:text="工作频点"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -127,7 +127,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="输出功率（微调）："
+                android:text="输出功率（微调）"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -140,7 +140,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="输出功率（粗调）："
+                android:text="输出功率（粗调）"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -153,7 +153,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="左频："
+                android:text="左频"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -167,7 +167,7 @@
 
 
             <TextView
-                android:text="右频："
+                android:text="右频"
                 style="@style/TextViewStyle1"/>
 
             <TextView
@@ -181,14 +181,16 @@
             android:layout_width="match_parent"
             android:background="@color/colorPrimary"
             android:textColor="@color/colorWhite"
-            android:text="事务清单"
+            android:text="业务配置清单"
             />
 
         <com.skycaster.hellobase.customize.MaxHeightListView
             android:id="@+id/main_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorBg"/>
+            android:background="@color/colorBg"
+            android:divider="@color/colorDivider"
+            android:dividerHeight="@dimen/dp_1"/>
 
     </LinearLayout>
 

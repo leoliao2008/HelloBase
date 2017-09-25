@@ -19,7 +19,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.ServerStateActivity;
+import com.skycaster.hellobase.activity.StateTableActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
@@ -62,13 +62,18 @@ public class ServerConStatusMonitor extends Service {
 
 
         @Override
-        public void onGetStateTableSuccess(StateTable stateTable) {
-            showLog(stateTable.toString());
-            updateNetStateByStateTable(stateTable);
+        public void onGetStateTablesSuccess(ArrayList<StateTable> stateTables) {
+            showLog(stateTables.toString());
+            if(stateTables.isEmpty()){
+                stopSelf();
+            }else {
+                updateNetStateByStateTable(stateTables.get(0));
+            }
         }
 
+
         @Override
-        public void onGetStateTableFail(String msg) {
+        public void onGetStateTablesFail(String msg) {
             mNetState =StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED;
             updateRemoteViewsAndBroadcast(mNetState,msg);
         }
@@ -101,7 +106,7 @@ public class ServerConStatusMonitor extends Service {
         BaseApplication.setBoundTable(mStateTable);
         startForeground();
         updateNetStateByStateTable(mStateTable);
-        mModel.connectMySql(StaticData.HOST_ADDRESS,StaticData.DATA_BASE_NAME,StaticData.USER_NAME,StaticData.PASSWORD);
+        mModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -197,6 +202,9 @@ public class ServerConStatusMonitor extends Service {
         mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,getActPendingIntent(netState));
         startForeground(123, mNotiBuilder.setContent(mRemoteViews).build());
 
+        mStateTable.setStateCode(netState);
+        BaseApplication.setBoundTable(mStateTable);
+
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_NET_STATUS);
         intent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SUCCESS,netState!=StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED&&netState!=StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED);
@@ -211,7 +219,7 @@ public class ServerConStatusMonitor extends Service {
 
 //    private void headUpNotification(String msg){
 //        mHeadUpNotiBuilder.setContentText(msg);
-//        Intent startActIntent = new Intent(this, ServerStateActivity.class);
+//        Intent startActIntent = new Intent(this, StateTableActivity.class);
 //        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
 //        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
 //        startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, mNetState);
@@ -245,7 +253,7 @@ public class ServerConStatusMonitor extends Service {
     }
 
     private PendingIntent getActPendingIntent(int netStatus) {
-        Intent startActIntent = new Intent(this, ServerStateActivity.class);
+        Intent startActIntent = new Intent(this, StateTableActivity.class);
         startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
         startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
         startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, netStatus);
@@ -269,7 +277,7 @@ public class ServerConStatusMonitor extends Service {
                         break;
                     }
                     try {
-                        mModel.requestStateTable(mConnection, mStateTable.getHostId());
+                        mModel.requestStateTables(mConnection, mStateTable.getHostId());
                         SystemClock.sleep(30000);
                     } catch (Exception e) {
                         try {

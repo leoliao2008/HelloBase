@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.bean.ServiceBase;
+import com.skycaster.hellobase.bean.BaseServer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -19,11 +19,11 @@ import java.util.Locale;
  */
 
 public class ServiceBaseAdapter extends BaseAdapter {
-    private ArrayList<ServiceBase> list;
+    private ArrayList<BaseServer> list;
     private Context mContext;
-    private int[] mColors =new int[]{Color.GREEN,Color.YELLOW,Color.BLUE};
+    private int[] mColors =new int[]{Color.parseColor("#FFFF00"),Color.parseColor("#0E7038"),Color.parseColor("#FFAA25")};
 
-    public ServiceBaseAdapter(ArrayList<ServiceBase> list, Context context) {
+    public ServiceBaseAdapter(ArrayList<BaseServer> list, Context context) {
         this.list = list;
         mContext = context;
     }
@@ -49,7 +49,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh;
         if(convertView==null){
-            convertView=View.inflate(mContext,R.layout.item_service_base_type_2,null);
+            convertView=View.inflate(mContext,R.layout.item_service_base,null);
             vh=new ViewHolder(convertView);
             convertView.setTag(vh);
         }else {
@@ -58,13 +58,13 @@ public class ServiceBaseAdapter extends BaseAdapter {
         if(list.size()==0){
             vh.tv_maskNoData.setVisibility(View.VISIBLE);
             vh.tv_id.setVisibility(View.INVISIBLE);
-            vh.mLinearLayout.setVisibility(View.INVISIBLE);
+            vh.mRelativeLayout.setVisibility(View.INVISIBLE);
         }else {
             vh.tv_maskNoData.setVisibility(View.GONE);
             vh.tv_id.setVisibility(View.VISIBLE);
-            vh.mLinearLayout.setVisibility(View.VISIBLE);
+            vh.mRelativeLayout.setVisibility(View.VISIBLE);
 
-            ServiceBase temp = list.get(position);
+            BaseServer temp = list.get(position);
             vh.tv_id.setText(String.format(Locale.CHINA,"%02d",temp.getId()));
             vh.tv_id.setBackgroundColor(mColors[position%3]);
             vh.tv_num.setText(String.valueOf(temp.getLdpcNum()));
@@ -83,7 +83,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
         private TextView tv_maskNoData;
         private TextView tv_id;
         private View contentView;
-        private LinearLayout mLinearLayout;
+        private RelativeLayout mRelativeLayout;
 
         public ViewHolder(View contentView) {
             this.contentView = contentView;
@@ -93,7 +93,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
             tv_type=contentView.findViewById(R.id.item_service_base_tv_ldpc_type);
             tv_id=contentView.findViewById(R.id.item_service_base_tv_id);
             tv_maskNoData=contentView.findViewById(R.id.item_service_base_tv_mask_no_data);
-            mLinearLayout =contentView.findViewById(R.id.item_service_base_container);
+            mRelativeLayout =contentView.findViewById(R.id.item_service_base_container);
         }
 
         public TextView getTv_num() {
@@ -124,8 +124,8 @@ public class ServiceBaseAdapter extends BaseAdapter {
             return tv_id;
         }
 
-        public LinearLayout getLinearLayout() {
-            return mLinearLayout;
+        public RelativeLayout getRelativeLayout() {
+            return mRelativeLayout;
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.skycaster.hellobase.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by 廖华凯 on 2017/9/12.
  */
 
-public class ServiceBase {
+public class BaseServer implements Parcelable {
     private int id;
 //    s0_form_code	  integer not null default 33,-- 此项不用翻译
 //    s0_ldpc_num		  integer not null default 15, -- 业务0 LDCP码字个数
@@ -16,6 +19,18 @@ public class ServiceBase {
     private int ldpcRate;
     private int intvSize;
     private int qamType;
+
+    public BaseServer() {
+    }
+
+    public BaseServer(Parcel in){
+        id=in.readInt();
+        formCode=in.readInt();
+        ldpcNum=in.readInt();
+        ldpcRate=in.readInt();
+        intvSize=in.readInt();
+        qamType=in.readInt();
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -64,4 +79,34 @@ public class ServiceBase {
     public int getQamType() {
         return qamType;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(formCode);
+        dest.writeInt(ldpcNum);
+        dest.writeInt(ldpcRate);
+        dest.writeInt(intvSize);
+        dest.writeInt(qamType);
+    }
+
+    public static final Creator<BaseServer> CREATOR=new Creator<BaseServer>() {
+        @Override
+        public BaseServer createFromParcel(Parcel source) {
+            return new BaseServer(source) ;
+        }
+
+        @Override
+        public BaseServer[] newArray(int size) {
+            return new BaseServer[size];
+        }
+    } ;
+
+
+
 }

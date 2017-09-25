@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * Created by 廖华凯 on 2017/9/12.
@@ -41,5 +43,18 @@ public abstract class BaseActivity extends AppCompatActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showToast(final String msg){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(BaseActivity.this,msg,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void showLog(String msg){
+        Log.e(getClass().getSimpleName(),msg);
     }
 }

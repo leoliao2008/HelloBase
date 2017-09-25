@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBg">
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/item_service_base_tv_mask_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="暂无数据"
+        android:layout_centerVertical="true"
+        android:textSize="@dimen/sp_18"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        />
+
+    <TextView
+        android:id="@+id/item_service_base_tv_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/sp_50"
+        android:padding="@dimen/dp_10"
+        android:textColor="@color/colorBlack"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/dp_10"
+        android:text="01"/>
+
+    <RelativeLayout
+        android:id="@+id/item_service_base_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/item_service_base_tv_id"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="调制类型："
+            />
+        <TextView
+            android:layout_toRightOf="@id/item1"
+            android:id="@+id/item_service_base_tv_ldpc_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            />
+        <TextView
+            android:id="@+id/item2"
+            android:layout_below="@id/item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LDCP码字个数："
+            />
+        <TextView
+            android:layout_toRightOf="@id/item2"
+            android:layout_below="@id/item1"
+            android:id="@+id/item_service_base_tv_ldpc_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"/>
+        <TextView
+            android:id="@+id/item7"
+            android:layout_below="@id/item2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LDCP码率："
+            />
+        <TextView
+            android:layout_toRightOf="@id/item7"
+            android:layout_below="@id/item_service_base_tv_ldpc_num"
+            android:id="@+id/item_service_base_tv_ldpc_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80%"/>
+        <TextView
+            android:id="@+id/item8"
+            android:layout_below="@id/item7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="交织块大小："/>
+        <TextView
+            android:id="@+id/item_service_base_tv_ldpc_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100k"
+            android:layout_toRightOf="@id/item8"
+            android:layout_below="@id/item_service_base_tv_ldpc_rate"
+            />
+    </RelativeLayout>
+
+
+</RelativeLayout>
