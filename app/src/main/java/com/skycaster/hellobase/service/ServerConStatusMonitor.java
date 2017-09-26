@@ -277,7 +277,7 @@ public class ServerConStatusMonitor extends Service {
                         break;
                     }
                     try {
-                        mModel.requestStateTables(mConnection, mStateTable.getHostId());
+                        mModel.getStateTables(mConnection, mStateTable.getHostId());
                         SystemClock.sleep(30000);
                     } catch (Exception e) {
                         try {

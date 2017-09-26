@@ -202,7 +202,7 @@ public class ConfigTableActivityPresenter {
 //            if(BaseApplication.getConnection()!=null
 //                    &&!BaseApplication.getConnection().isClosed()
 //                    &&mConfigTables.size()>0){
-//                mMySqlModel.requestStateTables(BaseApplication.getConnection(),((ConfigTable)mSpinner.getSelectedItem()).getHostId());
+//                mMySqlModel.getStateTables(BaseApplication.getConnection(),((ConfigTable)mSpinner.getSelectedItem()).getHostId());
 //            }else {
 //                showToast("请先选择基地器。");
 //                mProgressDialog.dismiss();
@@ -218,7 +218,7 @@ public class ConfigTableActivityPresenter {
         mActivity.getTv_hostVersion().setText(String.valueOf(table.getSpecVer()));
         mActivity.getTv_vendor().setText(table.getTheOwner());
         mActivity.getTv_opCode().setText(table.getOpCode());
-        mActivity.getTv_freq().setText(String.valueOf(table.getCenterFreq())+"MHz");
+        mActivity.getTv_freq().setText(String.valueOf(table.getCenterFreq()));
         mActivity.getTv_amp().setText(String.valueOf(table.getSignalAmp()));
         mActivity.getTv_fill().setText(String.valueOf(table.getSignFill()));
         mActivity.getTv_leftTune().setText(String.valueOf(table.getToneLeft()));
@@ -263,8 +263,12 @@ public class ConfigTableActivityPresenter {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE){
             if(resultCode==StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_OK){
-                ConfigTable configTable=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
-                updateActivityUi(configTable);
+                ConfigTable table=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
+                if(table!=null){
+                    showLog(table.toString());
+                    mConfigTable=table;
+                    updateActivityUi(mConfigTable);
+                }
             }
         }
     }

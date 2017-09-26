@@ -44,7 +44,7 @@ public class LogInActivityPresenter {
             BaseApplication.setIpAddress(mIp+":"+mPort);
             BaseApplication.setUserName(mUserName);
             BaseApplication.setPassword(mPw);
-            mMySqlModel.requestStateTables(con,null);
+            mMySqlModel.getStateTables(con,null);
         }
 
         @Override

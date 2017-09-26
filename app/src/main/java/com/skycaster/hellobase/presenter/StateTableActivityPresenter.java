@@ -28,6 +28,8 @@ import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,6 +59,20 @@ public class StateTableActivityPresenter {
         mActivity = activity;
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
             @Override
+            public void onGetSqlConnection(Connection con) {
+                super.onGetSqlConnection(con);
+                BaseApplication.setConnection(con);
+                toConfigTable();
+            }
+
+            @Override
+            public void onGetStateTablesFail(String msg) {
+                super.onGetStateTablesFail(msg);
+                dismissProgressDialog();
+                mActivity.showToast(msg);
+            }
+
+            @Override
             public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
                 final ConfigTable table;
                 if(tables.size()>0){
@@ -66,9 +82,7 @@ public class StateTableActivityPresenter {
                     table.setHostId(mStateTable.getHostId());
                     table.setSpecVer(mStateTable.getCurVer());
                 }
-                if(mProgressDialog!=null){
-                    mProgressDialog.dismiss();
-                }
+                dismissProgressDialog();
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -79,9 +93,7 @@ public class StateTableActivityPresenter {
 
             @Override
             public void onGetConfigTableFail(String msg) {
-                if(mProgressDialog!=null){
-                    mProgressDialog.dismiss();
-                }
+                dismissProgressDialog();
                 mActivity.showToast(msg);
             }
         });
@@ -272,13 +284,37 @@ public class StateTableActivityPresenter {
 
     public void toConfigTable(){
 //        ConfigTableActivity.start(mActivity);
-        mProgressDialog = ProgressDialog.show(
-                mActivity,
-                "连接数据库",
-                "连接数据库中，请稍候......",
-                true,
-                false
-        );
-        mMySqlModel.requestConfigTable(BaseApplication.getConnection(),mStateTable.getHostId());
+        showProgressDialog();
+        Connection con = BaseApplication.getConnection();
+        try {
+            if(con!=null&&con.isValid(50)){
+                mMySqlModel.getConfigTable(con,mStateTable.getHostId());
+            }else {
+                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+            }
+        } catch (SQLException e) {
+            dismissProgressDialog();
+            mActivity.showToast(e.getMessage());
+
+        }
+    }
+
+    private void showProgressDialog(){
+        if(mProgressDialog==null){
+            mProgressDialog = ProgressDialog.show(
+                    mActivity,
+                    "连接数据库",
+                    "连接数据库中，请稍候......",
+                    true,
+                    false
+            );
+        }
+    }
+
+    private void dismissProgressDialog(){
+        if(mProgressDialog!=null){
+            mProgressDialog.dismiss();
+            mProgressDialog=null;
+        }
     }
 }

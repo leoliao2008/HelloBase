@@ -114,7 +114,7 @@
             style="@style/LinearLayoutStyle1">
 
             <TextView
-                android:text="工作频点"
+                android:text="工作频点(MHz)"
                 style="@style/TextViewStyle1"/>
 
             <TextView

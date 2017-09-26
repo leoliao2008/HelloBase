@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_state_table_to_config_table"
+          android:title="查看配置表"
+          android:icon="@drawable/selector_ic_setting_24dp"
+          app:showAsAction="always"/>
+
+</menu>

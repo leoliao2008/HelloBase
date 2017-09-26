@@ -1,7 +1,9 @@
 package com.skycaster.hellobase.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -23,6 +25,7 @@ public class StateTableListActivity extends BaseActivity {
     private ListView mListView;
     private ArrayList<StateTable> mList=new ArrayList<>();
     private StateTableListAdapter mAdapter;
+    private AlertDialog mAlertDialog;
 
     public static void start(Context context,ArrayList<StateTable>list) {
         Intent starter = new Intent(context, StateTableListActivity.class);
@@ -63,5 +66,28 @@ public class StateTableListActivity extends BaseActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("温馨提示")
+                .setMessage("您确定要退出本程序吗？")
+                .setCancelable(true)
+                .setPositiveButton("是的", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAlertDialog.dismiss();
+                        StateTableListActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAlertDialog.dismiss();
+                    }
+                });
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
     }
 }

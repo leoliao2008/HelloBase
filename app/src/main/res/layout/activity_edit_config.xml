@@ -95,7 +95,7 @@ tools:context="com.skycaster.hellobase.activity.EditConfigActivity">
         style="@style/LinearLayoutStyle1">
 
         <TextView
-            android:text="工作频点"
+            android:text="工作频点(MHz)"
             style="@style/TextViewStyle1"/>
 
         <EditText
@@ -177,13 +177,6 @@ tools:context="com.skycaster.hellobase.activity.EditConfigActivity">
         android:background="@color/colorBg"
         android:divider="@color/colorDivider"
         android:dividerHeight="@dimen/dp_1"/>
-
-    <Button
-        android:id="@+id/activity_edit_config_btn_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="确定修改"/>
-
 </LinearLayout>
 
 

@@ -23,4 +23,11 @@ public class MySqlModelCallBack {
 
     public void onGetStateTablesFail(String msg){}
 
+    public void onUpdateConfigTableSuccess() {
+
+    }
+
+    public void onUpdateConfigTableFail(String msg) {
+
+    }
 }

@@ -40,13 +40,15 @@
         <activity
             android:name=".activity.LogInActivity"
             android:label="登陆"
-            android:theme="@style/LoginPageTheme"/>
+            android:theme="@style/LoginPageTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".activity.StateTableListActivity"
             android:label="激励器清单"/>
         <activity
             android:name=".activity.EditConfigActivity"
-            android:label="修改配置表"/>
+            android:label="修改配置表"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
     </application>
 
 </manifest>

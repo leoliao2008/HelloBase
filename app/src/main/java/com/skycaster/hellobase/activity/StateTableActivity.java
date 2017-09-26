@@ -2,7 +2,8 @@ package com.skycaster.hellobase.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +26,6 @@ public class StateTableActivity extends BaseActivity {
     private ToggleButton tgbtn_monitoring;
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
-    private FloatingActionButton mFab;
 
 
     public static void start(Activity context, StateTable stateTable) {
@@ -50,7 +50,6 @@ public class StateTableActivity extends BaseActivity {
         tgbtn_monitoring= (ToggleButton) findViewById(R.id.state_toggle_btn_monitoring);
         tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
         iv_statusReport= (ImageView) findViewById(R.id.state_iv_status_report);
-        mFab= (FloatingActionButton) findViewById(R.id.state_fab);
 
     }
 
@@ -62,12 +61,6 @@ public class StateTableActivity extends BaseActivity {
 
     @Override
     protected void initListener() {
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.toConfigTable();
-            }
-        });
 
     }
 
@@ -109,6 +102,24 @@ public class StateTableActivity extends BaseActivity {
         }else {
             mPresenter.stopMonitoring();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_state_table,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_state_table_to_config_table:
+                mPresenter.toConfigTable();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

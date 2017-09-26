@@ -2,7 +2,10 @@ package com.skycaster.hellobase.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
@@ -25,7 +28,6 @@ public class EditConfigActivity extends BaseActivity {
     private EditText edt_leftTune;
     private EditText edt_rightTune;
     private MaxHeightListView mListView;
-    private Button btn_submit;
     private ScrollView mScrollerView;
     private EditConfigTablePresenter mPresenter;
 
@@ -54,7 +56,6 @@ public class EditConfigActivity extends BaseActivity {
         edt_leftTune= (EditText) findViewById(R.id.activity_edit_config_edt_left_tune);
         edt_rightTune= (EditText) findViewById(R.id.activity_edit_config_edt_right_tune);
         mListView= (MaxHeightListView) findViewById(R.id.activity_edit_config_list_view);
-        btn_submit= (Button) findViewById(R.id.activity_edit_config_btn_submit);
         mScrollerView= (ScrollView) findViewById(R.id.activity_edit_config_scroll_view);
 
     }
@@ -69,6 +70,12 @@ public class EditConfigActivity extends BaseActivity {
 
     @Override
     protected void initListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.showEditServerBaseDialog(position);
+            }
+        });
 
     }
 
@@ -112,18 +119,32 @@ public class EditConfigActivity extends BaseActivity {
         return mListView;
     }
 
-    public Button getBtn_submit() {
-        return btn_submit;
-    }
-
     public ScrollView getScrollerView() {
         return mScrollerView;
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_config_table,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_edit_config_table_submit:
+                mPresenter.submit();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onBackPressed() {
+        mPresenter.onBackPress();
         super.onBackPressed();
-        //// TODO: 2017/9/25  
     }
 
 }
