@@ -47,7 +47,7 @@
             android:label="激励器清单"/>
         <activity
             android:name=".activity.EditConfigActivity"
-            android:label="修改配置表"
+            android:label="配置表"
             android:windowSoftInputMode="stateAlwaysHidden"/>
     </application>
 
