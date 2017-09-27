@@ -37,4 +37,5 @@ public interface StaticData {
     int REQUEST_CODE_EDIT_CONFIG_TABLE = 357;
     int RESULT_CODE_EDIT_CONFIG_TABLE_OK = 753;
     int RESULT_CODE_EDIT_CONFIG_TABLE_FAIL = 735;
+    String OP_CODE_REBOOT = "reboot";
 }

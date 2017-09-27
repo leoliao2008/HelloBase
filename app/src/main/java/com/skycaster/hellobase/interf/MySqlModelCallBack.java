@@ -17,17 +17,29 @@ public class MySqlModelCallBack {
 
     public void onGetConfigTableSuccess(ArrayList<ConfigTable> tables){}
 
-    public void onGetConfigTableFail(String msg){}
+    public void onGetConfigTableError(String error){}
 
     public void onGetStateTablesSuccess(ArrayList<StateTable> stateTables){}
 
-    public void onGetStateTablesFail(String msg){}
+    public void onGetStateTablesError(String error){}
 
     public void onUpdateConfigTableSuccess() {
 
     }
 
     public void onUpdateConfigTableFail(String msg) {
+
+    }
+
+    public void onTargetConfigTableNotExist() {
+
+    }
+
+    public void onCreateNewConfigTableSuccess(ConfigTable table) {
+
+    }
+
+    public void onCreateNewConfigTableFails(String error) {
 
     }
 }

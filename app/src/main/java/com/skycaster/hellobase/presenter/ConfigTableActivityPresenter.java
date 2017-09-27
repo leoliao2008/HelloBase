@@ -82,7 +82,7 @@ public class ConfigTableActivityPresenter {
 //            }
 //
 //            @Override
-//            public void onGetConfigTableFail(final String msg) {
+//            public void onGetConfigTableError(final String msg) {
 ////                if(mProgressDialog!=null){
 ////                    mProgressDialog.dismiss();
 ////                }
@@ -108,7 +108,7 @@ public class ConfigTableActivityPresenter {
 //            }
 //
 //            @Override
-//            public void onGetStateTablesFail(final String msg) {
+//            public void onGetStateTablesError(final String msg) {
 ////                if(mProgressDialog!=null){
 ////                    mProgressDialog.dismiss();
 ////                }

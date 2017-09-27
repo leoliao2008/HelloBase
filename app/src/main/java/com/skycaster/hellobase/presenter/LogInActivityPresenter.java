@@ -67,7 +67,7 @@ public class LogInActivityPresenter {
         }
 
         @Override
-        public void onGetStateTablesFail(String msg) {
+        public void onGetStateTablesError(String msg) {
             dismissProgressDialog();
             showToast(msg);
         }

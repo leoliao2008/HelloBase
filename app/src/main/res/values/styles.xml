@@ -84,6 +84,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/colorBg</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/color_selector_grey_to_green</item>
     </style>
 
 </resources>

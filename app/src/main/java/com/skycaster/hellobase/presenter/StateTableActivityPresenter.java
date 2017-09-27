@@ -4,19 +4,22 @@ import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.animation.BounceInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ConfigTableActivity;
+import com.skycaster.hellobase.activity.EditConfigActivity;
 import com.skycaster.hellobase.activity.StateTableActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -52,7 +55,7 @@ public class StateTableActivityPresenter {
     private float mTextSize;
     private MySqlModel mMySqlModel;
     private ProgressDialog mProgressDialog;
-
+    private AlertDialog mAlertDialog;
 
 
     public StateTableActivityPresenter(StateTableActivity activity) {
@@ -65,23 +68,47 @@ public class StateTableActivityPresenter {
                 toConfigTable();
             }
 
+
+
             @Override
-            public void onGetStateTablesFail(String msg) {
-                super.onGetStateTablesFail(msg);
+            public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
+                dismissProgressDialog();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditConfigActivity.start(mActivity,tables.get(0));
+                    }
+                });
+            }
+
+            @Override
+            public void onGetStateTablesError(String msg) {
+                super.onGetStateTablesError(msg);
                 dismissProgressDialog();
                 mActivity.showToast(msg);
             }
 
             @Override
-            public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
-                final ConfigTable table;
-                if(tables.size()>0){
-                    table=tables.get(0);
-                }else {
-                    table=new ConfigTable();
-                    table.setHostId(mStateTable.getHostId());
-                    table.setSpecVer(mStateTable.getCurVer());
-                }
+            public void onTargetConfigTableNotExist() {
+                super.onTargetConfigTableNotExist();
+                dismissProgressDialog();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showAlertDialogCreateConfigTable();
+                    }
+                });
+            }
+
+            @Override
+            public void onGetConfigTableError(String error) {
+                dismissProgressDialog();
+                mActivity.showToast(error);
+            }
+
+            @Override
+            public void onCreateNewConfigTableSuccess(final ConfigTable table) {
+                super.onCreateNewConfigTableSuccess(table);
                 dismissProgressDialog();
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -92,12 +119,15 @@ public class StateTableActivityPresenter {
             }
 
             @Override
-            public void onGetConfigTableFail(String msg) {
+            public void onCreateNewConfigTableFails(String s) {
+                super.onCreateNewConfigTableFails(s);
                 dismissProgressDialog();
-                mActivity.showToast(msg);
+                mActivity.showToast(s);
             }
         });
     }
+
+
 
     public void initData(){
 
@@ -166,13 +196,13 @@ public class StateTableActivityPresenter {
 
     public void onStart() {
         boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false)||BaseApplication.getBoundTable()!=null;
-        mActivity.getTgbtn_monitoring().setChecked(isServiceRunning);
+        mActivity.getToggleButton().setChecked(isServiceRunning);
         updateStatusReport(mNetStatus);
     }
 
     public void onStop() {
         if(!mActivity.isFinishing()) {
-            mActivity.getIntent().putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, mActivity.getTgbtn_monitoring().isChecked());
+            mActivity.getIntent().putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, mActivity.getToggleButton().isChecked());
         }
         if(mActivity.isFinishing()){
             mActivity.unregisterReceiver(mReceiver);
@@ -184,8 +214,8 @@ public class StateTableActivityPresenter {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(!mActivity.getTgbtn_monitoring().isChecked()){
-                mActivity.getTgbtn_monitoring().setChecked(true);
+            if(!mActivity.getToggleButton().isChecked()){
+                mActivity.getToggleButton().setChecked(true);
             }
             int type = intent.getIntExtra(StaticData.EXTRA_INT_EVENT_TYPE, 0);
             switch (type){
@@ -201,7 +231,7 @@ public class StateTableActivityPresenter {
                     }
                     break;
                 case StaticData.EVENT_TYPE_SERVICE_DISMISS:
-                    mActivity.getTgbtn_monitoring().setChecked(false);
+                    mActivity.getToggleButton().setChecked(false);
                     break;
                 case 0:
                 default:
@@ -268,7 +298,7 @@ public class StateTableActivityPresenter {
         final MutableColorSpan colorSpan = new MutableColorSpan(Color.RED,255);
         sp.setSpan(colorSpan,0,time.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ValueAnimator valueAnimator=ValueAnimator.ofFloat(0,1f);
-        valueAnimator.setInterpolator(new BounceInterpolator());
+        valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(500);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -316,5 +346,32 @@ public class StateTableActivityPresenter {
             mProgressDialog.dismiss();
             mProgressDialog=null;
         }
+    }
+
+    private void showAlertDialogCreateConfigTable() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
+        builder.setTitle("新建配置表")
+                .setMessage("当前激励器还没有生成相应的配置表，您需要现在创建吗？")
+                .setPositiveButton("创建", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showProgressDialog();
+                        ConfigTable configTable=new ConfigTable();
+                        configTable.setHostId(mStateTable.getHostId());
+                        configTable.setOpCode(StaticData.OP_CODE_REBOOT);
+                        configTable.setSpecVer(mStateTable.getCurVer());
+                        mMySqlModel.createNewConfigTable(configTable,BaseApplication.getConnection());
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAlertDialog.dismiss();
+                    }
+                })
+                .setCancelable(true);
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
+
     }
 }

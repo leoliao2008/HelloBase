@@ -107,6 +107,17 @@ public class ServerBase implements Parcelable {
         }
     } ;
 
+    public ServerBase deepClone(){
+        ServerBase sb=new ServerBase();
+        sb.setId(id);
+        sb.setLdpcNum(ldpcNum);
+        sb.setFormCode(formCode);
+        sb.setIntvSize(intvSize);
+        sb.setQamType(qamType);
+        sb.setLdpcRate(ldpcRate);
+        return sb;
+    }
+
 
 
 }

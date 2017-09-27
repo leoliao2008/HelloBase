@@ -48,6 +48,7 @@ public class EditConfigTablePresenter {
     private ProgressDialog mProgressDialog;
     private int resultCode;
     private SoftInputManager mSoftInputManager;
+    private ConfigTable mConfigTableBackUp;
 
 
     public EditConfigTablePresenter(EditConfigActivity activity) {
@@ -62,8 +63,8 @@ public class EditConfigTablePresenter {
             }
 
             @Override
-            public void onGetStateTablesFail(String msg) {
-                super.onGetStateTablesFail(msg);
+            public void onGetStateTablesError(String msg) {
+                super.onGetStateTablesError(msg);
                 dismissProgressDialog();
                 showToast(msg);
             }
@@ -73,6 +74,14 @@ public class EditConfigTablePresenter {
                 dismissProgressDialog();
                 showToast("修改成功！");
                 resultCode=StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_OK;
+                //既成事实的修改，需要同步更新备份
+                mConfigTableBackUp=mConfigTable.deepClone();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        exitEditMode();
+                    }
+                });
             }
 
             @Override
@@ -152,6 +161,17 @@ public class EditConfigTablePresenter {
         mServerBases.clear();
         mServerBases.addAll(bases);
         mAdapter.notifyDataSetChanged();
+
+        toggleUIFocusability(mActivity.getIsInEditMode().get());
+    }
+
+    private void toggleUIFocusability(boolean isToEnable) {
+        mActivity.getEdt_vendor().setEnabled(isToEnable);
+        mActivity.getEdt_frq().setEnabled(isToEnable);
+        mActivity.getEdt_amp().setEnabled(isToEnable);
+        mActivity.getEdt_fill().setEnabled(isToEnable);
+        mActivity.getEdt_leftTune().setEnabled(isToEnable);
+        mActivity.getEdt_rightTune().setEnabled(isToEnable);
     }
 
     public void showEditServerBaseDialog(final int position) {
@@ -222,7 +242,7 @@ public class EditConfigTablePresenter {
                 serverBase.setLdpcNum(Integer.valueOf(str_num));
 
                 mAdapter.notifyDataSetChanged();
-                dismissProgressDialog();
+                dismissAlertDialog();
             }
         });
 
@@ -240,7 +260,10 @@ public class EditConfigTablePresenter {
         mActivity.showToast(msg);
     }
 
-    public void submit() {
+    public void submit(){
+        submit(mConfigTable);
+    }
+    public void submit(final ConfigTable configTable) {
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
         builder.setTitle("温馨提示")
                 .setMessage("提交更改后，激励器将重新启动，您确定要提交吗？")
@@ -253,7 +276,7 @@ public class EditConfigTablePresenter {
                             Connection con = BaseApplication.getConnection();
                             try {
                                 if(con!=null&&con.isValid(50)){
-                                    mMySqlModel.updateConfigTable(mConfigTable, con);
+                                    mMySqlModel.updateConfigTable(configTable, con);
                                 }else {
                                     mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
                                 }
@@ -314,6 +337,8 @@ public class EditConfigTablePresenter {
         mConfigTable.setSignFill(Integer.parseInt(fill));
         mConfigTable.setToneLeft(Integer.parseInt(leftTune));
         mConfigTable.setToneRight(Integer.parseInt(rightTune));
+        mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
+        mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
         return true;
     }
 
@@ -344,4 +369,26 @@ public class EditConfigTablePresenter {
         mActivity.setResult(resultCode,it);
     }
 
+    private void backUpConfigTable() {
+        mConfigTableBackUp=mConfigTable.deepClone();
+    }
+
+    private void restoreConfigTable() {
+        mConfigTable=mConfigTableBackUp.deepClone();
+    }
+
+    public void enterEditMode() {
+        backUpConfigTable();
+        mActivity.getIsInEditMode().set(true);
+        mActivity.supportInvalidateOptionsMenu();
+        updateUiByConfigTable(mConfigTable);
+
+    }
+
+    public void exitEditMode() {
+        restoreConfigTable();
+        mActivity.getIsInEditMode().set(false);
+        mActivity.supportInvalidateOptionsMenu();
+        updateUiByConfigTable(mConfigTable);
+    }
 }

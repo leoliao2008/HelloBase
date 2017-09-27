@@ -58,7 +58,10 @@ public class ConfigTable implements Parcelable{
     }
 
     public void setServiceBases(ArrayList<ServerBase> serviceBases) {
-        mServiceBases.addAll(serviceBases);
+        mServiceBases.clear();
+        for (ServerBase temp:serviceBases){
+            mServiceBases.add(temp.deepClone());
+        }
     }
 
     public String getHostId() {
@@ -136,8 +139,7 @@ public class ConfigTable implements Parcelable{
         dest.writeTypedList(this.mServiceBases);
     }
 
-    public ConfigTable() {
-    }
+    public ConfigTable() {}
 
     protected ConfigTable(Parcel in) {
         this.hostId = in.readString();
@@ -163,4 +165,19 @@ public class ConfigTable implements Parcelable{
             return new ConfigTable[size];
         }
     };
+
+    public ConfigTable deepClone(){
+        ConfigTable tb=new ConfigTable();
+        tb.setSpecVer(specVer);
+        tb.setOpCode(opCode);
+        tb.setHostId(hostId);
+        tb.setCenterFreq(centerFreq);
+        tb.setSignFill(signFill);
+        tb.setSignalAmp(signalAmp);
+        tb.setTheOwner(theOwner);
+        tb.setToneLeft(toneLeft);
+        tb.setToneRight(toneRight);
+        tb.setServiceBases(mServiceBases);
+        return tb;
+    }
 }

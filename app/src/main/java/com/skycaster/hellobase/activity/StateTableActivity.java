@@ -2,9 +2,8 @@ package com.skycaster.hellobase.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -26,6 +25,8 @@ public class StateTableActivity extends BaseActivity {
     private ToggleButton tgbtn_monitoring;
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
+    private Button btn_viewConfigTable;
+//    private SwitchCompat mSwitch;
 
 
     public static void start(Activity context, StateTable stateTable) {
@@ -50,6 +51,8 @@ public class StateTableActivity extends BaseActivity {
         tgbtn_monitoring= (ToggleButton) findViewById(R.id.state_toggle_btn_monitoring);
         tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
         iv_statusReport= (ImageView) findViewById(R.id.state_iv_status_report);
+        btn_viewConfigTable= (Button) findViewById(R.id.state_btn_to_config_table);
+//        mSwitch= (SwitchCompat) findViewById(R.id.state_switch_monitoring);
 
     }
 
@@ -61,6 +64,12 @@ public class StateTableActivity extends BaseActivity {
 
     @Override
     protected void initListener() {
+        btn_viewConfigTable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.toConfigTable();
+            }
+        });
 
     }
 
@@ -84,7 +93,7 @@ public class StateTableActivity extends BaseActivity {
         return tv_feedbackTime;
     }
 
-    public ToggleButton getTgbtn_monitoring() {
+    public ToggleButton getToggleButton() {
         return tgbtn_monitoring;
     }
 
@@ -104,23 +113,7 @@ public class StateTableActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_state_table,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_state_table_to_config_table:
-                mPresenter.toConfigTable();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onStart() {

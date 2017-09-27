@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+
+      <item android:title="修改配置"
+            android:icon="@drawable/selector_ic_edit_36dp"
+            android:id="@+id/menu_edit_config_table_edit"
+            app:showAsAction="always"/>
+
       <item android:id="@+id/menu_edit_config_table_submit"
-            android:icon="@drawable/selector_ic_submit_24dp"
+            android:icon="@drawable/selector_ic_submit_36dp"
             android:title="提交修改"
+            app:showAsAction="always"/>
+
+      <item android:title="取消修改"
+            android:icon="@drawable/selector_ic_abort_edit_36dp"
+            android:id="@+id/menu_edit_config_table_abort"
             app:showAsAction="always"/>
 </menu>

@@ -73,7 +73,7 @@ public class ServerConStatusMonitor extends Service {
 
 
         @Override
-        public void onGetStateTablesFail(String msg) {
+        public void onGetStateTablesError(String msg) {
             mNetState =StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED;
             updateRemoteViewsAndBroadcast(mNetState,msg);
         }

@@ -16,6 +16,8 @@ import com.skycaster.hellobase.customize.MaxHeightListView;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.presenter.EditConfigTablePresenter;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class EditConfigActivity extends BaseActivity {
 
     private EditText edt_id;
@@ -30,6 +32,7 @@ public class EditConfigActivity extends BaseActivity {
     private MaxHeightListView mListView;
     private ScrollView mScrollerView;
     private EditConfigTablePresenter mPresenter;
+    private AtomicBoolean isInEditMode=new AtomicBoolean(false);
 
 
     public static void start(Context context, ConfigTable table) {
@@ -73,7 +76,9 @@ public class EditConfigActivity extends BaseActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.showEditServerBaseDialog(position);
+                if(isInEditMode.get()){
+                    mPresenter.showEditServerBaseDialog(position);
+                }
             }
         });
 
@@ -123,9 +128,25 @@ public class EditConfigActivity extends BaseActivity {
         return mScrollerView;
     }
 
+    public AtomicBoolean getIsInEditMode() {
+        return isInEditMode;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit_config_table,menu);
+        MenuItem edit = menu.findItem(R.id.menu_edit_config_table_edit);
+        MenuItem submit = menu.findItem(R.id.menu_edit_config_table_submit);
+        MenuItem abort = menu.findItem(R.id.menu_edit_config_table_abort);
+        if(isInEditMode.get()){
+            edit.setVisible(false);
+            submit.setVisible(true);
+            abort.setVisible(true);
+        }else {
+            edit.setVisible(true);
+            submit.setVisible(false);
+            abort.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -134,6 +155,12 @@ public class EditConfigActivity extends BaseActivity {
         switch (item.getItemId()){
             case R.id.menu_edit_config_table_submit:
                 mPresenter.submit();
+                break;
+            case R.id.menu_edit_config_table_edit:
+                mPresenter.enterEditMode();
+                break;
+            case R.id.menu_edit_config_table_abort:
+                mPresenter.exitEditMode();
                 break;
             default:
                 break;
