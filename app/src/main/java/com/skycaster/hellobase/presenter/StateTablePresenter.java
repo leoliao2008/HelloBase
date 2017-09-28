@@ -372,8 +372,8 @@ public class StateTablePresenter {
         if(requestCode==StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE){
             if(resultCode==StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_OK){
                 //9月28日 因增加修改版本号的功能，导致要增加以下代码
-//                ConfigTable configTable=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
-//                mActivity.getTv_version().setText(String.valueOf(configTable.getSpecVer()));
+                ConfigTable configTable=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
+                mActivity.getTv_version().setText(String.valueOf(configTable.getSpecVer()));
             }
         }
     }
