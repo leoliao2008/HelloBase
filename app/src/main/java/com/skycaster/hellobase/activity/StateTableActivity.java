@@ -12,7 +12,7 @@ import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
-import com.skycaster.hellobase.presenter.StateTableActivityPresenter;
+import com.skycaster.hellobase.presenter.StateTablePresenter;
 
 public class StateTableActivity extends BaseActivity {
 
@@ -21,7 +21,7 @@ public class StateTableActivity extends BaseActivity {
     private TextView tv_status;
     private TextView tv_comments;
     private TextView tv_feedbackTime;
-    private StateTableActivityPresenter mPresenter;
+    private StateTablePresenter mPresenter;
     private ToggleButton tgbtn_monitoring;
     private TextView tv_statusReport;
     private ImageView iv_statusReport;
@@ -58,7 +58,7 @@ public class StateTableActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mPresenter=new StateTableActivityPresenter(this);
+        mPresenter=new StateTablePresenter(this);
         mPresenter.initData();
     }
 
@@ -67,7 +67,7 @@ public class StateTableActivity extends BaseActivity {
         btn_viewConfigTable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.toConfigTable();
+                mPresenter.toConfigTableActivity();
             }
         });
 
@@ -128,6 +128,9 @@ public class StateTableActivity extends BaseActivity {
         mPresenter.onStop();
     }
 
-
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

@@ -23,11 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ConfigTableActivity"
-            android:label="配置表"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
             android:name=".activity.StateTableActivity"
             android:label="状态信息"
             android:launchMode="singleTask"
@@ -46,7 +41,7 @@
             android:name=".activity.StateTableListActivity"
             android:label="激励器清单"/>
         <activity
-            android:name=".activity.EditConfigActivity"
+            android:name=".activity.ConfigTableActivity"
             android:label="配置表"
             android:windowSoftInputMode="stateAlwaysHidden"/>
     </application>

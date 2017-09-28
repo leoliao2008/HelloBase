@@ -1,150 +1,169 @@
 package com.skycaster.hellobase.activity;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.customize.MaxHeightListView;
-import com.skycaster.hellobase.presenter.ConfigTableActivityPresenter;
+import com.skycaster.hellobase.data.StaticData;
+import com.skycaster.hellobase.presenter.ConfigTablePresenter;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConfigTableActivity extends BaseActivity {
 
-    public static final String EXTRA_DATA_CONFIG_TABLE = "EXTRA_DATA_CONFIG_TABLE";
-    private ConfigTableActivityPresenter mPresenter;
-    private TextView tv_hostAddr;
-    private TextView tv_hostVersion;
-    private TextView tv_opCode;
-    private TextView tv_vendor;
-    private TextView tv_freq;
-    private TextView tv_amp;
-    private TextView tv_fill;
-    private TextView tv_leftTune;
-    private TextView tv_rightTune;
+    private EditText edt_id;
+    private EditText edt_version;
+    private EditText edt_opCode;
+    private EditText edt_vendor;
+    private EditText edt_frq;
+    private EditText edt_amp;
+    private EditText edt_fill;
+    private EditText edt_leftTune;
+    private EditText edt_rightTune;
     private MaxHeightListView mListView;
-//    private AppCompatSpinner mSpinner;
-//    private Button btn_connect;
-    private ScrollView mScrollView;
-//    private Button btn_state;
+    private ScrollView mScrollerView;
+    private ConfigTablePresenter mPresenter;
+    private AtomicBoolean isInEditMode=new AtomicBoolean(false);
+    private AlertDialog mAlertDialog;
 
 
-    public static void start(Activity context, ConfigTable configTable) {
+    public static void start(Context context, ConfigTable table) {
         Intent starter = new Intent(context, ConfigTableActivity.class);
-        starter.putExtra(EXTRA_DATA_CONFIG_TABLE,configTable);
+        starter.putExtra(StaticData.EXTRA_DATA_CONFIG_TABLE, table);
         context.startActivity(starter);
     }
 
 
     @Override
     protected int getRootViewLayoutId() {
-        return R.layout.activity_config_table;
+        return R.layout.activity_edit_config;
     }
 
     @Override
     protected void initViews() {
-        tv_hostAddr= (TextView) findViewById(R.id.main_tv_host_address);
-        tv_hostVersion= (TextView) findViewById(R.id.main_tv_host_version);
-        tv_opCode= (TextView) findViewById(R.id.main_tv_host_op_code);
-        tv_vendor= (TextView) findViewById(R.id.main_tv_vendor_name);
-        tv_freq= (TextView) findViewById(R.id.main_tv_frq);
-        tv_amp= (TextView) findViewById(R.id.main_tv_signal_amp);
-        tv_fill= (TextView) findViewById(R.id.main_tv_signal_fill);
-        tv_leftTune= (TextView) findViewById(R.id.main_tv_left_tune);
-        tv_rightTune= (TextView) findViewById(R.id.main_tv_right_tune);
-        mListView= (MaxHeightListView) findViewById(R.id.main_list_view);
-//        mSpinner= (AppCompatSpinner) findViewById(R.id.main_spinner);
-//        btn_connect= (Button) findViewById(R.id.main_btn_connect);
-        mScrollView= (ScrollView) findViewById(R.id.main_scroller_view);
-//        btn_state= (Button) findViewById(R.id.main_btn_to_state_table);
+        edt_id= (EditText) findViewById(R.id.activity_edit_config_edt_id);
+        edt_version= (EditText) findViewById(R.id.activity_edit_config_edt_version);
+        edt_opCode= (EditText) findViewById(R.id.activity_edit_config_edt_ops_code);
+        edt_vendor= (EditText) findViewById(R.id.activity_edit_config_edt_vendor);
+        edt_amp= (EditText) findViewById(R.id.activity_edit_config_edt_amp);
+        edt_frq= (EditText) findViewById(R.id.activity_edit_config_edt_frq);
+        edt_fill= (EditText) findViewById(R.id.activity_edit_config_edt_fill);
+        edt_leftTune= (EditText) findViewById(R.id.activity_edit_config_edt_left_tune);
+        edt_rightTune= (EditText) findViewById(R.id.activity_edit_config_edt_right_tune);
+        mListView= (MaxHeightListView) findViewById(R.id.activity_edit_config_list_view);
+        mScrollerView= (ScrollView) findViewById(R.id.activity_edit_config_scroll_view);
 
     }
 
     @Override
     protected void initData() {
-        mPresenter=new ConfigTableActivityPresenter(this);
+        mPresenter=new ConfigTablePresenter(this);
         mPresenter.initData();
+
+
     }
 
     @Override
     protected void initListener() {
-//        btn_connect.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mPresenter.connectMySql();
-//            }
-//        });
-//        btn_state.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mPresenter.goToStateTable();
-//            }
-//        });
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(isInEditMode.get()){
+                    mPresenter.showEditServerBaseDialog(position);
+                }
+            }
+        });
+
     }
 
-    public TextView getTv_hostAddr() {
-        return tv_hostAddr;
+    public EditText getEdt_id() {
+        return edt_id;
     }
 
-    public TextView getTv_hostVersion() {
-        return tv_hostVersion;
+    public EditText getEdt_version() {
+        return edt_version;
     }
 
-    public TextView getTv_opCode() {
-        return tv_opCode;
+    public EditText getEdt_opCode() {
+        return edt_opCode;
     }
 
-    public TextView getTv_vendor() {
-        return tv_vendor;
+    public EditText getEdt_vendor() {
+        return edt_vendor;
     }
 
-    public TextView getTv_freq() {
-        return tv_freq;
+    public EditText getEdt_frq() {
+        return edt_frq;
     }
 
-    public TextView getTv_amp() {
-        return tv_amp;
+    public EditText getEdt_amp() {
+        return edt_amp;
     }
 
-    public TextView getTv_fill() {
-        return tv_fill;
+    public EditText getEdt_fill() {
+        return edt_fill;
     }
 
-    public TextView getTv_leftTune() {
-        return tv_leftTune;
+    public EditText getEdt_leftTune() {
+        return edt_leftTune;
     }
 
-    public TextView getTv_rightTune() {
-        return tv_rightTune;
+    public EditText getEdt_rightTune() {
+        return edt_rightTune;
     }
-
-    public ScrollView getScrollView() {
-        return mScrollView;
-    }
-
-//    public AppCompatSpinner getSpinner() {
-//        return mSpinner;
-//    }
 
     public MaxHeightListView getListView() {
         return mListView;
     }
 
+    public ScrollView getScrollerView() {
+        return mScrollerView;
+    }
+
+    public AtomicBoolean getIsInEditMode() {
+        return isInEditMode;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_config_table,menu);
+        MenuItem edit = menu.findItem(R.id.menu_edit_config_table_edit);
+        MenuItem submit = menu.findItem(R.id.menu_edit_config_table_submit);
+        MenuItem abort = menu.findItem(R.id.menu_edit_config_table_abort);
+        if(isInEditMode.get()){
+            edit.setVisible(false);
+            submit.setVisible(true);
+            abort.setVisible(true);
+        }else {
+            edit.setVisible(true);
+            submit.setVisible(false);
+            abort.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_config_setting:
-                mPresenter.editConfigSetting();
+            case R.id.menu_edit_config_table_submit:
+                mPresenter.submit();
+                break;
+            case R.id.menu_edit_config_table_edit:
+                mPresenter.enterEditMode();
+                break;
+            case R.id.menu_edit_config_table_abort:
+                showAlertDialogAbortEdit();
                 break;
             default:
                 break;
@@ -152,14 +171,31 @@ public class ConfigTableActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mPresenter.onStop();
+    private void showAlertDialogAbortEdit() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("温馨提示")
+                .setMessage("您确定要退出编辑模式吗？如果退出，未提交的修改将被舍弃。")
+                .setCancelable(true)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.exitEditMode();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAlertDialog.dismiss();
+                    }
+                });
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.onActivityResult(requestCode,resultCode,data);
+    public void onBackPressed() {
+        mPresenter.onBackPress();
+        super.onBackPressed();
     }
+
 }

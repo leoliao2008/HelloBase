@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class ServerConStatusMonitor extends Service {
-    private MySqlModel mModel;
+    private MySqlModel mMySqlModel;
     private StateTable mStateTable;
     private Connection mConnection;
     private AtomicBoolean isContinue=new AtomicBoolean(false);
@@ -64,9 +64,7 @@ public class ServerConStatusMonitor extends Service {
         @Override
         public void onGetStateTablesSuccess(ArrayList<StateTable> stateTables) {
             showLog(stateTables.toString());
-            if(stateTables.isEmpty()){
-                stopSelf();
-            }else {
+            if(!stateTables.isEmpty()){
                 updateNetStateByStateTable(stateTables.get(0));
             }
         }
@@ -74,8 +72,14 @@ public class ServerConStatusMonitor extends Service {
 
         @Override
         public void onGetStateTablesError(String msg) {
-            mNetState =StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED;
-            updateRemoteViewsAndBroadcast(mNetState,msg);
+//            mNetState =StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED;
+//            updateRemoteViewsAndBroadcast(mNetState,msg);
+            mMySqlModel.connectMySql(
+                    BaseApplication.getIpAddress(),
+                    StaticData.DATA_BASE_NAME,
+                    BaseApplication.getUserName(),
+                    BaseApplication.getPassword()
+                    );
         }
     };
     private NotificationManagerCompat mNotiManager;
@@ -85,7 +89,7 @@ public class ServerConStatusMonitor extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mModel=new MySqlModel(mCallback);
+        mMySqlModel =new MySqlModel(mCallback);
         mNotiManager=NotificationManagerCompat.from(this);
 
 //        mHeadUpNotiBuilder = new NotificationCompat.Builder(this);
@@ -106,7 +110,7 @@ public class ServerConStatusMonitor extends Service {
         BaseApplication.setBoundTable(mStateTable);
         startForeground();
         updateNetStateByStateTable(mStateTable);
-        mModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+        mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -276,18 +280,19 @@ public class ServerConStatusMonitor extends Service {
                     if(mLoopThread!=null&&mLoopThread.isInterrupted()){
                         break;
                     }
-                    try {
-                        mModel.getStateTables(mConnection, mStateTable.getHostId());
-                        SystemClock.sleep(30000);
-                    } catch (Exception e) {
-                        try {
-                            mConnection.close();
-                        } catch (SQLException e1) {
-                            e1.printStackTrace();
-                        }
-                        mConnection = null;
-                        mCallback.onSqlConnectionFail(e.getMessage());
-                    }
+                    mMySqlModel.getStateTables(mConnection, mStateTable.getHostId());
+                    SystemClock.sleep(30000);
+//                    try {
+//
+//                    } catch (Exception e) {
+//                        try {
+//                            mConnection.close();
+//                        } catch (SQLException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                        mConnection = null;
+//                        mCallback.onSqlConnectionFail(e.getMessage());
+//                    }
                 }
             }
         });

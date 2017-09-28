@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
-import com.skycaster.hellobase.presenter.LogInActivityPresenter;
+import com.skycaster.hellobase.presenter.LogInPresenter;
 
 public class LogInActivity extends BaseActivity {
     private EditText edt_ip;
@@ -22,7 +22,7 @@ public class LogInActivity extends BaseActivity {
     private CheckBox cbx_keepInput;
     private Button btn_logIn;
     private ImageView iv_pwVisibility;
-    private LogInActivityPresenter mPresenter;
+    private LogInPresenter mPresenter;
 
 
     public static void start(Context context) {
@@ -50,7 +50,7 @@ public class LogInActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mPresenter=new LogInActivityPresenter(this);
+        mPresenter=new LogInPresenter(this);
         mPresenter.initData();
     }
 
@@ -89,7 +89,7 @@ public class LogInActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_log_in_wipe_history:
-                mPresenter.showWarnigWipeLoginRecord();
+                mPresenter.showWarningWipeLoginRecord();
                 return true;
             default:
                 break;

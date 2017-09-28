@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ConfigTableActivity;
-import com.skycaster.hellobase.activity.EditConfigActivity;
 import com.skycaster.hellobase.activity.StateTableActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -32,7 +31,6 @@ import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ import java.util.Locale;
  * Created by 廖华凯 on 2017/9/13.
  */
 
-public class StateTableActivityPresenter {
+public class StateTablePresenter {
     private StateTableActivity mActivity;
     private DateFormat mDateFormat;
     private StateTable mStateTable;
@@ -58,34 +56,34 @@ public class StateTableActivityPresenter {
     private AlertDialog mAlertDialog;
 
 
-    public StateTableActivityPresenter(StateTableActivity activity) {
+    public StateTablePresenter(StateTableActivity activity) {
         mActivity = activity;
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
             @Override
             public void onGetSqlConnection(Connection con) {
                 super.onGetSqlConnection(con);
                 BaseApplication.setConnection(con);
-                toConfigTable();
+                toConfigTableActivity();
             }
 
-
+            @Override
+            public void onSqlConnectionFail(String msg) {
+                super.onSqlConnectionFail(msg);
+                dismissProgressDialog();
+                mActivity.showToast(msg);
+            }
 
             @Override
             public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
                 dismissProgressDialog();
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        EditConfigActivity.start(mActivity,tables.get(0));
-                    }
-                });
+                toConfigTableActivity(tables.get(0));
             }
 
             @Override
             public void onGetStateTablesError(String msg) {
                 super.onGetStateTablesError(msg);
-                dismissProgressDialog();
-                mActivity.showToast(msg);
+                mActivity.showToast("连接过期，重新链接......");
+                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
             }
 
             @Override
@@ -102,20 +100,15 @@ public class StateTableActivityPresenter {
 
             @Override
             public void onGetConfigTableError(String error) {
-                dismissProgressDialog();
-                mActivity.showToast(error);
+                mActivity.showToast("数据库连接中断，重新链接...");
+                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
             }
 
             @Override
             public void onCreateNewConfigTableSuccess(final ConfigTable table) {
                 super.onCreateNewConfigTableSuccess(table);
                 dismissProgressDialog();
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ConfigTableActivity.start(mActivity,table);
-                    }
-                });
+                toConfigTableActivity(table);
             }
 
             @Override
@@ -127,6 +120,16 @@ public class StateTableActivityPresenter {
         });
     }
 
+    private void toConfigTableActivity(final ConfigTable configTable) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent=new Intent(mActivity,ConfigTableActivity.class);
+                intent.putExtra(StaticData.EXTRA_DATA_CONFIG_TABLE,configTable);
+                mActivity.startActivityForResult(intent,StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE);
+            }
+        });
+    }
 
 
     public void initData(){
@@ -312,20 +315,11 @@ public class StateTableActivityPresenter {
         valueAnimator.start();
     }
 
-    public void toConfigTable(){
-//        ConfigTableActivity.start(mActivity);
+    public void toConfigTableActivity(){
         showProgressDialog();
         Connection con = BaseApplication.getConnection();
-        try {
-            if(con!=null&&con.isValid(50)){
-                mMySqlModel.getConfigTable(con,mStateTable.getHostId());
-            }else {
-                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
-            }
-        } catch (SQLException e) {
-            dismissProgressDialog();
-            mActivity.showToast(e.getMessage());
-
+        if(con!=null){
+            mMySqlModel.getConfigTable(con,mStateTable.getHostId());
         }
     }
 
@@ -372,6 +366,17 @@ public class StateTableActivityPresenter {
                 .setCancelable(true);
         mAlertDialog = builder.create();
         mAlertDialog.show();
-
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode==StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE){
+            if(resultCode==StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_OK){
+                //9月28日 因增加修改版本号的功能，导致要增加以下代码
+//                ConfigTable configTable=data.getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
+//                mActivity.getTv_version().setText(String.valueOf(configTable.getSpecVer()));
+            }
+        }
+    }
+
+
 }

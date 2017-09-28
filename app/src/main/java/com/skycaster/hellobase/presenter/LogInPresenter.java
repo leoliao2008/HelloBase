@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Created by 廖华凯 on 2017/9/25.
  */
 
-public class LogInActivityPresenter {
+public class LogInPresenter {
     private LogInActivity mActivity;
     private SharedPreferences mSp;
     private String mIp;
@@ -75,7 +75,7 @@ public class LogInActivityPresenter {
     private NetworkStateModel mNetworkStateModel;
     private AlertDialog mAlertDialog;
 
-    public LogInActivityPresenter(LogInActivity activity) {
+    public LogInPresenter(LogInActivity activity) {
         mActivity = activity;
         mSp =mActivity.getSharedPreferences(StaticData.SP_NAME, Context.MODE_PRIVATE);
         mMySqlModel=new MySqlModel(mCallBack);
@@ -185,19 +185,22 @@ public class LogInActivityPresenter {
     }
 
     private void showProgressDialog() {
-        mProgressDialog = ProgressDialog.show(
-                mActivity,
-                "登陆中",
-                "正在登陆服务器，请稍候······",
-                true,
-                true,
-                new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        showToast("您取消了登陆。");
+        if(mProgressDialog==null){
+            mProgressDialog = ProgressDialog.show(
+                    mActivity,
+                    "登陆中",
+                    "正在登陆服务器，请稍候······",
+                    true,
+                    true,
+                    new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            showToast("您取消了登陆。");
+                        }
                     }
-                }
-        );
+            );
+        }
+
     }
 
     private void dismissProgressDialog(){
@@ -216,7 +219,7 @@ public class LogInActivityPresenter {
         editor.apply();
     }
 
-    public void showWarnigWipeLoginRecord(){
+    public void showWarningWipeLoginRecord(){
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
         builder.setTitle("温馨提示")
                 .setMessage("您确定要清除用户登录信息吗？清除后下次需要重新输入IP地址、端口号、用户名称及密码。")

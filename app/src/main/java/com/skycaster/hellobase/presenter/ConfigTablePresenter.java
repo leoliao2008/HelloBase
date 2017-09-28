@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.EditConfigActivity;
+import com.skycaster.hellobase.activity.ConfigTableActivity;
 import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -23,7 +23,6 @@ import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.model.SoftInputManager;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -37,8 +36,8 @@ import java.util.Locale;
  * 更新描述   ${TODO}
  */
 
-public class EditConfigTablePresenter {
-    private EditConfigActivity mActivity;
+public class ConfigTablePresenter {
+    private ConfigTableActivity mActivity;
     private ConfigTable mConfigTable;
     private ArrayList<ServerBase> mServerBases=new ArrayList<>();
     private ServiceBaseAdapter mAdapter;
@@ -51,7 +50,7 @@ public class EditConfigTablePresenter {
     private ConfigTable mConfigTableBackUp;
 
 
-    public EditConfigTablePresenter(EditConfigActivity activity) {
+    public ConfigTablePresenter(ConfigTableActivity activity) {
         mActivity = activity;
         mHandler=new Handler();
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
@@ -63,10 +62,10 @@ public class EditConfigTablePresenter {
             }
 
             @Override
-            public void onGetStateTablesError(String msg) {
-                super.onGetStateTablesError(msg);
+            public void onSqlConnectionFail(String msg) {
+                showToast("连接失败："+msg);
                 dismissProgressDialog();
-                showToast(msg);
+                resultCode=StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_FAIL;
             }
 
             @Override
@@ -85,11 +84,11 @@ public class EditConfigTablePresenter {
             }
 
             @Override
-            public void onUpdateConfigTableFail(String msg) {
-                dismissProgressDialog();
-                showToast(msg);
-                resultCode=StaticData.RESULT_CODE_EDIT_CONFIG_TABLE_FAIL;
+            public void onUpdateConfigTableError(String msg) {
+                showToast("数据库链接中断，重新链接......");
+                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
             }
+
         });
         mSoftInputManager=new SoftInputManager(mActivity);
     }
@@ -172,6 +171,7 @@ public class EditConfigTablePresenter {
         mActivity.getEdt_fill().setEnabled(isToEnable);
         mActivity.getEdt_leftTune().setEnabled(isToEnable);
         mActivity.getEdt_rightTune().setEnabled(isToEnable);
+        mActivity.getEdt_version().setEnabled(isToEnable);
     }
 
     public void showEditServerBaseDialog(final int position) {
@@ -263,6 +263,7 @@ public class EditConfigTablePresenter {
     public void submit(){
         submit(mConfigTable);
     }
+
     public void submit(final ConfigTable configTable) {
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
         builder.setTitle("温馨提示")
@@ -274,15 +275,10 @@ public class EditConfigTablePresenter {
                         showProgressDialog();
                         if(checkAndUpdateLocalConfigTable()){
                             Connection con = BaseApplication.getConnection();
-                            try {
-                                if(con!=null&&con.isValid(50)){
-                                    mMySqlModel.updateConfigTable(configTable, con);
-                                }else {
-                                    mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
-                                }
-                            } catch (SQLException e) {
-                                dismissProgressDialog();
-                                showToast(e.getMessage());
+                            if(con!=null){
+                                mMySqlModel.updateConfigTable(configTable, con);
+                            }else{
+                                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
                             }
 
                         }
@@ -331,6 +327,11 @@ public class EditConfigTablePresenter {
             showToast("右频不能为空。");
             return false;
         }
+        String version = mActivity.getEdt_version().getText().toString().trim();
+        if(TextUtils.isEmpty(version)){
+            showToast("版本号不能为空。");
+            return false;
+        }
         mConfigTable.setTheOwner(vendor);
         mConfigTable.setCenterFreq(Double.parseDouble(freq));
         mConfigTable.setSignalAmp(Integer.parseInt(amp));
@@ -338,6 +339,7 @@ public class EditConfigTablePresenter {
         mConfigTable.setToneLeft(Integer.parseInt(leftTune));
         mConfigTable.setToneRight(Integer.parseInt(rightTune));
         mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
+        mConfigTable.setSpecVer(Integer.parseInt(version));
         mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
         return true;
     }
@@ -369,26 +371,20 @@ public class EditConfigTablePresenter {
         mActivity.setResult(resultCode,it);
     }
 
-    private void backUpConfigTable() {
-        mConfigTableBackUp=mConfigTable.deepClone();
-    }
-
-    private void restoreConfigTable() {
-        mConfigTable=mConfigTableBackUp.deepClone();
-    }
 
     public void enterEditMode() {
-        backUpConfigTable();
         mActivity.getIsInEditMode().set(true);
         mActivity.supportInvalidateOptionsMenu();
-        updateUiByConfigTable(mConfigTable);
+        mConfigTableBackUp=mConfigTable.deepClone();
+        toggleUIFocusability(true);
+        showToast("您已进入编辑模式。");
 
     }
 
     public void exitEditMode() {
-        restoreConfigTable();
         mActivity.getIsInEditMode().set(false);
         mActivity.supportInvalidateOptionsMenu();
+        mConfigTable=mConfigTableBackUp.deepClone();
         updateUiByConfigTable(mConfigTable);
     }
 }

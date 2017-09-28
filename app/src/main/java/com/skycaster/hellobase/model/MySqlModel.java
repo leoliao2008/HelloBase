@@ -38,16 +38,8 @@ public class MySqlModel {
             @Override
             public void run() {
                 try {
-                    Class.forName("com.mysql.jdbc.Driver").newInstance();//加载驱动换成这个
-                } catch (Exception e) {
-                    showLog("加载数据库引擎失败");
-                    mCallBack.onSqlConnectionFail(e.getMessage());
-                }
-                showLog("数据库驱动成功");
-
-                try {
                     Connection con = DriverManager.getConnection(PREFIX+host+"/"+dataBase+"?user="+userName+"&password="+password);// 连接数据库对象
-                    showLog("连接数据库成功！");
+                    showLog("连接成功！");
                     mCallBack.onGetSqlConnection(con);
                 } catch (SQLException e) {
                     showLog(e.getMessage());
@@ -270,7 +262,7 @@ public class MySqlModel {
                     }
                 } catch (SQLException e) {
                     showLog("error while running updateConfigTable(ConfigTable configTable,Connection con): "+e.getMessage());
-                    mCallBack.onUpdateConfigTableFail(e.getMessage());
+                    mCallBack.onUpdateConfigTableError(e.getMessage());
                 }finally {
                     if(statement!=null){
                         try {

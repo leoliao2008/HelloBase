@@ -27,7 +27,7 @@ public class MySqlModelCallBack {
 
     }
 
-    public void onUpdateConfigTableFail(String msg) {
+    public void onUpdateConfigTableError(String msg) {
 
     }
 

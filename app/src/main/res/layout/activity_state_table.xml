@@ -29,7 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="查看配置表"
-            android:layout_gravity="end|center_vertical"/>
+            android:layout_gravity="end|center_vertical"
+            android:stateListAnimator="@drawable/sla_ic_button"/>
 
     </FrameLayout>
     <LinearLayout
