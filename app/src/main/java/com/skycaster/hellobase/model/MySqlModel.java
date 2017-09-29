@@ -78,16 +78,19 @@ public class MySqlModel {
                             resultSet.close();
                         } catch (SQLException e) {
                             showLog(e.getMessage());
+                        }finally {
+                            resultSet=null;
                         }
-                        resultSet=null;
                     }
                     if(statement!=null){
                         try {
                             statement.close();
                         } catch (SQLException e) {
                             showLog(e.getMessage());
+                        }finally {
+                            statement=null;
                         }
-                        statement=null;
+
                     }
                 }
             }
@@ -165,16 +168,20 @@ public class MySqlModel {
                                 resultSet.close();
                             } catch (SQLException e) {
                                 e.printStackTrace();
+                            } finally {
+                                resultSet=null;
                             }
-                            resultSet=null;
+
                         }
                         if(statement!=null){
                             try {
                                 statement.close();
                             } catch (SQLException e) {
                                 e.printStackTrace();
+                            } finally {
+                                statement=null;
                             }
-                            statement=null;
+
                         }
                     }
                 }
@@ -183,7 +190,7 @@ public class MySqlModel {
     }
 
 
-    private ArrayList<StateTable> getStateTablesByResultSet(ResultSet resultSet) {
+    private ArrayList<StateTable> getStateTablesByResultSet(ResultSet resultSet) throws SQLException {
         ArrayList<StateTable> list=new ArrayList<>();
         try {
             while (resultSet.next()){
@@ -207,11 +214,7 @@ public class MySqlModel {
             }
         } catch (SQLException e) {
             showLog("error while running getStateTablesByResultSet(ResultSet resultSet): "+e.getMessage());
-            try {
-                throw e;
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+            throw e;
         }
         return list;
     }
@@ -269,8 +272,10 @@ public class MySqlModel {
                             statement.close();
                         } catch (SQLException e) {
                             e.printStackTrace();
+                        } finally {
+                            statement=null;
                         }
-                        statement=null;
+
                     }
                 }
             }

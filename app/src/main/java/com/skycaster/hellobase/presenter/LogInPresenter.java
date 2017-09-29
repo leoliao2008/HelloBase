@@ -148,29 +148,24 @@ public class LogInPresenter {
             showToast("请先连接网络。");
             return;
         }
-        showProgressDialog();
         mIp=mActivity.getEdt_ip().getText().toString().trim();
         if(TextUtils.isEmpty(mIp)){
             showToast("IP地址不能为空。");
-            dismissProgressDialog();
             return;
         }
         mPort= mActivity.getEdt_port().getText().toString().trim();
         if(TextUtils.isEmpty(mPort)){
             showToast("端口号不能为空。");
-            dismissProgressDialog();
             return;
         }
         mUserName=mActivity.getEdt_uerName().getText().toString().trim();
         if(TextUtils.isEmpty(mUserName)){
             showToast("用户名不能为空。");
-            dismissProgressDialog();
             return;
         }
         mPw= mActivity.getEdt_pw().getText().toString().trim();
         if(TextUtils.isEmpty(mPw)){
             showToast("请输入密码。");
-            dismissProgressDialog();
             return;
         }
         if(mIsKeepInput){
@@ -181,6 +176,7 @@ public class LogInPresenter {
             editor.putString(StaticData.SP_PW,mPw);
             editor.apply();
         }
+        showProgressDialog();
         mMySqlModel.connectMySql(mIp+":"+mPort,StaticData.DATA_BASE_NAME,mUserName,mPw);
     }
 
