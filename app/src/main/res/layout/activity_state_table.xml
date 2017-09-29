@@ -94,22 +94,14 @@
             android:textSize="@dimen/sp_18"
             android:textColor="@color/colorWhite"
             android:background="@null"
-            android:text="服务器状态"
+            android:text="激励器状态"
             />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"/>
-        <!--<android.support.v7.widget.SwitchCompat-->
-            <!--android:id="@+id/state_switch_monitoring"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textSize="@dimen/sp_18"-->
-            <!--android:layout_gravity="end|center_vertical"-->
-            <!--android:padding="@dimen/dp_7"-->
-            <!--android:textColor="@color/colorWhite"-->
-            <!--android:onClick="startMonitoring"/>-->
     </FrameLayout>
+
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

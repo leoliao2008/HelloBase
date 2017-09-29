@@ -251,39 +251,32 @@ public class StateTablePresenter {
 
     private void updateStatusReport(int netStatus){
         String text;
-        int imageRes;
         switch (netStatus){
             case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
                 tv_statusReport.setTextColor(Color.GREEN);
                 text="服务器正常。";
-                imageRes= R.drawable.ic_android_robot_1;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
                 tv_statusReport.setTextColor(mActivity.getResources().getColor(R.color.colorOrange));
                 text="服务器连接不稳定...";
-                imageRes= R.drawable.ic_android_robot_2;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
                 tv_statusReport.setTextColor(Color.RED);
                 text="服务器数据停止更新了。";
-                imageRes= R.drawable.ic_android_robot_3;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:
                 tv_statusReport.setTextColor(Color.GRAY);
                 text="初始化中...";
-                imageRes=R.drawable.ic_android_robot_4;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED:
             case StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED:
                 tv_statusReport.setTextColor(Color.RED);
                 text="服务器连接失败。";
-                imageRes=R.drawable.ic_android_robot_4;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE:
             default:
                 tv_statusReport.setTextColor(Color.BLACK);
                 text="监控已经停止。";
-                imageRes= R.drawable.ic_android_robot_4;
                 break;
         }
         tv_statusReport.setText(text);

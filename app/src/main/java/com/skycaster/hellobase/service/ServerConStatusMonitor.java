@@ -8,12 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -45,6 +43,7 @@ public class ServerConStatusMonitor extends Service {
     private ArrayList<StateTable> mStateTables=new ArrayList<>();
     private NotificationCompat.Builder mNotiBuilder;
     private int mNetState =StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE;
+    private Thread mLoopThread;
     private MySqlModelCallBack mCallback=new MySqlModelCallBack(){
         @Override
         public void onGetSqlConnection(Connection con) {
@@ -72,8 +71,8 @@ public class ServerConStatusMonitor extends Service {
 
         @Override
         public void onGetStateTablesError(String msg) {
-//            mNetState =StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED;
-//            updateRemoteViewsAndBroadcast(mNetState,msg);
+            mConnection=null;
+            stopLooping();
             mMySqlModel.connectMySql(
                     BaseApplication.getIpAddress(),
                     StaticData.DATA_BASE_NAME,
@@ -82,21 +81,13 @@ public class ServerConStatusMonitor extends Service {
                     );
         }
     };
-    private NotificationManagerCompat mNotiManager;
-    private Thread mLoopThread;
-    //    private NotificationCompat.Builder mHeadUpNotiBuilder;
+
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         mMySqlModel =new MySqlModel(mCallback);
-        mNotiManager=NotificationManagerCompat.from(this);
-
-//        mHeadUpNotiBuilder = new NotificationCompat.Builder(this);
-//        mHeadUpNotiBuilder.setSmallIcon(R.drawable.ic_signal_wifi_alert_white_24dp)
-//                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_signal_wifi_alert_white_48dp))
-//                .setContentTitle("连接异常！");
-
         mReceiver=new Receiver();
         IntentFilter intentFilter=new IntentFilter(StaticData.ACTION_STOP_SERVICE);
         registerReceiver(mReceiver,intentFilter);
@@ -106,9 +97,8 @@ public class ServerConStatusMonitor extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mStateTable = intent.getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
-        mStateTables.add(mStateTable);
         BaseApplication.setBoundTable(mStateTable);
-        startForeground();
+        showForegroundNotification();
         updateNetStateByStateTable(mStateTable);
         mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
         return super.onStartCommand(intent, flags, startId);
@@ -124,14 +114,15 @@ public class ServerConStatusMonitor extends Service {
             mStateTables.remove(0);
         }
         mStateTables.add(newTable.deepClone());
-        int outDateCount=0;
-        for(int i = 1; i< size; i++){
-            long dateTime = mStateTables.get(i).getDateTime();
-            if(dateTime==mStateTables.get(i-1).getDateTime()){
-                outDateCount++;
-            }
-        }
+
         if(mStateTables.size()==3){
+            int outDateCount=0;
+            for(int i = 1; i< size; i++){
+                long dateTime = mStateTables.get(i).getDateTime();
+                if(dateTime==mStateTables.get(i-1).getDateTime()){
+                    outDateCount++;
+                }
+            }
             switch (outDateCount){
                 case 0:
                     mNetState =StaticData.EXTRA_INT_NET_STATUS_NORMAL;
@@ -159,51 +150,35 @@ public class ServerConStatusMonitor extends Service {
             case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:
                 text="初始化中";
                 color=Color.WHITE;
-                src=R.drawable.ic_signal_wifi_initializing_white_24dp;
+                src=R.drawable.ic_signal_wifi_statusbar_not_connected_white_18dp;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
                 text="更新正常";
                 color= Color.GREEN;
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                    src=R.drawable.vd_ic_signal_excellent_24dp;
-                }else {
-                    src=R.drawable.ic_signal_wifi_full_white_24dp;
-                }
+                src=R.drawable.ic_signal_wifi_4_bar_white_18dp;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
                 text="更新缓慢";
                 color=Color.YELLOW;
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                    src=R.drawable.vd_ic_signal_unstable_24dp;
-                }else {
-                    src=R.drawable.ic_signal_wifi_half_white_24dp;
-                }
+                src=R.drawable.ic_signal_wifi_statusbar_2_bar_white_18dp;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
                 text="停止更新";
                 color=Color.RED;
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                    src=R.drawable.vd_ic_signal_error_24dp;
-                }else {
-                    src=R.drawable.ic_signal_wifi_alert_white_24dp;
-                }
+                src=R.drawable.ic_signal_wifi_statusbar_connected_no_internet_white_18dp;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED:
             case StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED:
             default:
                 text="链接中断";
                 color=Color.RED;
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                    src=R.drawable.vd_ic_signal_error_24dp;
-                }else {
-                    src=R.drawable.ic_signal_wifi_alert_white_24dp;
-                }
+                src=R.drawable.ic_signal_wifi_statusbar_connected_no_internet_white_18dp;
                 break;
         }
         mRemoteViews.setTextViewText(R.id.remote_view_tv_signal,text);
         mRemoteViews.setTextColor(R.id.remote_view_tv_signal,color);
         mRemoteViews.setImageViewResource(R.id.remote_view_iv_signal,src);
-        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,getActPendingIntent(netState));
+        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view, initActPi(netState));
         startForeground(123, mNotiBuilder.setContent(mRemoteViews).build());
 
         mStateTable.setStateCode(netState);
@@ -220,29 +195,12 @@ public class ServerConStatusMonitor extends Service {
         sendBroadcast(intent);
     }
 
-
-//    private void headUpNotification(String msg){
-//        mHeadUpNotiBuilder.setContentText(msg);
-//        Intent startActIntent = new Intent(this, StateTableActivity.class);
-//        startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
-//        startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
-//        startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, mNetState);
-//        PendingIntent pi=PendingIntent.getActivity(this,753,startActIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-//        mHeadUpNotiBuilder.setFullScreenIntent(pi,true);
-//        mHeadUpNotiBuilder.setAutoCancel(true);
-//        mNotiManager.notify(963, mHeadUpNotiBuilder.build());
-//    }
-
-    private void startForeground(){
+    private void showForegroundNotification(){
         mNotiBuilder = new NotificationCompat.Builder(this);
         mNotiBuilder.setContentText("正在监控服务器连接状态......");
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-            mNotiBuilder.setSmallIcon(R.drawable.vd_network_check_24dp);
-        }else {
-            mNotiBuilder.setSmallIcon(R.drawable.ic_signal_wifi_full_white_24dp);
-        }
+        mNotiBuilder.setSmallIcon(R.drawable.ic_signal_wifi_4_bar_white_18dp);
         mRemoteViews = new RemoteViews(getPackageName(), R.layout.remote_view_net_status);
-        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view,getActPendingIntent(mNetState));
+        mRemoteViews.setOnClickPendingIntent(R.id.remote_view_root_view, initActPi(mNetState));
         Intent stopSevIntent=new Intent(StaticData.ACTION_STOP_SERVICE);
         PendingIntent stopSevPi = PendingIntent.getBroadcast(
                 this,
@@ -256,7 +214,7 @@ public class ServerConStatusMonitor extends Service {
         startForeground(123,notification);
     }
 
-    private PendingIntent getActPendingIntent(int netStatus) {
+    private PendingIntent initActPi(int netStatus) {
         Intent startActIntent = new Intent(this, StateTableActivity.class);
         startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
         startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
@@ -277,45 +235,42 @@ public class ServerConStatusMonitor extends Service {
             @Override
             public void run() {
                 while (isContinue.get()) {
-                    if(mLoopThread!=null&&mLoopThread.isInterrupted()){
+                    if(Thread.currentThread().isInterrupted()){
                         break;
                     }
                     mMySqlModel.getStateTables(mConnection, mStateTable.getHostId());
-                    SystemClock.sleep(30000);
-//                    try {
-//
-//                    } catch (Exception e) {
-//                        try {
-//                            mConnection.close();
-//                        } catch (SQLException e1) {
-//                            e1.printStackTrace();
-//                        }
-//                        mConnection = null;
-//                        mCallback.onSqlConnectionFail(e.getMessage());
-//                    }
+                    SystemClock.sleep(6000);
                 }
             }
         });
         mLoopThread.start();
     }
 
+    private void stopLooping() {
+        isContinue.set(false);
+        if(mLoopThread!=null){
+            mLoopThread.interrupt();
+            mLoopThread=null;
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        showLog("onDestroy");
         BaseApplication.setBoundTable(null);
+
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_SERVICE_DISMISS);
         intent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
         sendBroadcast(intent);
+
         if(mReceiver!=null){
             unregisterReceiver(mReceiver);
             mReceiver=null;
         }
-        isContinue.set(false);
 
-        if(mLoopThread!=null){
-            mLoopThread.interrupt();
-        }
+        stopLooping();
 
         //在连接未成功的情况下退出时，不要清除通知栏，让用户知道连接失败了。
         stopForeground(mConnection!=null);
@@ -330,7 +285,6 @@ public class ServerConStatusMonitor extends Service {
     }
 
     private class Receiver extends BroadcastReceiver{
-
         @Override
         public void onReceive(Context context, Intent intent) {
             stopSelf();
