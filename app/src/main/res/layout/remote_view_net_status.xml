@@ -62,7 +62,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/dp_4"
-        app:srcCompat="@drawable/ic_signal_wifi_full_white_24dp"/>
+        android:paddingLeft="@dimen/dp_4"
+        app:srcCompat="@drawable/ic_signal_wifi_4_bar_white_18dp"/>
 
     <TextView
         android:layout_alignBottom="@id/item3"
