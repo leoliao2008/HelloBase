@@ -143,7 +143,7 @@ public class StateTablePresenter {
         iv_statusReport=mActivity.getIv_statusReport();
         mNetStatus=mActivity.getIntent().getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
 
-        mDateFormat= new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
+        mDateFormat= new SimpleDateFormat("HH时mm分ss秒", Locale.CHINA);
         mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
         if(mStateTable!=null){
             updateActivityUi(mStateTable);
