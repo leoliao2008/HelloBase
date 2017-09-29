@@ -1,7 +1,6 @@
 package com.skycaster.hellobase.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
@@ -17,6 +16,7 @@ import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.customize.MaxHeightListView;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.presenter.ConfigTablePresenter;
+import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -172,24 +172,17 @@ public class ConfigTableActivity extends BaseActivity {
     }
 
     private void showAlertDialogAbortEdit() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("温馨提示")
-                .setMessage("您确定要退出编辑模式吗？如果退出，未提交的修改将被舍弃。")
-                .setCancelable(true)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        AlertDialogUtil.showBaseDialog(
+                this,
+                "温馨提示",
+                "您确定要退出编辑模式吗？如果退出，未提交的修改将被舍弃。",
+                new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         mPresenter.exitEditMode();
                     }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAlertDialog.dismiss();
-                    }
-                });
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+                }
+        );
     }
 
     @Override

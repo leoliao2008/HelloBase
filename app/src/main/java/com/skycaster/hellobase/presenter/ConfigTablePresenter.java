@@ -1,7 +1,6 @@
 package com.skycaster.hellobase.presenter;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +20,7 @@ import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.model.SoftInputManager;
+import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -265,12 +265,13 @@ public class ConfigTablePresenter {
     }
 
     public void submit(final ConfigTable configTable) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
-        builder.setTitle("温馨提示")
-                .setMessage("提交更改后，激励器将重新启动，您确定要提交吗？")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        AlertDialogUtil.showBaseDialog(
+                mActivity,
+                "温馨提示",
+                "提交更改后，激励器将重新启动，您确定要提交吗？",
+                new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         mAlertDialog.dismiss();
                         showProgressDialog();
                         if(checkAndUpdateLocalConfigTable()){
@@ -282,18 +283,9 @@ public class ConfigTablePresenter {
                             }
 
                         }
-
                     }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAlertDialog.dismiss();
-                    }
-                })
-                .setCancelable(true);
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+                }
+        );
     }
 
     private boolean checkAndUpdateLocalConfigTable() {

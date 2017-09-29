@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -13,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +29,7 @@ import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
+import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.sql.Connection;
 import java.text.DateFormat;
@@ -336,12 +337,13 @@ public class StateTablePresenter {
     }
 
     private void showAlertDialogCreateConfigTable() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
-        builder.setTitle("新建配置表")
-                .setMessage("当前激励器还没有生成相应的配置表，您需要现在创建吗？")
-                .setPositiveButton("创建", new DialogInterface.OnClickListener() {
+        AlertDialogUtil.showBaseDialog(
+                mActivity,
+                "新建配置表",
+                "当前激励器还没有生成相应的配置表，您需要现在创建吗？",
+                new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         showProgressDialog();
                         ConfigTable configTable=new ConfigTable();
                         configTable.setHostId(mStateTable.getHostId());
@@ -349,16 +351,8 @@ public class StateTablePresenter {
                         configTable.setSpecVer(mStateTable.getCurVer());
                         mMySqlModel.createNewConfigTable(configTable,BaseApplication.getConnection());
                     }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAlertDialog.dismiss();
-                    }
-                })
-                .setCancelable(true);
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+                }
+        );
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){

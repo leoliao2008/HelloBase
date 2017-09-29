@@ -1,7 +1,6 @@
 package com.skycaster.hellobase.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -12,6 +11,7 @@ import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.adapter.StateTableListAdapter;
 import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.util.ArrayList;
 
@@ -70,24 +70,11 @@ public class StateTableListActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("温馨提示")
-                .setMessage("您确定要退出本程序吗？")
-                .setCancelable(true)
-                .setPositiveButton("是的", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAlertDialog.dismiss();
-                        StateTableListActivity.super.onBackPressed();
-                    }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAlertDialog.dismiss();
-                    }
-                });
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+        AlertDialogUtil.showBaseDialog(this, "温馨提示", "您确定要退出本程序吗？", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StateTableListActivity.super.onBackPressed();
+            }
+        });
     }
 }
