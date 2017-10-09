@@ -7,7 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -18,8 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.ConfigTableActivity;
-import com.skycaster.hellobase.activity.StateTableActivity;
+import com.skycaster.hellobase.activity.ConfigActivity;
+import com.skycaster.hellobase.activity.StateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.bean.StateTable;
@@ -43,21 +44,21 @@ import java.util.Locale;
  */
 
 public class StateTablePresenter {
-    private StateTableActivity mActivity;
+    private StateActivity mActivity;
     private DateFormat mDateFormat;
     private StateTable mStateTable;
     private Receiver mReceiver;
     private TextView tv_statusReport;
-    private ImageView iv_statusReport;
+    private ImageView iv_netStateIcon;
     private int mNetStatus;
     private TextView tv_updateTime;
     private float mTextSize;
     private MySqlModel mMySqlModel;
     private ProgressDialog mProgressDialog;
-    private AlertDialog mAlertDialog;
+    private Drawable mAslDrawable;
 
 
-    public StateTablePresenter(StateTableActivity activity) {
+    public StateTablePresenter(StateActivity activity) {
         mActivity = activity;
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
             @Override
@@ -125,7 +126,7 @@ public class StateTablePresenter {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent intent=new Intent(mActivity,ConfigTableActivity.class);
+                Intent intent=new Intent(mActivity,ConfigActivity.class);
                 intent.putExtra(StaticData.EXTRA_DATA_CONFIG_TABLE,configTable);
                 mActivity.startActivityForResult(intent,StaticData.REQUEST_CODE_EDIT_CONFIG_TABLE);
             }
@@ -138,10 +139,12 @@ public class StateTablePresenter {
         tv_updateTime=mActivity.getTv_feedbackTime();
         mTextSize = tv_updateTime.getTextSize();
 
-
-
         tv_statusReport=mActivity.getTv_statusReport();
-        iv_statusReport=mActivity.getIv_statusReport();
+        iv_netStateIcon =mActivity.getIv_netStateIcon();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            mAslDrawable = mActivity.getDrawable(R.drawable.asl_net_status_icon);
+            iv_netStateIcon.setImageDrawable(mAslDrawable);
+        }
         mNetStatus=mActivity.getIntent().getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
 
         mDateFormat= new SimpleDateFormat("HH时mm分ss秒", Locale.CHINA);
@@ -252,36 +255,45 @@ public class StateTablePresenter {
 
     private void updateStatusReport(int netStatus){
         String text;
+        int[] statusSet;
         switch (netStatus){
             case StaticData.EXTRA_INT_NET_STATUS_NORMAL:
                 tv_statusReport.setTextColor(Color.GREEN);
                 text="服务器正常。";
+                statusSet=StaticData.STATE_SET_NORMAL;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_UNSTABLE:
                 tv_statusReport.setTextColor(mActivity.getResources().getColor(R.color.colorOrange));
                 text="服务器连接不稳定...";
+                statusSet=StaticData.STATE_SET_UNSTABLE;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_ERROR:
                 tv_statusReport.setTextColor(Color.RED);
                 text="服务器数据停止更新了。";
+                statusSet=StaticData.STATE_SET_NO_UPDATE;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_INITIALIZING:
                 tv_statusReport.setTextColor(Color.GRAY);
                 text="初始化中...";
+                statusSet=StaticData.STATE_SET_INITIALIZING;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_TABLE_FAILED:
             case StaticData.EXTRA_INT_NET_STATUS_LINK_FAILED:
                 tv_statusReport.setTextColor(Color.RED);
                 text="服务器连接失败。";
+                statusSet=StaticData.STATE_SET_LINK_FAIL;
                 break;
             case StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE:
             default:
                 tv_statusReport.setTextColor(Color.BLACK);
                 text="监控已经停止。";
+                statusSet=StaticData.STATE_SET_STOPPED;
                 break;
         }
         tv_statusReport.setText(text);
-//        iv_statusReport.setImageResource(imageRes);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP&&mAslDrawable!=null){
+            iv_netStateIcon.setImageState(statusSet,true);
+        }
     }
 
     private void feedbackTimeAnimation(StateTable stateTable){

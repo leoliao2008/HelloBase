@@ -9,7 +9,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:scrollbars="none"
 android:background="@color/colorBg"
-tools:context="com.skycaster.hellobase.activity.ConfigTableActivity">
+tools:context="com.skycaster.hellobase.activity.ConfigActivity">
 
 <LinearLayout
     android:layout_width="match_parent"

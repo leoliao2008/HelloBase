@@ -17,7 +17,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.StateTableActivity;
+import com.skycaster.hellobase.activity.StateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
@@ -215,7 +215,7 @@ public class ServerConStatusMonitor extends Service {
     }
 
     private PendingIntent initActPi(int netStatus) {
-        Intent startActIntent = new Intent(this, StateTableActivity.class);
+        Intent startActIntent = new Intent(this, StateActivity.class);
         startActIntent.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,mStateTable);
         startActIntent.putExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING,true);
         startActIntent.putExtra(StaticData.EXTRA_INT_NET_STATUS_CODE, netStatus);

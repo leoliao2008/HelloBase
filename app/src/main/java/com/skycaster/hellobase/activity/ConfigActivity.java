@@ -20,7 +20,7 @@ import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ConfigTableActivity extends BaseActivity {
+public class ConfigActivity extends BaseActivity {
 
     private EditText edt_id;
     private EditText edt_version;
@@ -39,7 +39,7 @@ public class ConfigTableActivity extends BaseActivity {
 
 
     public static void start(Context context, ConfigTable table) {
-        Intent starter = new Intent(context, ConfigTableActivity.class);
+        Intent starter = new Intent(context, ConfigActivity.class);
         starter.putExtra(StaticData.EXTRA_DATA_CONFIG_TABLE, table);
         context.startActivity(starter);
     }

@@ -62,7 +62,7 @@ public class StateTableListActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 StateTable table = mList.get(position);
-                StateTableActivity.start(StateTableListActivity.this,table);
+                StateActivity.start(StateTableListActivity.this,table);
             }
         });
 

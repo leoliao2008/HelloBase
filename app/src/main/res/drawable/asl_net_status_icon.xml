@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/item_normal"
+        android:drawable="@drawable/vd_net_status_normal"
+        app:net_status_normal="true"/>
+    <item
+        android:id="@+id/item_unstable"
+        android:drawable="@drawable/vd_net_status_unstable"
+        app:net_status_unstable="true"/>
+    <item
+        android:id="@+id/item_no_update"
+        android:drawable="@drawable/vd_net_status_no_update"
+        app:net_status_no_update="true"/>
+    <item
+        android:id="@+id/item_linked_fail"
+        android:drawable="@drawable/vd_net_status_linked_fails"
+        app:net_status_link_fail="true"/>
+    <item
+        android:id="@+id/item_init"
+        android:drawable="@drawable/vd_net_status_init"
+        app:net_status_initializing="true"/>
+    <item
+        android:id="@+id/item_stop"
+        android:drawable="@drawable/vd_net_status_stop"/>
+
+
+    <transition
+        android:fromId="@id/item_stop"
+        android:toId="@id/item_init"
+        android:drawable="@drawable/avd_net_status_stop_to_init"/>
+    <transition
+        android:fromId="@id/item_stop"
+        android:toId="@id/item_linked_fail"
+        android:drawable="@drawable/avd_net_status_stop_to_linked_fail"/>
+    <transition
+        android:fromId="@id/item_stop"
+        android:toId="@id/item_no_update"
+        android:drawable="@drawable/avd_net_status_stop_to_no_update"/>
+    <transition
+        android:fromId="@id/item_stop"
+        android:toId="@id/item_unstable"
+        android:drawable="@drawable/avd_net_status_stop_to_unstable"/>
+    <transition
+        android:fromId="@id/item_stop"
+        android:toId="@id/item_normal"
+        android:drawable="@drawable/avd_net_status_stop_to_normal"/>
+
+
+    <transition
+        android:fromId="@id/item_init"
+        android:toId="@id/item_stop"
+        android:drawable="@drawable/avd_net_status_init_to_stop"/>
+    <transition
+        android:fromId="@id/item_init"
+        android:toId="@id/item_linked_fail"
+        android:drawable="@drawable/avd_net_status_init_to_linked_fail"/>
+    <transition
+        android:fromId="@id/item_init"
+        android:toId="@id/item_no_update"
+        android:drawable="@drawable/avd_net_status_init_to_no_update"/>
+    <transition
+        android:fromId="@id/item_init"
+        android:toId="@id/item_unstable"
+        android:drawable="@drawable/avd_net_status_init_to_unstable"/>
+    <transition
+        android:fromId="@id/item_init"
+        android:toId="@id/item_normal"
+        android:drawable="@drawable/avd_net_status_stop_to_normal"/>
+
+
+
+    <transition
+        android:fromId="@id/item_linked_fail"
+        android:toId="@id/item_stop"
+        android:drawable="@drawable/avd_net_status_linked_fail_to_stop"/>
+    <transition
+        android:fromId="@id/item_linked_fail"
+        android:toId="@id/item_init"
+        android:drawable="@drawable/avd_net_status_linked_fail_to_init"/>
+    <transition
+        android:fromId="@id/item_linked_fail"
+        android:toId="@id/item_no_update"
+        android:drawable="@drawable/avd_net_status_linked_fail_to_no_update"/>
+    <transition
+        android:fromId="@id/item_linked_fail"
+        android:toId="@id/item_unstable"
+        android:drawable="@drawable/avd_net_status_linked_fail_to_unstable"/>
+    <transition
+        android:fromId="@id/item_linked_fail"
+        android:toId="@id/item_normal"
+        android:drawable="@drawable/avd_net_status_linked_fail_to_normal"/>
+
+
+
+    <transition
+        android:fromId="@id/item_no_update"
+        android:toId="@id/item_stop"
+        android:drawable="@drawable/avd_net_status_no_update_to_stop"/>
+    <transition
+        android:fromId="@id/item_no_update"
+        android:toId="@id/item_init"
+        android:drawable="@drawable/avd_net_status_no_update_to_init"/>
+    <transition
+        android:fromId="@id/item_no_update"
+        android:toId="@id/item_linked_fail"
+        android:drawable="@drawable/avd_net_status_no_update_to_linked_fail"/>
+    <transition
+        android:fromId="@id/item_no_update"
+        android:toId="@id/item_unstable"
+        android:drawable="@drawable/avd_net_status_no_update_to_unstable"/>
+    <transition
+        android:fromId="@id/item_no_update"
+        android:toId="@id/item_normal"
+        android:drawable="@drawable/avd_net_status_no_update_to_normal"/>
+
+
+
+
+    <transition
+        android:fromId="@id/item_unstable"
+        android:toId="@id/item_stop"
+        android:drawable="@drawable/avd_net_status_unstable_to_stop"/>
+    <transition
+        android:fromId="@id/item_unstable"
+        android:toId="@id/item_init"
+        android:drawable="@drawable/avd_net_status_unstable_to_init"/>
+    <transition
+        android:fromId="@id/item_unstable"
+        android:toId="@id/item_linked_fail"
+        android:drawable="@drawable/avd_net_status_unstable_to_linked_fail"/>
+    <transition
+        android:fromId="@id/item_unstable"
+        android:toId="@id/item_no_update"
+        android:drawable="@drawable/avd_net_status_unstable_to_no_update"/>
+    <transition
+        android:fromId="@id/item_unstable"
+        android:toId="@id/item_normal"
+        android:drawable="@drawable/avd_net_status_unstable_to_normal"/>
+
+
+    <transition
+        android:fromId="@id/item_normal"
+        android:toId="@id/item_stop"
+        android:drawable="@drawable/avd_net_status_normal_to_stop"/>
+    <transition
+        android:fromId="@id/item_normal"
+        android:toId="@id/item_init"
+        android:drawable="@drawable/avd_net_status_normal_to_init"/>
+    <transition
+        android:fromId="@id/item_normal"
+        android:toId="@id/item_linked_fail"
+        android:drawable="@drawable/avd_net_status_normal_to_linked_fail"/>
+    <transition
+        android:fromId="@id/item_normal"
+        android:toId="@id/item_no_update"
+        android:drawable="@drawable/avd_net_status_normal_to_no_update"/>
+    <transition
+        android:fromId="@id/item_normal"
+        android:toId="@id/item_unstable"
+        android:drawable="@drawable/avd_net_status_normal_to_unstable"/>
+
+
+</animated-selector>

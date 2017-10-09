@@ -1,5 +1,7 @@
 package com.skycaster.hellobase.data;
 
+import com.skycaster.hellobase.R;
+
 /**
  * Created by 廖华凯 on 2017/9/13.
  */
@@ -38,4 +40,46 @@ public interface StaticData {
     int RESULT_CODE_EDIT_CONFIG_TABLE_OK = 753;
     int RESULT_CODE_EDIT_CONFIG_TABLE_FAIL = 735;
     String OP_CODE_REBOOT = "reboot";
+    int[] STATE_SET_NORMAL=new int[]{
+            R.attr.net_status_normal,
+            -R.attr.net_status_initializing,
+            -R.attr.net_status_link_fail,
+            -R.attr.net_status_no_update,
+            -R.attr.net_status_stopped,
+            -R.attr.net_status_unstable};
+    int[] STATE_SET_INITIALIZING=new int[]{
+            -R.attr.net_status_normal,
+            R.attr.net_status_initializing,
+            -R.attr.net_status_link_fail,
+            -R.attr.net_status_no_update,
+            -R.attr.net_status_stopped,
+            -R.attr.net_status_unstable};
+    int[] STATE_SET_LINK_FAIL=new int[]{
+            -R.attr.net_status_normal,
+            -R.attr.net_status_initializing,
+            R.attr.net_status_link_fail,
+            -R.attr.net_status_no_update,
+            -R.attr.net_status_stopped,
+            -R.attr.net_status_unstable};
+    int[] STATE_SET_NO_UPDATE=new int[]{
+            -R.attr.net_status_normal,
+            -R.attr.net_status_initializing,
+            -R.attr.net_status_link_fail,
+            R.attr.net_status_no_update,
+            -R.attr.net_status_stopped,
+            -R.attr.net_status_unstable};
+    int[] STATE_SET_STOPPED=new int[]{
+            -R.attr.net_status_normal,
+            -R.attr.net_status_initializing,
+            -R.attr.net_status_link_fail,
+            -R.attr.net_status_no_update,
+            R.attr.net_status_stopped,
+            -R.attr.net_status_unstable};
+    int[] STATE_SET_UNSTABLE=new int[]{
+            -R.attr.net_status_normal,
+            -R.attr.net_status_initializing,
+            -R.attr.net_status_link_fail,
+            -R.attr.net_status_no_update,
+            -R.attr.net_status_stopped,
+            R.attr.net_status_unstable};
 }

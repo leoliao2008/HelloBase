@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.activity.ConfigTableActivity;
+import com.skycaster.hellobase.activity.ConfigActivity;
 import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -37,7 +37,7 @@ import java.util.Locale;
  */
 
 public class ConfigTablePresenter {
-    private ConfigTableActivity mActivity;
+    private ConfigActivity mActivity;
     private ConfigTable mConfigTable;
     private ArrayList<ServerBase> mServerBases=new ArrayList<>();
     private ServiceBaseAdapter mAdapter;
@@ -50,7 +50,7 @@ public class ConfigTablePresenter {
     private ConfigTable mConfigTableBackUp;
 
 
-    public ConfigTablePresenter(ConfigTableActivity activity) {
+    public ConfigTablePresenter(ConfigActivity activity) {
         mActivity = activity;
         mHandler=new Handler();
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){

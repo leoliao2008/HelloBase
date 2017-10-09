@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/vd_net_status_normal">
+    <target
+        android:animation="@animator/animator_outer_ring"
+        android:name="group_net_status"/>
+    <target
+        android:animation="@animator/animator_normal_to_init"
+        android:name="path_inner_part"/>
+
+</animated-vector>

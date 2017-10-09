@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NetState">
+        <attr name="net_status_normal" format="boolean"/>
+        <attr name="net_status_unstable" format="boolean"/>
+        <attr name="net_status_no_update" format="boolean"/>
+        <attr name="net_status_initializing" format="boolean"/>
+        <attr name="net_status_link_fail" format="boolean"/>
+        <attr name="net_status_stopped" format="boolean"/>
+    </declare-styleable>
+
+    <string name="path_net_status_normal">M9,30 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 c0,0,4,-4,4,-4 l8,8, m0,0 l18,-19, a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0</string>
+    <string name="path_net_status_no_update">M36,10 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 c0,0,-24,28,-24,28 l0,0 m0,-28 l24,28 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0</string>
+    <string name="path_net_status_stopped">M15,10 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 c0,0,-0,28,-0,28 l0,0 m18,-28 l0,28 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0</string>
+    <string name="path_net_status_link_fails">M24,9 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 c0,0,-0,22,-0,22 l0,0 m-1,6 l0,0 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0</string>
+    <string name="path_net_status_unstable">M16,16 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0 c8,-10,16,0,8,6 l0,8 m-1,7 l0,0 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0 m0,0 a0,0,0,0,0,0,0 a0,0,0,0,0,0,0</string>
+    <string name="path_net_status_init">M8.6,24 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0 m9.6,0 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0 c0,0,0,0,0,0 l0,0 m9.6,0 l0,0 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0 m9.6,0 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0</string>
+    <string name="path_outer_ring">M2,24 a22,22,0,0,1,44,0 a22,22,0,0,1,-44,0</string>
+
+</resources>

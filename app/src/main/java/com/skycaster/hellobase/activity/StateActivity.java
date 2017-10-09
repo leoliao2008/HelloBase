@@ -14,7 +14,7 @@ import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.presenter.StateTablePresenter;
 
-public class StateTableActivity extends BaseActivity {
+public class StateActivity extends BaseActivity {
 
     private TextView tv_mac;
     private TextView tv_version;
@@ -24,13 +24,12 @@ public class StateTableActivity extends BaseActivity {
     private StateTablePresenter mPresenter;
     private ToggleButton tgbtn_monitoring;
     private TextView tv_statusReport;
-    private ImageView iv_statusReport;
     private Button btn_viewConfigTable;
-//    private SwitchCompat mSwitch;
+    private ImageView iv_netStateIcon;
 
 
     public static void start(Activity context, StateTable stateTable) {
-        Intent starter = new Intent(context, StateTableActivity.class);
+        Intent starter = new Intent(context, StateActivity.class);
         starter.putExtra(StaticData.EXTRA_DATA_STATE_TABLE,stateTable);
         context.startActivity(starter);
     }
@@ -50,9 +49,8 @@ public class StateTableActivity extends BaseActivity {
         tv_status= (TextView) findViewById(R.id.state_tv_status);
         tgbtn_monitoring= (ToggleButton) findViewById(R.id.state_toggle_btn_monitoring);
         tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
-        iv_statusReport= (ImageView) findViewById(R.id.state_iv_status_report);
         btn_viewConfigTable= (Button) findViewById(R.id.state_btn_to_config_table);
-//        mSwitch= (SwitchCompat) findViewById(R.id.state_switch_monitoring);
+        iv_netStateIcon= (ImageView) findViewById(R.id.state_iv_status_report);
 
     }
 
@@ -101,8 +99,8 @@ public class StateTableActivity extends BaseActivity {
         return tv_statusReport;
     }
 
-    public ImageView getIv_statusReport() {
-        return iv_statusReport;
+    public ImageView getIv_netStateIcon() {
+        return iv_netStateIcon;
     }
 
     public void startMonitoring(View view) {
