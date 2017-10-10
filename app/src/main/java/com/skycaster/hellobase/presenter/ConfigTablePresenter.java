@@ -272,7 +272,6 @@ public class ConfigTablePresenter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mAlertDialog.dismiss();
                         showProgressDialog();
                         if(checkAndUpdateLocalConfigTable()){
                             Connection con = BaseApplication.getConnection();
