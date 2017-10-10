@@ -7,6 +7,7 @@ import android.util.Log;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.bean.ServerBase;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 
@@ -37,8 +38,9 @@ public class MySqlModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Connection con=null;
                 try {
-                    Connection con = DriverManager.getConnection(PREFIX+host+"/"+dataBase+"?user="+userName+"&password="+password);// 连接数据库对象
+                    con=getConnection(new UserBean(userName,password,host,StaticData.DATA_BASE_NAME));
                     showLog("连接成功！");
                     mCallBack.onGetSqlConnection(con);
                 } catch (SQLException e) {
@@ -47,78 +49,6 @@ public class MySqlModel {
                 }
             }
         }).start();
-    }
-
-    public void getConfigTable(final Connection con, @Nullable final String mac){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Statement statement=null;
-                ResultSet resultSet=null;
-                try {
-                    statement = con.createStatement();
-                    if(mac!=null){
-                        resultSet = statement.executeQuery("SELECT * FROM ConfigTable WHERE HostId='"+mac+"'");
-                    }else {
-                        resultSet =statement.executeQuery("SELECT * FROM ConfigTable");
-                    }
-
-                    ArrayList<ConfigTable> configTables = getConfigTableByResultSet(resultSet);
-                    if(!configTables.isEmpty()){
-                        mCallBack.onGetConfigTableSuccess(configTables);
-                    }else {
-                        mCallBack.onTargetConfigTableNotExist();
-                    }
-                } catch (SQLException e) {
-                    showLog(e.getMessage());
-                    mCallBack.onGetConfigTableError(e.getMessage());
-                }finally {
-                    if(resultSet!=null){
-                        try {
-                            resultSet.close();
-                        } catch (SQLException e) {
-                            showLog(e.getMessage());
-                        }finally {
-                            resultSet=null;
-                        }
-                    }
-                    if(statement!=null){
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            showLog(e.getMessage());
-                        }finally {
-                            statement=null;
-                        }
-
-                    }
-                }
-            }
-        }).start();
-    }
-
-    private ArrayList<ConfigTable> getConfigTableByResultSet(ResultSet resultSet) throws SQLException {
-        ArrayList<ConfigTable> list=new ArrayList<>();
-        try {
-            while (resultSet.next()){
-                ConfigTable tb=new ConfigTable();
-                tb.setHostId(resultSet.getString("HostId"));
-                tb.setSpecVer(resultSet.getInt("SpecVer"));
-                tb.setOpCode(resultSet.getString("OpCode"));
-                tb.setTheOwner(resultSet.getString("TheOwner"));
-                tb.setCenterFreq(resultSet.getDouble("center_freq"));
-                tb.setSignalAmp(resultSet.getInt("signal_amp"));
-                tb.setSignFill(resultSet.getInt("sign_fill"));
-                tb.setToneLeft(resultSet.getInt("tone_index_left"));
-                tb.setToneRight(resultSet.getInt("tone_index_right"));
-                tb.setServiceBases(getServiceBasesByResultSet(resultSet));
-                list.add(tb);
-            }
-        } catch (SQLException e) {
-            showLog("error during getConfigTableByResultSet(ResultSet resultSet) :"+e.getMessage());
-            throw e;
-        }
-        return list;
     }
 
     private ArrayList<ServerBase> getServiceBasesByResultSet(ResultSet resultSet) throws SQLException {
@@ -219,67 +149,297 @@ public class MySqlModel {
         return list;
     }
 
-    public void updateConfigTable(final ConfigTable configTable, final Connection con) {
+
+
+    public void getStateTables(final UserBean userBean,@Nullable final String mac){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PreparedStatement statement=null;
+                Connection con=null;
                 try {
-                    String sql= genUpdateCfTableSqlCommand();
-                    statement = con.prepareStatement(sql);
-                    statement.setString(1,configTable.getHostId());
-                    statement.setInt(2,configTable.getSpecVer());
-                    statement.setString(3,configTable.getOpCode());
-                    statement.setString(4,configTable.getTheOwner());
-                    statement.setDouble(5,configTable.getCenterFreq());
-                    statement.setInt(6,configTable.getSignalAmp());
-                    statement.setInt(7,configTable.getSignFill());
-                    statement.setInt(8,configTable.getToneLeft());
-                    statement.setInt(9,configTable.getToneRight());
-                    int index=10;
-                    int size = configTable.getServiceBases().size();
-                    for (int i=0;i<8;i++){
-                        if(i<size){
-                            ServerBase temp = configTable.getServiceBases().get(i);
-                            statement.setInt(index++,temp.getFormCode());
-                            statement.setInt(index++,temp.getLdpcNum());
-                            statement.setInt(index++,temp.getLdpcRate());
-                            statement.setInt(index++,temp.getIntvSize());
-                            statement.setInt(index++,temp.getQamType());
+                    con=getConnection(userBean);
+                    Statement statement=null;
+                    ResultSet resultSet=null;
+                    try {
+                        statement =con.createStatement();
+                        if(mac!=null){
+                            resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
                         }else {
-                            statement.setInt(index++,0);
-                            statement.setInt(index++,0);
-                            statement.setInt(index++,0);
-                            statement.setInt(index++,0);
-                            statement.setInt(index++,0);
+                            resultSet=statement.executeQuery("SELECT * FROM StateTable");
+                        }
+                        ArrayList<StateTable> tableList = getStateTablesByResultSet(resultSet);
+                        mCallBack.onGetStateTablesSuccess(tableList);
+                    } catch (SQLException e) {
+                        showLog("error while running getStateTables(final UserBean userBean,@Nullable final String mac):"+e.getMessage());
+                        mCallBack.onGetStateTablesError(e.getMessage());
+                    }finally {
+                        if(resultSet!=null){
+                            try {
+                                resultSet.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } finally {
+                                resultSet=null;
+                            }
+                        }
+                        if(statement!=null){
+                            try {
+                                statement.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } finally {
+                                statement=null;
+                            }
+
                         }
                     }
-                    statement.setString(50,configTable.getHostId());
-                    statement.execute();
-                    int updateCount = statement.getUpdateCount();
-                    if(updateCount>0){
-                        mCallBack.onUpdateConfigTableSuccess();
-                    }else {
-                        //如果不见有配置表，这里可以申请新增一张。
-                        mCallBack.onTargetConfigTableNotExist();
-                    }
+
                 } catch (SQLException e) {
-                    showLog("error while running updateConfigTable(ConfigTable configTable,Connection con): "+e.getMessage());
-                    mCallBack.onUpdateConfigTableError(e.getMessage());
-                }finally {
-                    if(statement!=null){
+                    mCallBack.onSqlConnectionFail(e.getMessage());
+                } finally {
+                    if(con!=null){
                         try {
-                            statement.close();
+                            con.close();
                         } catch (SQLException e) {
                             e.printStackTrace();
-                        } finally {
-                            statement=null;
                         }
-
+                        con=null;
                     }
                 }
             }
         }).start();
+    }
+
+    public void getConfigTable(final UserBean userBean, final String mac){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Connection con=null;
+                try {
+                    con = getConnection(userBean);
+                    Statement statement=null;
+                    ResultSet resultSet=null;
+                    try {
+                        statement = con.createStatement();
+                        if(mac!=null){
+                            resultSet = statement.executeQuery("SELECT * FROM ConfigTable WHERE HostId='"+mac+"'");
+                        }else {
+                            resultSet =statement.executeQuery("SELECT * FROM ConfigTable");
+                        }
+
+                        ArrayList<ConfigTable> configTables = getConfigTableByResultSet(resultSet);
+                        if(!configTables.isEmpty()){
+                            mCallBack.onGetConfigTableSuccess(configTables);
+                        }else {
+                            mCallBack.onTargetConfigTableNotExist();
+                        }
+                    } catch (SQLException e) {
+                        showLog(e.getMessage());
+                        mCallBack.onGetConfigTableError(e.getMessage());
+                    }finally {
+                        if(resultSet!=null){
+                            try {
+                                resultSet.close();
+                            } catch (SQLException e) {
+                                showLog(e.getMessage());
+                            }
+                            resultSet=null;
+                        }
+                        if(statement!=null){
+                            try {
+                                statement.close();
+                            } catch (SQLException e) {
+                                showLog(e.getMessage());
+                            }
+                            statement=null;
+                        }
+                    }
+                } catch (SQLException e) {
+                    showLog("error while running getConfigTable(final UserBean userBean, final String mac):"+e.getMessage());
+                    mCallBack.onSqlConnectionFail(e.getMessage());
+                } finally {
+                    if(con!=null){
+                        try {
+                            con.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        con=null;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void updateConfigTable(final UserBean userBean, final ConfigTable configTable){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Connection con=null;
+                try {
+                    con=getConnection(userBean);
+                    PreparedStatement statement=null;
+                    try {
+                        String sql= genUpdateCfTableSqlCommand();
+                        statement = con.prepareStatement(sql);
+                        statement.setString(1,configTable.getHostId());
+                        statement.setInt(2,configTable.getSpecVer());
+                        statement.setString(3,configTable.getOpCode());
+                        statement.setString(4,configTable.getTheOwner());
+                        statement.setDouble(5,configTable.getCenterFreq());
+                        statement.setInt(6,configTable.getSignalAmp());
+                        statement.setInt(7,configTable.getSignFill());
+                        statement.setInt(8,configTable.getToneLeft());
+                        statement.setInt(9,configTable.getToneRight());
+                        int index=10;
+                        int size = configTable.getServiceBases().size();
+                        for (int i=0;i<8;i++){
+                            if(i<size){
+                                ServerBase temp = configTable.getServiceBases().get(i);
+                                statement.setInt(index++,temp.getFormCode());
+                                statement.setInt(index++,temp.getLdpcNum());
+                                statement.setInt(index++,temp.getLdpcRate());
+                                statement.setInt(index++,temp.getIntvSize());
+                                statement.setInt(index++,temp.getQamType());
+                            }else {
+                                statement.setInt(index++,0);
+                                statement.setInt(index++,0);
+                                statement.setInt(index++,0);
+                                statement.setInt(index++,0);
+                                statement.setInt(index++,0);
+                            }
+                        }
+                        statement.setString(50,configTable.getHostId());
+                        statement.execute();
+                        int updateCount = statement.getUpdateCount();
+                        if(updateCount>0){
+                            mCallBack.onUpdateConfigTableSuccess();
+                        }else {
+                            //如果不见有配置表，这里可以申请新增一张。
+                            mCallBack.onTargetConfigTableNotExist();
+                        }
+                    } catch (SQLException e) {
+                        showLog("error while running updateConfigTable(final UserBean userBean, final ConfigTable configTable): "+e.getMessage());
+                        mCallBack.onUpdateConfigTableError(e.getMessage());
+                    }finally {
+                        if(statement!=null){
+                            try {
+                                statement.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } finally {
+                                statement=null;
+                            }
+
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    mCallBack.onSqlConnectionFail(e.getMessage());
+                } finally {
+                    if(con!=null){
+                        try {
+                            con.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        con=null;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void createNewConfigTable(final UserBean userBean, final ConfigTable table){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Connection con=null;
+                try {
+                    con=getConnection(userBean);
+                    PreparedStatement statement=null;
+                    try {
+                        String sql= genInsertCfTableSqlCommand();
+                        statement = con.prepareStatement(sql);
+                        statement.setString(1,table.getHostId());
+                        statement.setInt(2,table.getSpecVer());
+                        statement.setString(3, StaticData.OP_CODE_REBOOT);
+                        statement.setString(4,table.getTheOwner());
+                        statement.setDouble(5,table.getCenterFreq());
+                        statement.setInt(6,table.getSignalAmp());
+                        statement.setInt(7,table.getSignFill());
+                        statement.setInt(8,table.getToneLeft());
+                        statement.setInt(9,table.getToneRight());
+                        int index=10;
+                        for(int i=0;i<40;i++){
+                            statement.setInt(index++,0);
+                        }
+                        try {
+                            statement.execute();
+                            int updateCount = statement.getUpdateCount();
+                            if(updateCount>0){
+                                mCallBack.onCreateNewConfigTableSuccess(table);
+                            }else {
+                                mCallBack.onCreateNewConfigTableFails("创建配置表失败，原因：未知，请联系思凯微电子公司。");
+                            }
+                        }catch (SQLException e){
+                            showLog("error while running createNewConfigTable(final UserBean userBean, final ConfigTable table): "+e.getMessage());
+                            mCallBack.onCreateNewConfigTableFails(e.getMessage());
+                        }
+
+                    } catch (SQLException e) {
+                        showLog("error while running createNewConfigTable(final UserBean userBean, final ConfigTable table): "+e.getMessage());
+                        mCallBack.onCreateNewConfigTableFails(e.getMessage());
+                    }finally {
+                        if(statement!=null){
+                            try {
+                                statement.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            statement=null;
+                        }
+                    }
+                } catch (SQLException e) {
+                    showLog("error while running createNewConfigTable(final UserBean userBean, final ConfigTable table):"+e.getMessage());
+                    mCallBack.onSqlConnectionFail(e.getMessage());
+                }finally {
+                    if(con!=null){
+                        try {
+                            con.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        con=null;
+                    }
+                }
+
+            }
+        }).start();
+    }
+
+    private ArrayList<ConfigTable> getConfigTableByResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<ConfigTable> list=new ArrayList<>();
+        try {
+            while (resultSet.next()){
+                ConfigTable tb=new ConfigTable();
+                tb.setHostId(resultSet.getString("HostId"));
+                tb.setSpecVer(resultSet.getInt("SpecVer"));
+                tb.setOpCode(resultSet.getString("OpCode"));
+                tb.setTheOwner(resultSet.getString("TheOwner"));
+                tb.setCenterFreq(resultSet.getDouble("center_freq"));
+                tb.setSignalAmp(resultSet.getInt("signal_amp"));
+                tb.setSignFill(resultSet.getInt("sign_fill"));
+                tb.setToneLeft(resultSet.getInt("tone_index_left"));
+                tb.setToneRight(resultSet.getInt("tone_index_right"));
+                tb.setServiceBases(getServiceBasesByResultSet(resultSet));
+                list.add(tb);
+            }
+        } catch (SQLException e) {
+            showLog("error during getConfigTableByResultSet(ResultSet resultSet) :"+e.getMessage());
+            throw e;
+        }
+        return list;
     }
 
     private String genUpdateCfTableSqlCommand() {
@@ -297,58 +457,6 @@ public class MySqlModel {
         }
         sb.append(" where HostId=?");
         return sb.toString();
-    }
-
-
-    public void createNewConfigTable(final ConfigTable table, final Connection con){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                PreparedStatement statement=null;
-                try {
-                    String sql= genInsertCfTableSqlCommand();
-                    statement = con.prepareStatement(sql);
-                    statement.setString(1,table.getHostId());
-                    statement.setInt(2,table.getSpecVer());
-                    statement.setString(3, StaticData.OP_CODE_REBOOT);
-                    statement.setString(4,table.getTheOwner());
-                    statement.setDouble(5,table.getCenterFreq());
-                    statement.setInt(6,table.getSignalAmp());
-                    statement.setInt(7,table.getSignFill());
-                    statement.setInt(8,table.getToneLeft());
-                    statement.setInt(9,table.getToneRight());
-                    int index=10;
-                    for(int i=0;i<40;i++){
-                        statement.setInt(index++,0);
-                    }
-                    try {
-                        statement.execute();
-                        int updateCount = statement.getUpdateCount();
-                        if(updateCount>0){
-                            mCallBack.onCreateNewConfigTableSuccess(table);
-                        }else {
-                            mCallBack.onCreateNewConfigTableFails("创建配置表失败，原因：未知，请联系思凯微电子公司。");
-                        }
-                    }catch (SQLException e){
-                        showLog("error while running createNewConfigTable(final ConfigTable table, final Connection con): "+e.getMessage());
-                        mCallBack.onCreateNewConfigTableFails(e.getMessage());
-                    }
-
-                } catch (SQLException e) {
-                    showLog("error while running createNewConfigTable(final ConfigTable table, final Connection con): "+e.getMessage());
-                    mCallBack.onCreateNewConfigTableFails(e.getMessage());
-                }finally {
-                    if(statement!=null){
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        statement=null;
-                    }
-                }
-            }
-        }).start();
     }
 
     private String genInsertCfTableSqlCommand(){
@@ -375,8 +483,16 @@ public class MySqlModel {
         return sb.toString();
     }
 
+    private Connection getConnection(UserBean userBean) throws SQLException {
+        return DriverManager.getConnection(PREFIX+userBean.getHost()+"/"
+                +userBean.getDataBaseName()+"?user="+userBean.getUserName()
+                +"&password="+userBean.getPassword());
+    }
+
 
     private void showLog(String msg){
         Log.e(getClass().getSimpleName(),msg);
     }
+
+
 }
