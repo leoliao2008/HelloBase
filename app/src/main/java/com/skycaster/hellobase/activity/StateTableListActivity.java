@@ -2,7 +2,6 @@ package com.skycaster.hellobase.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -25,7 +24,6 @@ public class StateTableListActivity extends BaseActivity {
     private ListView mListView;
     private ArrayList<StateTable> mList=new ArrayList<>();
     private StateTableListAdapter mAdapter;
-    private AlertDialog mAlertDialog;
 
     public static void start(Context context,ArrayList<StateTable>list) {
         Intent starter = new Intent(context, StateTableListActivity.class);

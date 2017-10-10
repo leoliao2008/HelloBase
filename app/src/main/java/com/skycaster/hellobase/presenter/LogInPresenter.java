@@ -14,6 +14,7 @@ import com.skycaster.hellobase.activity.LogInActivity;
 import com.skycaster.hellobase.activity.StateTableListActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
@@ -40,10 +41,12 @@ public class LogInPresenter {
     private MySqlModelCallBack mCallBack=new MySqlModelCallBack(){
         @Override
         public void onGetSqlConnection(Connection con) {
-            BaseApplication.setConnection(con);
-            BaseApplication.setIpAddress(mIp+":"+mPort);
-            BaseApplication.setUserName(mUserName);
-            BaseApplication.setPassword(mPw);
+            UserBean user=new UserBean();
+            user.setUserName(mUserName);
+            user.setPassword(mPw);
+            user.setHost(mIp+":"+mPort);
+            user.setDataBaseName(StaticData.DATA_BASE_NAME);
+            BaseApplication.setUser(user);
             mMySqlModel.getStateTables(con,null);
         }
 

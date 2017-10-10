@@ -40,6 +40,7 @@ public interface StaticData {
     int RESULT_CODE_EDIT_CONFIG_TABLE_OK = 753;
     int RESULT_CODE_EDIT_CONFIG_TABLE_FAIL = 735;
     String OP_CODE_REBOOT = "reboot";
+    String OP_CODE_RECONFIG = "reconfig";
     int[] STATE_SET_NORMAL=new int[]{
             R.attr.net_status_normal,
             -R.attr.net_status_initializing,
@@ -82,4 +83,5 @@ public interface StaticData {
             -R.attr.net_status_no_update,
             -R.attr.net_status_stopped,
             R.attr.net_status_unstable};
+
 }

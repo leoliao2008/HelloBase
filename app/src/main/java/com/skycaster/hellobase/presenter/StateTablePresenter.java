@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v7.app.ActionBar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -24,6 +25,7 @@ import com.skycaster.hellobase.activity.StateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.customize.MutableColorSpan;
 import com.skycaster.hellobase.customize.MutableSizeSpan;
 import com.skycaster.hellobase.data.StaticData;
@@ -32,7 +34,6 @@ import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.service.ServerConStatusMonitor;
 import com.skycaster.hellobase.utils.AlertDialogUtil;
 
-import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,12 +62,6 @@ public class StateTablePresenter {
     public StateTablePresenter(StateActivity activity) {
         mActivity = activity;
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
-            @Override
-            public void onGetSqlConnection(Connection con) {
-                super.onGetSqlConnection(con);
-                BaseApplication.setConnection(con);
-                toConfigTableActivity();
-            }
 
             @Override
             public void onSqlConnectionFail(String msg) {
@@ -84,8 +79,8 @@ public class StateTablePresenter {
             @Override
             public void onGetStateTablesError(String msg) {
                 super.onGetStateTablesError(msg);
-                mActivity.showToast("连接过期，重新链接......");
-                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+                dismissProgressDialog();
+                mActivity.showToast(msg);
             }
 
             @Override
@@ -102,8 +97,8 @@ public class StateTablePresenter {
 
             @Override
             public void onGetConfigTableError(String error) {
-                mActivity.showToast("数据库连接中断，重新链接...");
-                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+                dismissProgressDialog();
+                mActivity.showToast(error);
             }
 
             @Override
@@ -149,10 +144,14 @@ public class StateTablePresenter {
 
         mDateFormat= new SimpleDateFormat("HH时mm分ss秒", Locale.CHINA);
         mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
+        ActionBar supportActionBar = mActivity.getSupportActionBar();
+        if(supportActionBar!=null){
+            supportActionBar.setTitle(mStateTable.getTheOwner());
+        }
         if(mStateTable!=null){
             updateActivityUi(mStateTable);
             //假如已经有前台服务在运行
-            StateTable table = BaseApplication.getBoundTable();
+            StateTable table = BaseApplication.getCurrentStateTable();
             if(table !=null){
                 //更新前台服务对象
                 String newStbId=TextUtils.isEmpty(mStateTable.getHostId())?"null":mStateTable.getHostId();
@@ -202,7 +201,7 @@ public class StateTablePresenter {
     }
 
     public void onStart() {
-        boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false)||BaseApplication.getBoundTable()!=null;
+        boolean isServiceRunning = mActivity.getIntent().getBooleanExtra(StaticData.EXTRA_BOOLEAN_IS_SERVICE_RUNNING, false)||BaseApplication.getCurrentStateTable()!=null;
         mActivity.getToggleButton().setChecked(isServiceRunning);
         updateStatusReport(mNetStatus);
     }
@@ -323,9 +322,11 @@ public class StateTablePresenter {
 
     public void toConfigTableActivity(){
         showProgressDialog();
-        Connection con = BaseApplication.getConnection();
-        if(con!=null){
-            mMySqlModel.getConfigTable(con,mStateTable.getHostId());
+        UserBean user = BaseApplication.getUser();
+        if(user!=null){
+            mMySqlModel.getConfigTable(user,mStateTable.getHostId());
+        }else {
+            mActivity.showToast("登陆信息已过期，请重新登陆。");
         }
     }
 
@@ -361,7 +362,12 @@ public class StateTablePresenter {
                         configTable.setHostId(mStateTable.getHostId());
                         configTable.setOpCode(StaticData.OP_CODE_REBOOT);
                         configTable.setSpecVer(mStateTable.getCurVer());
-                        mMySqlModel.createNewConfigTable(configTable,BaseApplication.getConnection());
+                        UserBean user = BaseApplication.getUser();
+                        if(user!=null){
+                            mMySqlModel.createNewConfigTable(user,configTable);
+                        }else {
+                            mActivity.showToast("登陆信息已过期，请重新登陆。");
+                        }
                     }
                 }
         );

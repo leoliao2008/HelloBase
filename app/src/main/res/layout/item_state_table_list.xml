@@ -18,6 +18,17 @@
             android:layout_height="wrap_content"
             android:background="@color/colorDivider">
 
+            <TextView
+                android:id="@+id/item_state_table_list_tv_the_owner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="@dimen/sp_19"
+                android:padding="@dimen/dp_7"
+                android:text="武汉龟山实验室"
+                android:background="@color/colorGreen"
+                android:textColor="@color/colorWhite"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

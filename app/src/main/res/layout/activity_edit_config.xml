@@ -20,13 +20,13 @@ tools:context="com.skycaster.hellobase.activity.ConfigActivity">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorGreen">
 
         <TextView
             style="@style/TextViewStyle1"
             android:layout_width="match_parent"
             android:text="激励器配置表"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorGreen"
             android:layout_gravity="center"
             android:textColor="@color/colorWhite"
         />
@@ -165,7 +165,7 @@ tools:context="com.skycaster.hellobase.activity.ConfigActivity">
     <TextView
         style="@style/TextViewStyle1"
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorGreen"
         android:textColor="@color/colorWhite"
         android:text="业务配置清单"
     />

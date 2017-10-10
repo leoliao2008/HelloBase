@@ -128,6 +128,8 @@ public class MySqlModel {
                 String hostId = resultSet.getString("HostId");
                 hostId= TextUtils.isEmpty(hostId)?"unknown":hostId;
                 st.setHostId(hostId);
+                String theOwner = resultSet.getString("TheOwner");
+                st.setTheOwner(theOwner);
                 Timestamp timestamp = resultSet.getTimestamp("FeedbackTime");
                 if(timestamp==null){
                     timestamp=new Timestamp(0);

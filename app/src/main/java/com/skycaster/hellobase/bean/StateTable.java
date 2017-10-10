@@ -20,19 +20,13 @@ public class StateTable implements Parcelable{
     private String runningState;
     private long dateTime;
     private String notes;
+//    TheOwner      varchar(45), -- 运营商     新增选项
+    private String theOwner;
     private int stateCode= StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE;
 
     public StateTable() {
     }
 
-    protected StateTable(Parcel in) {
-        hostId = in.readString();
-        curVer = in.readInt();
-        runningState = in.readString();
-        dateTime=in.readLong();
-        notes = in.readString();
-        stateCode=in.readInt();
-    }
 
     public StateTable deepClone(){
         StateTable st=new StateTable();
@@ -42,20 +36,11 @@ public class StateTable implements Parcelable{
         st.setCurVer(curVer);
         st.setHostId(hostId);
         st.setStateCode(stateCode);
+        st.setTheOwner(theOwner);
         return st;
     }
 
-    public static final Creator<StateTable> CREATOR = new Creator<StateTable>() {
-        @Override
-        public StateTable createFromParcel(Parcel in) {
-            return new StateTable(in);
-        }
 
-        @Override
-        public StateTable[] newArray(int size) {
-            return new StateTable[size];
-        }
-    };
 
     public String getHostId() {
         return hostId;
@@ -105,20 +90,14 @@ public class StateTable implements Parcelable{
         this.stateCode = stateCode;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getTheOwner() {
+        return theOwner;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(hostId);
-        dest.writeInt(curVer);
-        dest.writeString(runningState);
-        dest.writeLong(dateTime);
-        dest.writeString(notes);
-        dest.writeInt(stateCode);
+    public void setTheOwner(String theOwner) {
+        this.theOwner = theOwner;
     }
+
 
     @Override
     public String toString() {
@@ -128,7 +107,46 @@ public class StateTable implements Parcelable{
                 ", runningState='" + runningState + '\'' +
                 ", dateTime=" + dateTime +
                 ", notes='" + notes + '\'' +
+                ", theOwner='" + theOwner + '\'' +
                 ", stateCode=" + stateCode +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.hostId);
+        dest.writeInt(this.curVer);
+        dest.writeString(this.runningState);
+        dest.writeLong(this.dateTime);
+        dest.writeString(this.notes);
+        dest.writeString(this.theOwner);
+        dest.writeInt(this.stateCode);
+    }
+
+    protected StateTable(Parcel in) {
+        this.hostId = in.readString();
+        this.curVer = in.readInt();
+        this.runningState = in.readString();
+        this.dateTime = in.readLong();
+        this.notes = in.readString();
+        this.theOwner = in.readString();
+        this.stateCode = in.readInt();
+    }
+
+    public static final Creator<StateTable> CREATOR = new Creator<StateTable>() {
+        @Override
+        public StateTable createFromParcel(Parcel source) {
+            return new StateTable(source);
+        }
+
+        @Override
+        public StateTable[] newArray(int size) {
+            return new StateTable[size];
+        }
+    };
 }

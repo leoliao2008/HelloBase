@@ -53,6 +53,7 @@ public class StateTableListAdapter extends BaseAdapter {
         vh.tv_version.setText(String.valueOf(stateTable.getCurVer()));
         vh.tv_id.setText(stateTable.getHostId());
         vh.tv_state.setText(stateTable.getRunningState());
+        vh.tv_owner.setText(stateTable.getTheOwner());
         return convertView;
     }
 
@@ -61,12 +62,14 @@ public class StateTableListAdapter extends BaseAdapter {
         private TextView tv_id;
         private TextView tv_state;
         private TextView tv_version;
+        private TextView tv_owner;
 
         public ViewHolder(View convertView) {
             this.convertView = convertView;
             tv_id=convertView.findViewById(R.id.item_state_table_list_tv_id);
             tv_state= convertView.findViewById(R.id.item_state_table_list_tv_status);
             tv_version=convertView.findViewById(R.id.item_state_table_list_tv_version);
+            tv_owner=convertView.findViewById(R.id.item_state_table_list_tv_the_owner);
         }
     }
 }

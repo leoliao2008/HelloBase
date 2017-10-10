@@ -15,11 +15,13 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.StateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
+import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
@@ -73,12 +75,7 @@ public class ServerConStatusMonitor extends Service {
         public void onGetStateTablesError(String msg) {
             mConnection=null;
             stopLooping();
-            mMySqlModel.connectMySql(
-                    BaseApplication.getIpAddress(),
-                    StaticData.DATA_BASE_NAME,
-                    BaseApplication.getUserName(),
-                    BaseApplication.getPassword()
-                    );
+            connectMySql();
         }
     };
 
@@ -97,11 +94,20 @@ public class ServerConStatusMonitor extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mStateTable = intent.getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
-        BaseApplication.setBoundTable(mStateTable);
+        BaseApplication.setCurrentStateTable(mStateTable);
         showForegroundNotification();
         updateNetStateByStateTable(mStateTable);
-        mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+        connectMySql();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void connectMySql(){
+        UserBean user = BaseApplication.getUser();
+        if(user!=null){
+            mMySqlModel.connectMySql(user.getHost(),StaticData.DATA_BASE_NAME,user.getUserName(),user.getPassword());
+        }else {
+            Toast.makeText(this,"登陆信息过期，请重新登陆。",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showLog(String msg) {
@@ -182,7 +188,7 @@ public class ServerConStatusMonitor extends Service {
         startForeground(123, mNotiBuilder.setContent(mRemoteViews).build());
 
         mStateTable.setStateCode(netState);
-        BaseApplication.setBoundTable(mStateTable);
+        BaseApplication.setCurrentStateTable(mStateTable);
 
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_NET_STATUS);
@@ -258,7 +264,7 @@ public class ServerConStatusMonitor extends Service {
     public void onDestroy() {
         super.onDestroy();
         showLog("onDestroy");
-        BaseApplication.setBoundTable(null);
+        BaseApplication.setCurrentStateTable(null);
 
         Intent intent=new Intent(StaticData.ACTION_SEVER_CON_STATUS_MONITOR);
         intent.putExtra(StaticData.EXTRA_INT_EVENT_TYPE,StaticData.EVENT_TYPE_SERVICE_DISMISS);

@@ -16,13 +16,13 @@ import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
 import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
 import com.skycaster.hellobase.model.MySqlModel;
 import com.skycaster.hellobase.model.SoftInputManager;
 import com.skycaster.hellobase.utils.AlertDialogUtil;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -48,18 +48,13 @@ public class ConfigTablePresenter {
     private int resultCode;
     private SoftInputManager mSoftInputManager;
     private ConfigTable mConfigTableBackUp;
+    private String mOpCode;
 
 
     public ConfigTablePresenter(ConfigActivity activity) {
         mActivity = activity;
         mHandler=new Handler();
         mMySqlModel=new MySqlModel(new MySqlModelCallBack(){
-            @Override
-            public void onGetSqlConnection(Connection con) {
-                super.onGetSqlConnection(con);
-                BaseApplication.setConnection(con);
-                mMySqlModel.updateConfigTable(mConfigTable, con);
-            }
 
             @Override
             public void onSqlConnectionFail(String msg) {
@@ -85,8 +80,12 @@ public class ConfigTablePresenter {
 
             @Override
             public void onUpdateConfigTableError(String msg) {
-                showToast("数据库链接中断，重新链接......");
-                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+                dismissProgressDialog();
+                if(msg.contains("command denied to user")){
+                    showToast("此用户无修改激励器配置参数的权限！");
+                }else {
+                    showToast("修改失败，原因："+msg);
+                }
             }
 
         });
@@ -95,7 +94,6 @@ public class ConfigTablePresenter {
 
     public void initData(){
         initListView();
-
         mConfigTable=mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_CONFIG_TABLE);
         if(mConfigTable!=null){
             updateUiByConfigTable(mConfigTable);
@@ -265,26 +263,60 @@ public class ConfigTablePresenter {
     }
 
     public void submit(final ConfigTable configTable) {
-        AlertDialogUtil.showBaseDialog(
-                mActivity,
-                "温馨提示",
-                "提交更改后，激励器将重新启动，您确定要提交吗？",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showProgressDialog();
-                        if(checkAndUpdateLocalConfigTable()){
-                            Connection con = BaseApplication.getConnection();
-                            if(con!=null){
-                                mMySqlModel.updateConfigTable(configTable, con);
-                            }else{
-                                mMySqlModel.connectMySql(BaseApplication.getIpAddress(),StaticData.DATA_BASE_NAME,BaseApplication.getUserName(),BaseApplication.getPassword());
+        if(checkAndUpdateLocalConfigTable()){
+            final UserBean user = BaseApplication.getUser();
+            if(user!=null){
+                mOpCode = StaticData.OP_CODE_RECONFIG;
+                if(mConfigTable.getSpecVer()!=mConfigTableBackUp.getSpecVer()){
+                    AlertDialogUtil.showBaseDialog(
+                            mActivity,
+                            "温馨提示",
+                            "您修改了激励器系统版本号，你可以选择提交后立即重启激励器，也可以延迟重启，这样新的版本号将在下次重启后才生效。",
+                            "立刻重启",
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mOpCode = StaticData.OP_CODE_REBOOT;
+                                    mConfigTable.setOpCode(mOpCode);
+                                    mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
+                                    showProgressDialog();
+                                    mMySqlModel.updateConfigTable(user,mConfigTable);
+                                }
+                            },
+                            "延迟重启",
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mConfigTable.setOpCode(mOpCode);
+                                    mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
+                                    showProgressDialog();
+                                    mMySqlModel.updateConfigTable(user,configTable);
+                                }
+                            },
+                            null,
+                            null
+                    );
+                }else {
+                    AlertDialogUtil.showBaseDialog(
+                            mActivity,
+                            "温馨提示",
+                            "您确定提交修改吗？",
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mConfigTable.setOpCode(mOpCode);
+                                    mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
+                                    showProgressDialog();
+                                    mMySqlModel.updateConfigTable(user,configTable);
+                                }
                             }
-
-                        }
-                    }
+                    );
                 }
-        );
+            }else{
+                dismissProgressDialog();
+                mActivity.showToast("登陆信息过期，请重新登陆。");
+            }
+        }
     }
 
     private boolean checkAndUpdateLocalConfigTable() {
@@ -329,9 +361,7 @@ public class ConfigTablePresenter {
         mConfigTable.setSignFill(Integer.parseInt(fill));
         mConfigTable.setToneLeft(Integer.parseInt(leftTune));
         mConfigTable.setToneRight(Integer.parseInt(rightTune));
-        mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
         mConfigTable.setSpecVer(Integer.parseInt(version));
-        mActivity.getEdt_opCode().setText(StaticData.OP_CODE_REBOOT);
         return true;
     }
 

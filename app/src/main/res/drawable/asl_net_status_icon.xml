@@ -69,7 +69,7 @@
     <transition
         android:fromId="@id/item_init"
         android:toId="@id/item_normal"
-        android:drawable="@drawable/avd_net_status_stop_to_normal"/>
+        android:drawable="@drawable/avd_net_status_init_to_normal"/>
 
 
 
