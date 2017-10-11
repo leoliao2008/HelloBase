@@ -38,14 +38,11 @@
             android:theme="@style/LoginPageTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".activity.StateTableListActivity"
-            android:label="激励器清单"/>
-        <activity
             android:name=".activity.ConfigActivity"
             android:label="配置表"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".activity.NewStateTableListActivity"
+            android:name=".activity.StateTableListActivity"
             android:label="激励器清单"/>
     </application>
 

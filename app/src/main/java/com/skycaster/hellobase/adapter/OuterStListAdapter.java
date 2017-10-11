@@ -18,10 +18,10 @@ import java.util.ArrayList;
  * Created by 廖华凯 on 2017/9/25.
  */
 
-public class NewStListAdapter extends BaseAdapter {
+public class OuterStListAdapter extends BaseAdapter {
     private ArrayList<StateTableLabel> mList;
     private Context mContext;
-    public NewStListAdapter(ArrayList<StateTableLabel> list, Context context) {
+    public OuterStListAdapter(ArrayList<StateTableLabel> list, Context context) {
         mList = list;
         mContext = context;
     }
@@ -54,7 +54,7 @@ public class NewStListAdapter extends BaseAdapter {
         final StateTableLabel label = mList.get(position);
         vh.tv_owner.setText(label.getTheOwner());
         MaxHeightListView list = vh.multi_table_view;
-        list.setAdapter(new InnerListAdapter(mContext,label.getStateTables()));
+        list.setAdapter(new InnerStListAdapter(mContext,label.getStateTables()));
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

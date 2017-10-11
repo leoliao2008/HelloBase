@@ -10,18 +10,19 @@ import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.bean.StateTable;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
- * Created by 廖华凯 on 2017/9/25.
+ * Created by 廖华凯 on 2017/10/11.
  */
 
-public class StateTableListAdapter extends BaseAdapter {
-    private ArrayList<StateTable> mList;
+public class InnerStListAdapter extends BaseAdapter {
     private Context mContext;
+    private ArrayList<StateTable> mList;
 
-    public StateTableListAdapter(ArrayList<StateTable> list, Context context) {
-        mList = list;
+    public InnerStListAdapter(Context context, ArrayList<StateTable> list) {
         mContext = context;
+        mList = list;
     }
 
     @Override
@@ -43,17 +44,17 @@ public class StateTableListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh;
         if(convertView==null){
-            convertView=View.inflate(mContext,R.layout.item_state_table_list,null);
+            convertView=View.inflate(mContext,R.layout.item_innter_list_view_item,null);
             vh=new ViewHolder(convertView);
             convertView.setTag(vh);
         }else {
             vh= (ViewHolder) convertView.getTag();
         }
         StateTable stateTable = mList.get(position);
-        vh.tv_version.setText(String.valueOf(stateTable.getCurVer()));
         vh.tv_id.setText(stateTable.getHostId());
         vh.tv_state.setText(stateTable.getRunningState());
-        vh.tv_owner.setText(stateTable.getTheOwner());
+        vh.tv_version.setText(String.valueOf(stateTable.getCurVer()));
+        vh.tv_index.setText(String.format(Locale.CHINA,"%02d",position+1));
         return convertView;
     }
 
@@ -62,14 +63,14 @@ public class StateTableListAdapter extends BaseAdapter {
         private TextView tv_id;
         private TextView tv_state;
         private TextView tv_version;
-        private TextView tv_owner;
+        private TextView tv_index;
 
         public ViewHolder(View convertView) {
             this.convertView = convertView;
             tv_id=convertView.findViewById(R.id.item_state_table_list_tv_id);
             tv_state= convertView.findViewById(R.id.item_state_table_list_tv_status);
             tv_version=convertView.findViewById(R.id.item_state_table_list_tv_version);
-            tv_owner=convertView.findViewById(R.id.item_state_table_list_tv_the_owner);
+            tv_index=convertView.findViewById(R.id.item_state_table_list_tv_index);
         }
     }
 }
