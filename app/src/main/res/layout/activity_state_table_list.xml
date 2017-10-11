@@ -11,7 +11,8 @@
     <ListView
         android:id="@+id/activity_state_table_list_lst_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:scrollbars="none"/>
 
 
 

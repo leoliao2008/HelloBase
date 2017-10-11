@@ -140,10 +140,12 @@ tools:context="com.skycaster.hellobase.activity.ConfigActivity">
             android:text="左频"
             style="@style/TextViewStyle1"/>
 
-        <EditText
-            android:inputType="number"
+        <TextView
+            android:text="36"
             android:id="@+id/activity_edit_config_edt_left_tune"
-            style="@style/EditTextStyle2"/>
+            style="@style/EditTextStyle2"
+            android:textSize="@dimen/sp_18"
+            android:textColor="@color/color_selector_grey_to_purple"/>
 
     </LinearLayout>
 
@@ -155,10 +157,12 @@ tools:context="com.skycaster.hellobase.activity.ConfigActivity">
             android:text="右频"
             style="@style/TextViewStyle1"/>
 
-        <EditText
-            android:inputType="number"
+        <TextView
+            android:text="45"
             android:id="@+id/activity_edit_config_edt_right_tune"
-            style="@style/EditTextStyle2"/>
+            style="@style/EditTextStyle2"
+            android:textSize="@dimen/sp_18"
+            android:textColor="@color/color_selector_grey_to_purple"/>
 
     </LinearLayout>
 

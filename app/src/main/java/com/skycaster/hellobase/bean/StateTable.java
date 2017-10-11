@@ -149,4 +149,20 @@ public class StateTable implements Parcelable{
             return new StateTable[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StateTable that = (StateTable) o;
+
+        return theOwner != null ? theOwner.equals(that.theOwner) : that.theOwner == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return theOwner != null ? theOwner.hashCode() : 0;
+    }
 }

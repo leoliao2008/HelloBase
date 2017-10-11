@@ -11,7 +11,7 @@ import android.text.method.PasswordTransformationMethod;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.LogInActivity;
-import com.skycaster.hellobase.activity.StateTableListActivity;
+import com.skycaster.hellobase.activity.NewStateTableListActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.bean.UserBean;
@@ -62,7 +62,7 @@ public class LogInPresenter {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    StateTableListActivity.start(mActivity,stateTables);
+                    NewStateTableListActivity.start(mActivity,stateTables);
                     mActivity.finish();
                 }
             });

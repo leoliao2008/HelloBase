@@ -44,6 +44,9 @@
             android:name=".activity.ConfigActivity"
             android:label="配置表"
             android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".activity.NewStateTableListActivity"
+            android:label="激励器清单"/>
     </application>
 
 </manifest>

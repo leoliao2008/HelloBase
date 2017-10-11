@@ -1,6 +1,7 @@
 package com.skycaster.hellobase.presenter;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -147,12 +148,10 @@ public class ConfigTablePresenter {
         mActivity.getEdt_fill().setSelection(fill.length());
 
         String left = String.valueOf(tb.getToneLeft());
-        mActivity.getEdt_leftTune().setText(left);
-        mActivity.getEdt_leftTune().setSelection(left.length());
+        mActivity.getTv_leftTune().setText(left);
 
         String right = String.valueOf(tb.getToneRight());
-        mActivity.getEdt_rightTune().setText(right);
-        mActivity.getEdt_rightTune().setSelection(right.length());
+        mActivity.getTv_rightTune().setText(right);
 
         ArrayList<ServerBase> bases = tb.getServiceBases();
         mServerBases.clear();
@@ -167,10 +166,64 @@ public class ConfigTablePresenter {
         mActivity.getEdt_frq().setEnabled(isToEnable);
         mActivity.getEdt_amp().setEnabled(isToEnable);
         mActivity.getEdt_fill().setEnabled(isToEnable);
-        mActivity.getEdt_leftTune().setEnabled(isToEnable);
-        mActivity.getEdt_rightTune().setEnabled(isToEnable);
+        mActivity.getTv_leftTune().setEnabled(isToEnable);
+        mActivity.getTv_rightTune().setEnabled(isToEnable);
         mActivity.getEdt_version().setEnabled(isToEnable);
     }
+
+    public void showAlertDialogChooseTunes(){
+        if(!mActivity.getIsInEditMode().get()){
+            return;
+        }
+        String[] items=new String[]{
+                "左频36，右频45",
+                "左频26，右频45",
+                "左频46，右频60"
+        };
+        int leftTune=Integer.valueOf(mActivity.getTv_leftTune().getText().toString().trim());
+        int rightTune=Integer.valueOf(mActivity.getTv_rightTune().getText().toString().trim());
+        int checkedItem;
+        if(leftTune==36&&rightTune==45){
+            checkedItem=0;
+        }else if(leftTune==26&&rightTune==45){
+            checkedItem=1;
+        }else if(leftTune==46&&rightTune==60){
+            checkedItem=2;
+        }else {
+            checkedItem=-1;
+        }
+        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
+        mAlertDialog = builder.setTitle("请选择左频及右频参数")
+                .setSingleChoiceItems(
+                        items,
+                        checkedItem,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case 0:
+                                        mActivity.getTv_leftTune().setText("36");
+                                        mActivity.getTv_rightTune().setText("45");
+                                        break;
+                                    case 1:
+                                        mActivity.getTv_leftTune().setText("26");
+                                        mActivity.getTv_rightTune().setText("45");
+                                        break;
+                                    case 2:
+                                        mActivity.getTv_leftTune().setText("46");
+                                        mActivity.getTv_rightTune().setText("60");
+                                        break;
+                                }
+                                mAlertDialog.dismiss();
+                            }
+                        }
+
+                )
+                .create();
+        mAlertDialog.show();
+    }
+
+
 
     public void showEditServerBaseDialog(final int position) {
         //init view
@@ -340,12 +393,12 @@ public class ConfigTablePresenter {
             showToast("输出功率（粗调）不能为空。");
             return false;
         }
-        String leftTune = mActivity.getEdt_leftTune().getText().toString().trim();
+        String leftTune = mActivity.getTv_leftTune().getText().toString().trim();
         if(TextUtils.isEmpty(leftTune)){
             showToast("左频不能为空。");
             return false;
         }
-        String rightTune = mActivity.getEdt_rightTune().getText().toString().trim();
+        String rightTune = mActivity.getTv_rightTune().getText().toString().trim();
         if(TextUtils.isEmpty(rightTune)){
             showToast("右频不能为空。");
             return false;

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.base.BaseActivity;
@@ -29,8 +30,8 @@ public class ConfigActivity extends BaseActivity {
     private EditText edt_frq;
     private EditText edt_amp;
     private EditText edt_fill;
-    private EditText edt_leftTune;
-    private EditText edt_rightTune;
+    private TextView tv_leftTune;
+    private TextView tv_rightTune;
     private MaxHeightListView mListView;
     private ScrollView mScrollerView;
     private ConfigTablePresenter mPresenter;
@@ -59,8 +60,8 @@ public class ConfigActivity extends BaseActivity {
         edt_amp= (EditText) findViewById(R.id.activity_edit_config_edt_amp);
         edt_frq= (EditText) findViewById(R.id.activity_edit_config_edt_frq);
         edt_fill= (EditText) findViewById(R.id.activity_edit_config_edt_fill);
-        edt_leftTune= (EditText) findViewById(R.id.activity_edit_config_edt_left_tune);
-        edt_rightTune= (EditText) findViewById(R.id.activity_edit_config_edt_right_tune);
+        tv_leftTune = (TextView) findViewById(R.id.activity_edit_config_edt_left_tune);
+        tv_rightTune = (TextView) findViewById(R.id.activity_edit_config_edt_right_tune);
         mListView= (MaxHeightListView) findViewById(R.id.activity_edit_config_list_view);
         mScrollerView= (ScrollView) findViewById(R.id.activity_edit_config_scroll_view);
 
@@ -82,6 +83,20 @@ public class ConfigActivity extends BaseActivity {
                 if(isInEditMode.get()){
                     mPresenter.showEditServerBaseDialog(position);
                 }
+            }
+        });
+
+        tv_leftTune.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.showAlertDialogChooseTunes();
+            }
+        });
+
+        tv_rightTune.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.showAlertDialogChooseTunes();
             }
         });
 
@@ -115,12 +130,12 @@ public class ConfigActivity extends BaseActivity {
         return edt_fill;
     }
 
-    public EditText getEdt_leftTune() {
-        return edt_leftTune;
+    public TextView getTv_leftTune() {
+        return tv_leftTune;
     }
 
-    public EditText getEdt_rightTune() {
-        return edt_rightTune;
+    public TextView getTv_rightTune() {
+        return tv_rightTune;
     }
 
     public MaxHeightListView getListView() {
