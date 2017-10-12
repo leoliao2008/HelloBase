@@ -303,7 +303,9 @@ public class ConfigTablePresenter {
     }
 
     private void dismissAlertDialog() {
-        mAlertDialog.dismiss();
+        if(mAlertDialog!=null){
+            mAlertDialog.dismiss();
+        }
         mSoftInputManager.hideInputWindow();
     }
 

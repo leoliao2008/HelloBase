@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * Created by 廖华凯 on 2017/9/12.
@@ -58,11 +59,26 @@ public class MySqlModel {
             while (id<8){
                 ServerBase serviceBase=new ServerBase();
                 serviceBase.setId(id);
-                serviceBase.setFormCode(resultSet.getInt("s"+id+"_form_code"));
-                serviceBase.setLdpcNum(resultSet.getInt("s"+id+"_ldpc_num"));
-                serviceBase.setLdpcRate(resultSet.getInt("s"+id+"_ldpc_rate"));
-                serviceBase.setIntvSize(resultSet.getInt("s"+id+"_intv_size"));
-                serviceBase.setQamType(resultSet.getInt("s"+id+"_qam_type"));
+                String[] phyParas = resultSet.getString("s" + id + "_phy_para").split(Pattern.quote(","));
+                if(phyParas.length==5){
+                    serviceBase.setFormCode(Integer.parseInt(phyParas[0]));
+                    serviceBase.setLdpcNum(Integer.parseInt(phyParas[1]));
+                    serviceBase.setLdpcRate(Integer.parseInt(phyParas[2]));
+                    serviceBase.setIntvSize(Integer.parseInt(phyParas[3]));
+                    serviceBase.setQamType(Integer.parseInt(phyParas[4]));
+                }
+                String[] corsParas = resultSet.getString("s" + id + "_cors_para").split(Pattern.quote(","));
+//              '服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'
+                if(corsParas.length==8){
+                    serviceBase.setIp(corsParas[0]);
+                    serviceBase.setPort(corsParas[1]);
+                    serviceBase.setUserName(corsParas[2]);
+                    serviceBase.setPw(corsParas[3]);
+                    serviceBase.setDataFormat(corsParas[4]);
+                    serviceBase.setLatitude(corsParas[5]);
+                    serviceBase.setLongitude(corsParas[6]);
+                    serviceBase.setHeight(corsParas[7]);
+                }
                 list.add(serviceBase);
                 id++;
             }

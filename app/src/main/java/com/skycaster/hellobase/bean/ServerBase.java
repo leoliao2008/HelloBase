@@ -8,29 +8,31 @@ import android.os.Parcelable;
  */
 
 public class ServerBase implements Parcelable {
-    private int id;
+    private int id=0;
 //    s0_form_code	  integer not null default 33,-- 此项不用翻译
 //    s0_ldpc_num		  integer not null default 15, -- 业务0 LDCP码字个数
 //    s0_ldpc_rate	  integer not null default 2,  -- 业务0 LDPC码率
 //    s0_intv_size	  integer not null default 8,  -- 业务0 交织块大小
 //    s0_qam_type		  integer not null default 0,  -- 业务0 调制类型
-    private int formCode;
-    private int ldpcNum;
-    private int ldpcRate;
-    private int intvSize;
-    private int qamType;
+    private int formCode=0;
+    private int ldpcNum=0;
+    private int ldpcRate=0;
+    private int intvSize=0;
+    private int qamType=0;
+//    '服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'      ----新增属性
+    private String ip="null";
+    private String port="null";
+    private String userName="null";
+    private String pw="null";
+    private String dataFormat="null";
+    private String latitude="null";
+    private String longitude="null";
+    private String height="null";
+
 
     public ServerBase() {
     }
 
-    public ServerBase(Parcel in){
-        id=in.readInt();
-        formCode=in.readInt();
-        ldpcNum=in.readInt();
-        ldpcRate=in.readInt();
-        intvSize=in.readInt();
-        qamType=in.readInt();
-    }
 
     public void setId(int id) {
         this.id = id;
@@ -80,32 +82,69 @@ public class ServerBase implements Parcelable {
         return qamType;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getIp() {
+        return ip;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(formCode);
-        dest.writeInt(ldpcNum);
-        dest.writeInt(ldpcRate);
-        dest.writeInt(intvSize);
-        dest.writeInt(qamType);
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    public static final Creator<ServerBase> CREATOR=new Creator<ServerBase>() {
-        @Override
-        public ServerBase createFromParcel(Parcel source) {
-            return new ServerBase(source) ;
-        }
+    public String getPort() {
+        return port;
+    }
 
-        @Override
-        public ServerBase[] newArray(int size) {
-            return new ServerBase[size];
-        }
-    } ;
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPw() {
+        return pw;
+    }
+
+    public void setPw(String pw) {
+        this.pw = pw;
+    }
+
+    public String getDataFormat() {
+        return dataFormat;
+    }
+
+    public void setDataFormat(String dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
 
     public ServerBase deepClone(){
         ServerBase sb=new ServerBase();
@@ -115,9 +154,67 @@ public class ServerBase implements Parcelable {
         sb.setIntvSize(intvSize);
         sb.setQamType(qamType);
         sb.setLdpcRate(ldpcRate);
+        sb.setIp(ip);
+        sb.setPort(port);
+        sb.setDataFormat(dataFormat);
+        sb.setUserName(userName);
+        sb.setPw(pw);
+        sb.setLatitude(latitude);
+        sb.setLongitude(longitude);
+        sb.setHeight(height);
         return sb;
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeInt(this.formCode);
+        dest.writeInt(this.ldpcNum);
+        dest.writeInt(this.ldpcRate);
+        dest.writeInt(this.intvSize);
+        dest.writeInt(this.qamType);
+        dest.writeString(this.ip);
+        dest.writeString(this.port);
+        dest.writeString(this.userName);
+        dest.writeString(this.pw);
+        dest.writeString(this.dataFormat);
+        dest.writeString(this.latitude);
+        dest.writeString(this.longitude);
+        dest.writeString(this.height);
+    }
+
+    protected ServerBase(Parcel in) {
+        this.id = in.readInt();
+        this.formCode = in.readInt();
+        this.ldpcNum = in.readInt();
+        this.ldpcRate = in.readInt();
+        this.intvSize = in.readInt();
+        this.qamType = in.readInt();
+        this.ip = in.readString();
+        this.port = in.readString();
+        this.userName = in.readString();
+        this.pw = in.readString();
+        this.dataFormat = in.readString();
+        this.latitude = in.readString();
+        this.longitude = in.readString();
+        this.height = in.readString();
+    }
+
+    public static final Creator<ServerBase> CREATOR = new Creator<ServerBase>() {
+        @Override
+        public ServerBase createFromParcel(Parcel source) {
+            return new ServerBase(source);
+        }
+
+        @Override
+        public ServerBase[] newArray(int size) {
+            return new ServerBase[size];
+        }
+    };
 }
