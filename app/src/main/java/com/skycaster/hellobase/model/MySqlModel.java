@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -77,7 +78,7 @@ public class MySqlModel {
                     serviceBase.setDataFormat(corsParas[4]);
                     serviceBase.setLatitude(corsParas[5]);
                     serviceBase.setLongitude(corsParas[6]);
-                    serviceBase.setHeight(corsParas[7]);
+                    serviceBase.setAltitude(corsParas[7]);
                 }
                 list.add(serviceBase);
                 id++;
@@ -313,21 +314,79 @@ public class MySqlModel {
                         int size = configTable.getServiceBases().size();
                         for (int i=0;i<8;i++){
                             if(i<size){
+//                                #'form_code, ldpc_num, ldpc_rate, intv_size, qam_type'
                                 ServerBase temp = configTable.getServiceBases().get(i);
-                                statement.setInt(index++,temp.getFormCode());
-                                statement.setInt(index++,temp.getLdpcNum());
-                                statement.setInt(index++,temp.getLdpcRate());
-                                statement.setInt(index++,temp.getIntvSize());
-                                statement.setInt(index++,temp.getQamType());
+                                statement.setString(index++,
+                                        new StringBuffer()
+                                        .append(temp.getFormCode())
+                                        .append(",")
+                                        .append(temp.getLdpcNum())
+                                        .append(",")
+                                        .append(temp.getLdpcRate())
+                                        .append(",")
+                                        .append(temp.getIntvSize())
+                                        .append(",")
+                                        .append(temp.getQamType())
+                                        .toString()
+
+                                );
+//                                #'服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'
+                                statement.setString(index++,
+                                        new StringBuilder()
+                                        .append(temp.getIp())
+                                        .append(",")
+                                        .append(temp.getPort())
+                                        .append(",")
+                                        .append(temp.getUserName())
+                                        .append(",")
+                                        .append(temp.getPw())
+                                        .append(",")
+                                        .append(temp.getDataFormat())
+                                        .append(",")
+                                        .append(temp.getLatitude())
+                                        .append(",")
+                                        .append(temp.getLongitude())
+                                        .append(",")
+                                        .append(temp.getAltitude())
+                                        .toString()
+                                );
                             }else {
-                                statement.setInt(index++,0);
-                                statement.setInt(index++,0);
-                                statement.setInt(index++,0);
-                                statement.setInt(index++,0);
-                                statement.setInt(index++,0);
+                                statement.setString(index++,
+                                        new StringBuffer()
+                                                .append(0)
+                                                .append(",")
+                                                .append(0)
+                                                .append(",")
+                                                .append(0)
+                                                .append(",")
+                                                .append(0)
+                                                .append(",")
+                                                .append(0)
+                                                .toString()
+
+                                );
+                                statement.setString(index++,
+                                        new StringBuilder()
+                                                .append("0.0.0.0")
+                                                .append(",")
+                                                .append("0")
+                                                .append(",")
+                                                .append("null")
+                                                .append(",")
+                                                .append("null")
+                                                .append(",")
+                                                .append("null")
+                                                .append(",")
+                                                .append("0")
+                                                .append(",")
+                                                .append("0")
+                                                .append(",")
+                                                .append("0")
+                                                .toString()
+                                );
                             }
                         }
-                        statement.setString(50,configTable.getHostId());
+                        statement.setString(index,configTable.getHostId());
                         statement.execute();
                         int updateCount = statement.getUpdateCount();
                         if(updateCount>0){
@@ -389,8 +448,9 @@ public class MySqlModel {
                         statement.setInt(8,table.getToneLeft());
                         statement.setInt(9,table.getToneRight());
                         int index=10;
-                        for(int i=0;i<40;i++){
-                            statement.setInt(index++,0);
+                        for(int i=0;i<16;i++){
+                            statement.setString(index++,"null");
+                            statement.setString(index++,"null");
                         }
                         try {
                             statement.execute();
@@ -436,6 +496,83 @@ public class MySqlModel {
         }).start();
     }
 
+    public void getLog(final UserBean user, final String hostId){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Connection connection=null;
+                try {
+                    connection=getConnection(user);
+                    if(connection!=null){
+                        Statement statement = null;
+                        try {
+                            statement = connection.createStatement();
+                            ResultSet resultSet=null;
+                            try {
+                                resultSet = statement.executeQuery("SELECT * FROM RecordTable WHERE HostId='" + hostId + "'");
+                                ArrayList<com.skycaster.hellobase.bean.Log> list = obtainLogByResultSet(resultSet);
+                                mCallBack.onObtainLog(list);
+                            } catch (SQLException e) {
+                                showLog("Error while executing getLog(final UserBean user, String hostId):"+e.getMessage());
+                                mCallBack.onGetLogError(hostId,e.getMessage());
+                            } finally {
+                                if(resultSet!=null){
+                                    try {
+                                        resultSet.close();
+                                    }catch (SQLException e){
+                                        e.printStackTrace();
+                                    }
+                                    resultSet=null;
+                                }
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }finally {
+                            if(statement!=null){
+                                try {
+                                    statement.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                statement=null;
+                            }
+                        }
+
+                    }
+                } catch (SQLException e) {
+                    showLog("Error while executing getLog(final UserBean user, String hostId):"+e.getMessage());
+                    mCallBack.onSqlConnectionFail(e.getMessage());
+                } finally {
+                    if(connection!=null){
+                        try {
+                            connection.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        connection=null;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private ArrayList<com.skycaster.hellobase.bean.Log> obtainLogByResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<com.skycaster.hellobase.bean.Log> list=new ArrayList<>();
+        try {
+            while (resultSet.next()){
+                com.skycaster.hellobase.bean.Log log=new com.skycaster.hellobase.bean.Log();
+                log.setHostId(resultSet.getString("HostId"));
+                log.setRecordTime(new Date(resultSet.getTimestamp("RecordTime").getTime()));
+                log.setNotes(resultSet.getString("Notes"));
+                list.add(log);
+            }
+        }catch (SQLException e){
+            showLog("error while executing obtainLogByResultSet(ResultSet resultSet):+e.getMessage()");
+            throw new SQLException(e.getMessage());
+        }
+        return list;
+    }
+
     private ArrayList<ConfigTable> getConfigTableByResultSet(ResultSet resultSet) throws SQLException {
         ArrayList<ConfigTable> list=new ArrayList<>();
         try {
@@ -464,11 +601,8 @@ public class MySqlModel {
         StringBuilder sb=new StringBuilder();
         sb.append("update ConfigTable set HostId=?,SpecVer=?,OpCode=?,TheOwner=?,center_freq=?,signal_amp=?,sign_fill=?,tone_index_left=?,tone_index_right=?,");
         for (int i=0;i<8;i++){
-            sb.append("s").append(i).append("_form_code=?,");
-            sb.append("s").append(i).append("_ldpc_num=?,");
-            sb.append("s").append(i).append("_ldpc_rate=?,");
-            sb.append("s").append(i).append("_intv_size=?,");
-            sb.append("s").append(i).append("_qam_type=?");
+            sb.append("s").append(i).append("_phy_para=?,");
+            sb.append("s").append(i).append("_cors_para=?");
             if(i<7){
                 sb.append(",");
             }
@@ -481,19 +615,16 @@ public class MySqlModel {
         StringBuilder sb=new StringBuilder();
         sb.append("insert into ConfigTable (HostId,SpecVer,OpCode,TheOwner,center_freq,signal_amp,sign_fill,tone_index_left,tone_index_right,");
         for(int i=0;i<8;i++){
-            sb.append("s").append(i).append("_form_code,");
-            sb.append("s").append(i).append("_ldpc_num,");
-            sb.append("s").append(i).append("_ldpc_rate,");
-            sb.append("s").append(i).append("_intv_size,");
-            sb.append("s").append(i).append("_qam_type");
+            sb.append("s").append(i).append("_phy_para=?,");
+            sb.append("s").append(i).append("_cors_para=?");
             if(i<7){
                 sb.append(",");
             }
         }
         sb.append(") values(");
-        for (int i=0;i<49;i++){
+        for (int i=0;i<25;i++){
             sb.append("?");
-            if(i<48){
+            if(i<24){
                 sb.append(",");
             }
         }

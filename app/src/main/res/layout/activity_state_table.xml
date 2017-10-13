@@ -97,9 +97,11 @@
             android:text="激励器状态"
             />
         <Button
+            android:id="@+id/state_btn_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"/>
+            android:layout_gravity="end"
+            android:text="运行日志"/>
     </FrameLayout>
 
     <android.support.percent.PercentRelativeLayout

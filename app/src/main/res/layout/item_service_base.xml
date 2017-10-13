@@ -92,5 +92,14 @@
             />
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/item_service_base_tv_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/selector_ic_more_24dp"
+        android:layout_alignBottom="@id/item_service_base_tv_id"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dp_10"/>
+
 
 </RelativeLayout>

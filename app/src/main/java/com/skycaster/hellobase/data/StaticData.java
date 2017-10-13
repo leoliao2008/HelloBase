@@ -84,4 +84,5 @@ public interface StaticData {
             -R.attr.net_status_stopped,
             R.attr.net_status_unstable};
 
+    String EXTRA_LOGS = "EXTRA_LOGS";
 }

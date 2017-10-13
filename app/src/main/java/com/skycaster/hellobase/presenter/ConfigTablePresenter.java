@@ -7,11 +7,7 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
-import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ConfigActivity;
 import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
 import com.skycaster.hellobase.base.BaseApplication;
@@ -25,7 +21,6 @@ import com.skycaster.hellobase.model.SoftInputManager;
 import com.skycaster.hellobase.utils.AlertDialogUtil;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * 创建者     $Author$
@@ -110,9 +105,21 @@ public class ConfigTablePresenter {
     }
 
     private void initListView() {
-        mAdapter=new ServiceBaseAdapter(mServerBases,mActivity);
+        mAdapter=new ServiceBaseAdapter(mServerBases, mActivity, new ServiceBaseAdapter.CallBack() {
+            @Override
+            public void onPressMoreIcon(int position, ServerBase serverBase) {
+                AlertDialogUtil.showServerBaseDetails(mActivity,serverBase,position);
+            }
+
+            @Override
+            public void onPressSettingIcon(int position, ServerBase serverBase) {
+                showEditServerBaseDialog(position);
+            }
+        });
         mActivity.getListView().setAdapter(mAdapter);
     }
+
+
 
     private void updateUiByConfigTable(ConfigTable tb) {
         String hostId = tb.getHostId();
@@ -158,17 +165,18 @@ public class ConfigTablePresenter {
         mServerBases.addAll(bases);
         mAdapter.notifyDataSetChanged();
 
-        toggleUIFocusability(mActivity.getIsInEditMode().get());
+        toggleUIByMode(mActivity.getIsInEditMode().get());
     }
 
-    private void toggleUIFocusability(boolean isToEnable) {
-        mActivity.getEdt_vendor().setEnabled(isToEnable);
-        mActivity.getEdt_frq().setEnabled(isToEnable);
-        mActivity.getEdt_amp().setEnabled(isToEnable);
-        mActivity.getEdt_fill().setEnabled(isToEnable);
-        mActivity.getTv_leftTune().setEnabled(isToEnable);
-        mActivity.getTv_rightTune().setEnabled(isToEnable);
-        mActivity.getEdt_version().setEnabled(isToEnable);
+    private void toggleUIByMode(boolean isToEditMode) {
+        mActivity.getEdt_vendor().setEnabled(isToEditMode);
+        mActivity.getEdt_frq().setEnabled(isToEditMode);
+        mActivity.getEdt_amp().setEnabled(isToEditMode);
+        mActivity.getEdt_fill().setEnabled(isToEditMode);
+        mActivity.getTv_leftTune().setEnabled(isToEditMode);
+        mActivity.getTv_rightTune().setEnabled(isToEditMode);
+        mActivity.getEdt_version().setEnabled(isToEditMode);
+        mAdapter.toggleMode(isToEditMode);
     }
 
     public void showAlertDialogChooseTunes(){
@@ -226,80 +234,15 @@ public class ConfigTablePresenter {
 
 
     public void showEditServerBaseDialog(final int position) {
-        //init view
-        View rootView=View.inflate(mActivity, R.layout.dialog_edit_base_server,null);
-        final EditText edt_qamType=rootView.findViewById(R.id.dialog_config_server_base_edt_qam_type);
-        final EditText edt_ldcpNum=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_num);
-        final EditText edt_ldcpSize=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_size);
-        final EditText edt_ldcpRate=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_rate);
-        TextView tv_order=rootView.findViewById(R.id.dialog_config_server_base_tv_order);
-        Button btn_confirm=rootView.findViewById(R.id.dialog_config_server_base_btn_confirm);
-        Button btn_cancel=rootView.findViewById(R.id.dialog_config_server_base_btn_cancel);
-        //init data
-        final ServerBase base = mServerBases.get(position);
-        String type=String.valueOf(base.getQamType());
-        edt_qamType.setText(type);
-        edt_qamType.setSelection(type.length());
-        String rate = String.valueOf(base.getLdpcRate());
-        edt_ldcpRate.setText(rate);
-        edt_ldcpRate.setSelection(rate.length());
-        String num = String.valueOf(base.getLdpcNum());
-        edt_ldcpNum.setText(num);
-        edt_ldcpNum.setSelection(num.length());
-        String size = String.valueOf(base.getIntvSize());
-        edt_ldcpSize.setText(size);
-        edt_ldcpSize.setSelection(size.length());
-        tv_order.setText(String.format(Locale.CHINA,"%02d",base.getId()));
-        //int listeners
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+        AlertDialogUtil.showEditServerBaseDialog(mActivity, mServerBases.get(position), new AlertDialogUtil.ServerBaseEditListener() {
             @Override
-            public void onClick(View v) {
-                dismissAlertDialog();
-            }
-        });
-        btn_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str_type = edt_qamType.getText().toString().trim();
-                if(TextUtils.isEmpty(str_type)){
-                    showToast("调制类型不能为空。");
-                    return;
-                }
-                String str_num = edt_ldcpNum.getText().toString().trim();
-                if(TextUtils.isEmpty(str_num)){
-                    showToast("LDCP码字个数不能为空。");
-                    return;
-                }
-                String str_rate=edt_ldcpRate.getText().toString().trim();
-                if(TextUtils.isEmpty(str_rate)){
-                    showToast("LDCP编码率不能为空。");
-                    return;
-                }
-                String str_size = edt_ldcpSize.getText().toString().trim();
-                if(TextUtils.isEmpty(str_size)){
-                    showToast("交织块大小不能为空。");
-                    return;
-                }
-                base.setQamType(Integer.valueOf(str_type));
-                base.setIntvSize(Integer.valueOf(str_size));
-                base.setLdpcRate(Integer.valueOf(str_rate));
-                base.setLdpcNum(Integer.valueOf(str_num));
-
+            public void onConfirmEdit(ServerBase confirm) {
+                confirm.lightClone(mServerBases.get(position));
                 //同步更新数据
-                ServerBase serverBase = mConfigTable.getServiceBases().get(position);
-                serverBase.setQamType(Integer.valueOf(str_type));
-                serverBase.setIntvSize(Integer.valueOf(str_size));
-                serverBase.setLdpcRate(Integer.valueOf(str_rate));
-                serverBase.setLdpcNum(Integer.valueOf(str_num));
-
+                confirm.lightClone(mConfigTable.getServiceBases().get(position));
                 mAdapter.notifyDataSetChanged();
-                dismissAlertDialog();
             }
         });
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
-        mAlertDialog = builder.setView(rootView).setCancelable(true).create();
-        mAlertDialog.show();
     }
 
     private void dismissAlertDialog() {
@@ -452,7 +395,7 @@ public class ConfigTablePresenter {
         mActivity.getIsInEditMode().set(true);
         mActivity.supportInvalidateOptionsMenu();
         mConfigTableBackUp=mConfigTable.deepClone();
-        toggleUIFocusability(true);
+        toggleUIByMode(true);
         showToast("您已进入编辑模式。");
 
     }

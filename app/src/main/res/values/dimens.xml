@@ -32,4 +32,6 @@
     <dimen name="sp_20">20sp</dimen>
     <dimen name="dp_40">40dp</dimen>
     <dimen name="sp_19">19sp</dimen>
+    <dimen name="dp_400">400dp</dimen>
+    <dimen name="dp_300">300dp</dimen>
 </resources>

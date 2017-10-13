@@ -26,6 +26,7 @@ public class StateActivity extends BaseActivity {
     private TextView tv_statusReport;
     private Button btn_viewConfigTable;
     private ImageView iv_netStateIcon;
+    private Button btn_log;
 
 
     public static void start(Activity context, StateTable stateTable) {
@@ -51,6 +52,7 @@ public class StateActivity extends BaseActivity {
         tv_statusReport= (TextView) findViewById(R.id.state_tv_status_report);
         btn_viewConfigTable= (Button) findViewById(R.id.state_btn_to_config_table);
         iv_netStateIcon= (ImageView) findViewById(R.id.state_iv_status_report);
+        btn_log= (Button) findViewById(R.id.state_btn_log);
 
     }
 
@@ -66,6 +68,13 @@ public class StateActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mPresenter.toConfigTableActivity();
+            }
+        });
+        
+        btn_log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //// TODO: 2017/10/13  
             }
         });
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.skycaster.hellobase"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.skycaster.hellobase">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -44,6 +44,8 @@
         <activity
             android:name=".activity.StateTableListActivity"
             android:label="激励器清单"/>
+        <activity android:name=".activity.LogActivity">
+        </activity>
     </application>
 
 </manifest>

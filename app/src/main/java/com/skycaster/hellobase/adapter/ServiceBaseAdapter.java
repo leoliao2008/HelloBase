@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,10 +23,18 @@ public class ServiceBaseAdapter extends BaseAdapter {
     private ArrayList<ServerBase> list;
     private Context mContext;
     private int[] mColors =new int[]{Color.parseColor("#FFFF00"),Color.parseColor("#0E7038"),Color.parseColor("#FFAA25")};
+    private ServiceBaseAdapter.CallBack mCallBack;
+    private boolean isEditMode =false;
 
-    public ServiceBaseAdapter(ArrayList<ServerBase> list, Context context) {
+    public ServiceBaseAdapter(ArrayList<ServerBase> list, Context context,CallBack callBack) {
         this.list = list;
         mContext = context;
+        mCallBack=callBack;
+    }
+
+    public void toggleMode(boolean isEditMode){
+        this.isEditMode =isEditMode;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -46,7 +55,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder vh;
         if(convertView==null){
             convertView=View.inflate(mContext,R.layout.item_service_base,null);
@@ -63,16 +72,37 @@ public class ServiceBaseAdapter extends BaseAdapter {
             vh.tv_maskNoData.setVisibility(View.GONE);
             vh.tv_id.setVisibility(View.VISIBLE);
             vh.mRelativeLayout.setVisibility(View.VISIBLE);
-
-            ServerBase temp = list.get(position);
+            final ServerBase temp = list.get(position);
             vh.tv_id.setText(String.format(Locale.CHINA,"%02d",temp.getId()));
             vh.tv_id.setBackgroundColor(mColors[position%3]);
             vh.tv_num.setText(String.valueOf(temp.getLdpcNum()));
             vh.tv_type.setText(String.valueOf(temp.getQamType()));
             vh.tv_size.setText(String.valueOf(temp.getIntvSize()));
             vh.tv_rate.setText(String.valueOf(temp.getLdpcRate()));
+            if(isEditMode){
+                vh.iv_more.setVisibility(View.GONE);
+            }else {
+                vh.iv_more.setVisibility(View.VISIBLE);
+                vh.iv_more.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(isEditMode){
+                            mCallBack.onPressSettingIcon(position,temp);
+                        }else {
+                            mCallBack.onPressMoreIcon(position,temp);
+                        }
+
+                    }
+                });
+            }
         }
         return convertView;
+    }
+
+    public interface CallBack{
+        void onPressMoreIcon(int position,ServerBase serverBase);
+
+        void onPressSettingIcon(int position, ServerBase serverBase);
     }
 
     private class ViewHolder{
@@ -82,6 +112,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
         private TextView tv_type;
         private TextView tv_maskNoData;
         private TextView tv_id;
+        private ImageView iv_more;
         private View contentView;
         private RelativeLayout mRelativeLayout;
 
@@ -92,40 +123,9 @@ public class ServiceBaseAdapter extends BaseAdapter {
             tv_size=contentView.findViewById(R.id.item_service_base_tv_ldpc_size);
             tv_type=contentView.findViewById(R.id.item_service_base_tv_ldpc_type);
             tv_id=contentView.findViewById(R.id.item_service_base_tv_id);
+            iv_more=contentView.findViewById(R.id.item_service_base_tv_more);
             tv_maskNoData=contentView.findViewById(R.id.item_service_base_tv_mask_no_data);
             mRelativeLayout =contentView.findViewById(R.id.item_service_base_container);
-        }
-
-        public TextView getTv_num() {
-            return tv_num;
-        }
-
-        public TextView getTv_rate() {
-            return tv_rate;
-        }
-
-        public TextView getTv_size() {
-            return tv_size;
-        }
-
-        public TextView getTv_type() {
-            return tv_type;
-        }
-
-        public View getContentView() {
-            return contentView;
-        }
-
-        public TextView getTv_maskNoData() {
-            return tv_maskNoData;
-        }
-
-        public TextView getTv_id() {
-            return tv_id;
-        }
-
-        public RelativeLayout getRelativeLayout() {
-            return mRelativeLayout;
         }
     }
 }

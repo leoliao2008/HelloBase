@@ -1,6 +1,7 @@
 package com.skycaster.hellobase.interf;
 
 import com.skycaster.hellobase.bean.ConfigTable;
+import com.skycaster.hellobase.bean.Log;
 import com.skycaster.hellobase.bean.StateTable;
 
 import java.sql.Connection;
@@ -40,6 +41,14 @@ public class MySqlModelCallBack {
     }
 
     public void onCreateNewConfigTableFails(String error) {
+
+    }
+
+    public void onGetLogError(String hostId, String errorInfo) {
+
+    }
+
+    public void onObtainLog(ArrayList<Log> list) {
 
     }
 }

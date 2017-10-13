@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -14,13 +15,13 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:textColor="@color/colorWhite"
-            android:text="修改业务配置清单"
+            android:text="配置详情"
             android:gravity="center"
             android:padding="@dimen/dp_10"
             android:textSize="@dimen/sp_25"/>
 
         <TextView
-            android:id="@+id/dialog_config_server_base_tv_order"
+            android:id="@+id/dialog_server_base_more_tv_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorYellow"
@@ -28,7 +29,9 @@
             android:gravity="center"
             android:padding="@dimen/dp_10"
             android:textSize="@dimen/sp_25"/>
+        
     </FrameLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -45,9 +48,8 @@
                     android:layout_weight="1"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_qam_type"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_qam_type"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -58,9 +60,8 @@
                     android:text="LDCP码字个数"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_ldcp_num"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_ldcp_num"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -71,9 +72,8 @@
                     android:text="LDCP编码率"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_ldcp_rate"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_ldcp_rate"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -84,9 +84,8 @@
                     android:text="交织块大小"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_ldcp_size"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_ldcp_size"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -97,8 +96,9 @@
                     android:text="服务器IP"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:id="@+id/dialog_config_server_base_edt_ip"
+                <TextView
+                    android:inputType="number"
+                    android:id="@+id/dialog_server_base_more_tv_ip"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -106,12 +106,11 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="服务器端口"
+                    android:text="端口号"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_port"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_port"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -122,8 +121,8 @@
                     android:text="用户名"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:id="@+id/dialog_config_server_base_edt_user_name"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_user_name"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -134,8 +133,8 @@
                     android:text="密码"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:id="@+id/dialog_config_server_base_edt_pw"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_pw"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -146,8 +145,8 @@
                     android:text="数据格式"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:id="@+id/dialog_config_server_base_edt_data_format"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_data_format"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -155,12 +154,11 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="经度（E°）"
+                    android:text="经度"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="numberDecimal"
-                    android:id="@+id/dialog_config_server_base_edt_lng"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_latitude"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -168,12 +166,11 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="纬度(N°)"
+                    android:text="纬度"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="numberDecimal"
-                    android:id="@+id/dialog_config_server_base_edt_lat"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_longitude"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -181,40 +178,21 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="海拔（米）"
+                    android:text="高度"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="numberDecimal"
-                    android:id="@+id/dialog_config_server_base_edt_alt"
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_altitude"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-    <TextView
+    <Button
+        android:id="@+id/dialog_server_base_more_btn_return"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="*点击确定后还要在返回页面中点击提交。"
-        android:padding="@dimen/dp_7"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/dialog_config_server_base_btn_confirm"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="确定"/>
-        <Button
-            android:id="@+id/dialog_config_server_base_btn_cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="取消"/>
-
-    </LinearLayout>
+        android:layout_weight="1"
+        android:text="返回"/>
 </LinearLayout>

@@ -27,7 +27,7 @@ public class ServerBase implements Parcelable {
     private String dataFormat="null";
     private String latitude="null";
     private String longitude="null";
-    private String height="null";
+    private String altitude ="null";
 
 
     public ServerBase() {
@@ -138,12 +138,12 @@ public class ServerBase implements Parcelable {
         this.longitude = longitude;
     }
 
-    public String getHeight() {
-        return height;
+    public String getAltitude() {
+        return altitude;
     }
 
-    public void setHeight(String height) {
-        this.height = height;
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
     }
 
     public ServerBase deepClone(){
@@ -161,8 +161,25 @@ public class ServerBase implements Parcelable {
         sb.setPw(pw);
         sb.setLatitude(latitude);
         sb.setLongitude(longitude);
-        sb.setHeight(height);
+        sb.setAltitude(altitude);
         return sb;
+    }
+
+    public void lightClone(ServerBase sb){
+        sb.setId(id);
+        sb.setLdpcNum(ldpcNum);
+        sb.setFormCode(formCode);
+        sb.setIntvSize(intvSize);
+        sb.setQamType(qamType);
+        sb.setLdpcRate(ldpcRate);
+        sb.setIp(ip);
+        sb.setPort(port);
+        sb.setDataFormat(dataFormat);
+        sb.setUserName(userName);
+        sb.setPw(pw);
+        sb.setLatitude(latitude);
+        sb.setLongitude(longitude);
+        sb.setAltitude(altitude);
     }
 
 
@@ -186,7 +203,7 @@ public class ServerBase implements Parcelable {
         dest.writeString(this.dataFormat);
         dest.writeString(this.latitude);
         dest.writeString(this.longitude);
-        dest.writeString(this.height);
+        dest.writeString(this.altitude);
     }
 
     protected ServerBase(Parcel in) {
@@ -203,7 +220,7 @@ public class ServerBase implements Parcelable {
         this.dataFormat = in.readString();
         this.latitude = in.readString();
         this.longitude = in.readString();
-        this.height = in.readString();
+        this.altitude = in.readString();
     }
 
     public static final Creator<ServerBase> CREATOR = new Creator<ServerBase>() {
