@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/dp_3"
+        android:background="@color/colorBg"
+        android:layout_margin="@dimen/dp_5">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_log_tv_index"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="01"
+                android:gravity="center"
+                android:textSize="@dimen/sp_25"
+                android:padding="@dimen/dp_20"
+                android:textColor="@color/colorPrimary"
+                android:background="@color/colorBg"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/item_log_tv_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2017年10月16日09时41分50秒"
+                    android:textSize="@dimen/sp_19"
+                    android:padding="@dimen/dp_5"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="@dimen/dp_10"/>
+
+                <TextView
+                    android:id="@+id/item_log_tv_record"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="报错历史记录报错历史记录报错历史记录报错历史记录报错历史记录报错历史记录"
+                    android:textSize="@dimen/sp_18"
+                    android:paddingLeft="@dimen/dp_5"
+                    android:paddingRight="@dimen/dp_10"
+                    android:paddingBottom="@dimen/dp_10"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

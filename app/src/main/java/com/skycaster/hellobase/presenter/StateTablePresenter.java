@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.ConfigActivity;
+import com.skycaster.hellobase.activity.LogActivity;
 import com.skycaster.hellobase.activity.StateActivity;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
@@ -198,6 +199,10 @@ public class StateTablePresenter {
 
     public void stopMonitoring(){
         mActivity.stopService(new Intent(mActivity, ServerConStatusMonitor.class));
+    }
+
+    public void toLogActivity(){
+        LogActivity.start(mActivity,mStateTable.getHostId());
     }
 
     public void onStart() {

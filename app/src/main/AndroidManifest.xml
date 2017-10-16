@@ -44,7 +44,8 @@
         <activity
             android:name=".activity.StateTableListActivity"
             android:label="激励器清单"/>
-        <activity android:name=".activity.LogActivity">
+        <activity android:name=".activity.LogActivity"
+            android:label="运行记录">
         </activity>
     </application>
 

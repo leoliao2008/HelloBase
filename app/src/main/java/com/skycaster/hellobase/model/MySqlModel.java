@@ -563,11 +563,12 @@ public class MySqlModel {
                 com.skycaster.hellobase.bean.Log log=new com.skycaster.hellobase.bean.Log();
                 log.setHostId(resultSet.getString("HostId"));
                 log.setRecordTime(new Date(resultSet.getTimestamp("RecordTime").getTime()));
-                log.setNotes(resultSet.getString("Notes"));
+                log.setNotes(resultSet.getString("Note"));
                 list.add(log);
             }
+            showLog(list.toString());
         }catch (SQLException e){
-            showLog("error while executing obtainLogByResultSet(ResultSet resultSet):+e.getMessage()");
+            showLog("error while executing obtainLogByResultSet(ResultSet resultSet):"+e.getMessage());
             throw new SQLException(e.getMessage());
         }
         return list;

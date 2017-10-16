@@ -74,7 +74,7 @@ public class StateActivity extends BaseActivity {
         btn_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //// TODO: 2017/10/13  
+                mPresenter.toLogActivity();
             }
         });
 

@@ -2,6 +2,7 @@ package com.skycaster.hellobase.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
@@ -9,7 +10,7 @@ import java.util.Date;
  * Created by 廖华凯 on 2017/10/13.
  */
 
-public class Log implements Parcelable {
+public class Log implements Parcelable,Comparable<Log> {
 //    HostId        varchar(45),
 //    RecordTime    datetime,
 //    Notes         varchar default null,
@@ -57,6 +58,15 @@ public class Log implements Parcelable {
     public Log() {
     }
 
+    @Override
+    public String toString() {
+        return "Log{" +
+                "mHostId='" + mHostId + '\'' +
+                ", mRecordTime=" + mRecordTime +
+                ", mNotes='" + mNotes + '\'' +
+                '}';
+    }
+
     protected Log(Parcel in) {
         this.mHostId = in.readString();
         long tmpMRecordTime = in.readLong();
@@ -75,4 +85,10 @@ public class Log implements Parcelable {
             return new Log[size];
         }
     };
+
+
+    @Override
+    public int compareTo(@NonNull Log o) {
+        return this.getRecordTime().compareTo(o.getRecordTime());
+    }
 }

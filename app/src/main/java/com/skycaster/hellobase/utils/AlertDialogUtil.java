@@ -1,6 +1,8 @@
 package com.skycaster.hellobase.utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -13,7 +15,11 @@ import android.widget.Toast;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.data.StaticData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -23,6 +29,7 @@ import java.util.Locale;
 public class AlertDialogUtil {
 
     private static AlertDialog alertDialog;
+    private static ProgressDialog progressDialog;
 
     private AlertDialogUtil() {
     }
@@ -301,5 +308,278 @@ public class AlertDialogUtil {
     private static void assignValueToEditText(EditText editText, String value){
         editText.setText(value);
         editText.setSelection(value.length());
+    }
+
+    public static void showProgressDialog(Context context){
+        progressDialog = ProgressDialog.show(
+                context,
+                "连接中",
+                "正在连接数据库，请稍候......",
+                true,
+                false
+
+        );
+    }
+
+    public static void dismissProgressDialog(){
+        if(progressDialog!=null){
+            progressDialog.dismiss();
+        }
+    }
+
+    public static void showSortLogsDialog(final Context context, final SortLogRangeListener listener){
+        View rootView=View.inflate(context,R.layout.dialog_sort_logs,null);
+        //initView
+        final EditText startYear=rootView.findViewById(R.id.dialog_sort_log_edt_start_year);
+        final EditText startMonth=rootView.findViewById(R.id.dialog_sort_log_edt_start_month);
+        final EditText startDay=rootView.findViewById(R.id.dialog_sort_log_edt_start_day);
+        final EditText startHour=rootView.findViewById(R.id.dialog_sort_log_edt_start_hour);
+        final EditText endYear=rootView.findViewById(R.id.dialog_sort_log_edt_end_year);
+        final EditText endMonth=rootView.findViewById(R.id.dialog_sort_log_edt_end_month);
+        final EditText endDay=rootView.findViewById(R.id.dialog_sort_log_edt_end_day);
+        final EditText endHour=rootView.findViewById(R.id.dialog_sort_log_edt_end_hour);
+        Button confirm=rootView.findViewById(R.id.dialog_sort_log_btn_confirm);
+        Button cancel=rootView.findViewById(R.id.dialog_sort_log_btn_cancel);
+        Button showAll=rootView.findViewById(R.id.dialog_sort_log_btn_showAll);
+        //initData
+        final SharedPreferences sp=context.getSharedPreferences(StaticData.SP_NAME,Context.MODE_PRIVATE);
+        long start = sp.getLong(StaticData.DATE_START, 0);
+        if(start>0){
+            Date dateStart=new Date(start);
+            String year = String.valueOf(1900 + dateStart.getYear());
+            startYear.setText(year);
+            startYear.setSelection(year.length());
+            String month = String.valueOf(dateStart.getMonth()+1);
+            startMonth.setText(month);
+            startMonth.setSelection(month.length());
+            String day = String.valueOf(dateStart.getDate());
+            startDay.setText(day);
+            startDay.setSelection(day.length());
+            String hour=String.valueOf(dateStart.getHours());
+            startHour.setText(hour);
+            startHour.setSelection(hour.length());
+        }
+        long end = sp.getLong(StaticData.DATE_END, 0);
+        if(end>0){
+            Date dateEnd=new Date(end);
+            String year = String.valueOf(1900 + dateEnd.getYear());
+            endYear.setText(year);
+            endYear.setSelection(year.length());
+            String month = String.valueOf(dateEnd.getMonth()+1);
+            endMonth.setText(month);
+            endMonth.setSelection(month.length());
+            String day = String.valueOf(dateEnd.getDate());
+            endDay.setText(day);
+            endDay.setSelection(day.length());
+            String hour=String.valueOf(dateEnd.getHours());
+            endHour.setText(hour);
+            endHour.setSelection(hour.length());
+        }
+        //initListener
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String stY = startYear.getText().toString();
+                int intStY;
+                if(TextUtils.isEmpty(stY)){
+                    showToast(context,"请输入起始年份。");
+                    return;
+                }else {
+                    intStY=Integer.valueOf(stY.trim());
+                    if(intStY>2099||intStY<2017){
+                        showToast(context,"起始年份输入有误，请检查。");
+                        return;
+                    }
+                }
+                String stM = startMonth.getText().toString();
+                int intStM;
+                if(TextUtils.isEmpty(stM)){
+                    showToast(context,"请输入起始月份。");
+                    return;
+                }else {
+                    intStM=Integer.valueOf(stM.trim());
+                    if(intStM<1||intStM>12){
+                        showToast(context,"起始月份输入有误，请检查。");
+                        return;
+                    }
+                }
+                String stD = startDay.getText().toString();
+                int intStD;
+                if(TextUtils.isEmpty(stD)){
+                    showToast(context,"请输入起始日。");
+                    return;
+                }else {
+                    intStD=Integer.valueOf(stD.trim());
+                    //1,3,5,7,8,10,12月有31天
+                    //4,6,9,11月有30天
+                    //平年2月29天，闰年2月28天
+                    if(intStM==1||intStM==3||intStM==5||intStM==7||intStM==8||intStM==10||intStM==12){
+                        if(intStD<0||intStD>31){
+                            showToast(context,"起始日输入有误，请检查。");
+                            return;
+                        }
+                    }else if(intStM==4||intStM==6||intStM==9||intStM==11){
+                        if(intStD<0||intStD>30){
+                            showToast(context,"起始日输入有误，请检查。");
+                            return;
+                        }
+                    }else {
+                        boolean isLeapYear=false;
+                        if(intStY%100==0){
+                            if(intStY%400==0){
+                                isLeapYear=true;
+                            }
+                        }else if(intStY%4==0){
+                            isLeapYear=true;
+                        }
+                        if(isLeapYear){
+                            if(intStD<0||intStD>28){
+                                showToast(context,"起始日输入有误，请检查。");
+                                return;
+                            }
+                        }else {
+                            if(intStD<0||intStD>29){
+                                showToast(context,"起始日输入有误，请检查。");
+                                return;
+                            }
+                        }
+                    }
+                }
+                String stH = startHour.getText().toString();
+                int intStH;
+                if(TextUtils.isEmpty(stH)){
+                    showToast(context,"请输入起始时");
+                    return;
+                }else {
+                    intStH=Integer.valueOf(stH.trim());
+                    if(intStH<0||intStH>24){
+                        showToast(context,"起始时输入有误，请检查。");
+                        return;
+                    }
+                }
+                String endY = endYear.getText().toString();
+                int intEndY;
+                if(TextUtils.isEmpty(endY)){
+                    showToast(context,"请输入结束年份。");
+                    return;
+                }else {
+                    intEndY=Integer.valueOf(endY.trim());
+                    if(intEndY>2099||intEndY<2017){
+                        showToast(context,"结束年输入有误，请检查。");
+                        return;
+                    }
+                }
+                String endM = endMonth.getText().toString();
+                int intEndM;
+                if(TextUtils.isEmpty(endM)){
+                    showToast(context,"请输入结束月份。");
+                    return;
+                }else {
+                    intEndM=Integer.valueOf(endM.trim());
+                    if(intEndM<1||intEndM>12){
+                        showToast(context,"结束月输入有误，请检查。");
+                        return;
+                    }
+                }
+                String endD = endDay.getText().toString();
+                int intEndD;
+                if(TextUtils.isEmpty(endD)){
+                    showToast(context,"请输入结束日。");
+                    return;
+                }else {
+                    intEndD=Integer.valueOf(endD.trim());
+                    if(intEndM==1||intEndM==3||intEndM==5||intEndM==7||intEndM==8||intEndM==10||intEndM==12){
+                        if(intEndD<0||intEndD>31){
+                            showToast(context,"结束日输入有误，请检查。");
+                            return;
+                        }
+                    }else if(intEndM==4||intEndM==6||intEndM==9||intEndM==11){
+                        if(intEndD<0||intEndD>30){
+                            showToast(context,"结束日输入有误，请检查。");
+                            return;
+                        }
+                    }else {
+                        boolean isLeapYear = false;
+                        if (intEndY % 100 == 0) {
+                            if (intEndY % 400 == 0) {
+                                isLeapYear = true;
+                            }
+                        } else if (intEndY % 4 == 0) {
+                            isLeapYear = true;
+                        }
+                        if (isLeapYear) {
+                            if (intEndD < 0 || intEndD > 28) {
+                                showToast(context, "结束日输入有误，请检查。");
+                                return;
+                            }
+                        } else {
+                            if (intEndD < 0 || intEndD > 29) {
+                                showToast(context, "结束日输入有误，请检查。");
+                                return;
+                            }
+                        }
+                    }
+                }
+                String endH = endHour.getText().toString();
+                int intEndH;
+                if(TextUtils.isEmpty(endH)){
+                    showToast(context,"结束时输入有误，请检查。");
+                    return;
+                }else {
+                    intEndH=Integer.valueOf(endH.trim());
+                    if(intEndH<0||intEndH>24){
+                        showToast(context,"结束时输入有误，请检查。");
+                        return;
+                    }
+                }
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMMddHH",Locale.CHINA);
+                try {
+                    Date dateStart=simpleDateFormat.parse(
+                                    String.format(Locale.CHINA,"%04d",intStY)+
+                                    String.format(Locale.CHINA,"%02d",intStM)+
+                                    String.format(Locale.CHINA,"%02d",intStD)+
+                                    String.format(Locale.CHINA,"%02d",intStH));
+                    Date dateEnd=simpleDateFormat.parse(
+                                    String.format(Locale.CHINA,"%04d",intEndY)+
+                                    String.format(Locale.CHINA,"%02d",intEndM)+
+                                    String.format(Locale.CHINA,"%02d",intEndD)+
+                                    String.format(Locale.CHINA,"%02d",intEndH));
+                    if(dateEnd.compareTo(dateStart)<0){
+                        showToast(context,"结束日期不可小于起始日期。");
+                        return;
+                    }
+                    alertDialog.dismiss();
+                    sp.edit().putLong(StaticData.DATE_START,dateStart.getTime()).putLong(StaticData.DATE_END,dateEnd.getTime()).apply();
+                    listener.onRangeSelected(dateStart,dateEnd);
+
+                } catch (ParseException e) {
+                    alertDialog.dismiss();
+                    listener.onError(e.getMessage());
+                }
+
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        showAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                listener.onChooseToShowAll();
+            }
+        });
+        AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        alertDialog=builder.setView(rootView).setCancelable(true).create();
+        alertDialog.show();
+    }
+
+    public interface SortLogRangeListener{
+        void onRangeSelected(Date start,Date end);
+        void onError(String errorInfo);
+        void onChooseToShowAll();
     }
 }

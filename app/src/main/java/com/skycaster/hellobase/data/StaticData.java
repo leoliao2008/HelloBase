@@ -85,4 +85,7 @@ public interface StaticData {
             R.attr.net_status_unstable};
 
     String EXTRA_LOGS = "EXTRA_LOGS";
+    String EXTRA_STRING_HOST_ID = "EXTRA_STRING_HOST_ID";
+    String DATE_START = "DATE_START";
+    String DATE_END="DATE_END";
 }
