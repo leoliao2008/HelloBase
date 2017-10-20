@@ -143,7 +143,8 @@ public class StateTablePresenter {
         }
         mNetStatus=mActivity.getIntent().getIntExtra(StaticData.EXTRA_INT_NET_STATUS_CODE,StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE);
 
-        mDateFormat= new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒", Locale.CHINA);
+//        2017-10-08 09:14:18”
+        mDateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         mStateTable= mActivity.getIntent().getParcelableExtra(StaticData.EXTRA_DATA_STATE_TABLE);
         ActionBar supportActionBar = mActivity.getSupportActionBar();
         if(supportActionBar!=null){
@@ -326,9 +327,9 @@ public class StateTablePresenter {
     }
 
     public void toConfigTableActivity(){
-        showProgressDialog();
         UserBean user = BaseApplication.getUser();
         if(user!=null){
+            showProgressDialog();
             mMySqlModel.getConfigTable(user,mStateTable.getHostId());
         }else {
             mActivity.showToast("登陆信息已过期，请重新登陆。");

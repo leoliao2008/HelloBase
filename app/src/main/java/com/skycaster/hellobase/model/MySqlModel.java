@@ -566,7 +566,8 @@ public class MySqlModel {
                 log.setNotes(resultSet.getString("Note"));
                 list.add(log);
             }
-            showLog(list.toString());
+
+            showLog("Logs size ="+list.size()+","+list.toString());
         }catch (SQLException e){
             showLog("error while executing obtainLogByResultSet(ResultSet resultSet):"+e.getMessage());
             throw new SQLException(e.getMessage());

@@ -11,7 +11,7 @@ import com.skycaster.hellobase.bean.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -26,10 +26,10 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
 
     public LogListAdapter(ArrayList<Log> list, Context context) {
         this.list = list;
-        this.list.sort(new Comparator<Log>() {
+        Collections.sort(this.list,new Comparator<Log>() {
             @Override
             public int compare(Log o1, Log o2) {
-                return o1.getRecordTime().compareTo(o2.getRecordTime());
+                return o2.getRecordTime().compareTo(o1.getRecordTime());
             }
         });
         mContext = context;
@@ -46,7 +46,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         Log temp = list.get(position);
         holder.tv_record.setText(temp.getNotes());
         holder.tv_date.setText(mSimpleDateFormat.format(temp.getRecordTime()));
-        holder.tv_index.setText(String.format(Locale.CHINA,"%02d",position+1));
+        holder.tv_index.setText(String.format(Locale.CHINA,"%02d",getItemCount()-position));
     }
 
     @Override

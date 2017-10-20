@@ -95,7 +95,7 @@ tools:context="com.skycaster.hellobase.activity.ConfigActivity">
         style="@style/LinearLayoutStyle1">
 
         <TextView
-            android:text="工作频点(MHz)"
+            android:text="工作频点（MHz）"
             style="@style/TextViewStyle1"/>
 
         <EditText

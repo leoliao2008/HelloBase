@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.adapter.OuterStListAdapter;
+import com.skycaster.hellobase.adapter.LvOneStListAdapter;
 import com.skycaster.hellobase.base.BaseActivity;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.bean.StateTableLabel;
@@ -23,7 +23,7 @@ public class StateTableListActivity extends BaseActivity {
     private static final String EXTRA_PARCELABLE_ARRAY_STATE_TABLE_LIST = "EXTRA_PARCELABLE_ARRAY_STATE_TABLE_LIST";
     private ListView mListView;
     private ArrayList<StateTableLabel> mList=new ArrayList<>();
-    private OuterStListAdapter mAdapter;
+    private LvOneStListAdapter mAdapter;
 
     public static void start(Context context,ArrayList<StateTable>list) {
         Intent starter = new Intent(context, StateTableListActivity.class);
@@ -38,14 +38,13 @@ public class StateTableListActivity extends BaseActivity {
     @Override
     protected void initViews() {
         mListView= (ListView) findViewById(R.id.activity_state_table_list_lst_view);
-
     }
 
     @Override
     protected void initData() {
         ArrayList<StateTable> list = getIntent().getParcelableArrayListExtra(EXTRA_PARCELABLE_ARRAY_STATE_TABLE_LIST);
         sortTables(list);
-        mAdapter=new OuterStListAdapter(mList,this);
+        mAdapter=new LvOneStListAdapter(mList,this);
         mListView.setAdapter(mAdapter);
         mListView.setDividerHeight(0);
 
@@ -78,7 +77,7 @@ public class StateTableListActivity extends BaseActivity {
 //                StateActivity.start(StateTableListActivity.this,table);
 //            }
 //        });
-        mAdapter.setOnItemClickListener(new OuterStListAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new LvOneStListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(StateTable table) {
                 StateActivity.start(StateTableListActivity.this,table);

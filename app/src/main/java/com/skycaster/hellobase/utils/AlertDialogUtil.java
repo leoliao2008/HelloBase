@@ -156,6 +156,7 @@ public class AlertDialogUtil {
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_user_name)).setText(base.getUserName());
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_pw)).setText(base.getPw());
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_longitude)).setText(base.getLongitude());
+        ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_form_code)).setText(String.valueOf(base.getFormCode()));
         rootView.findViewById(R.id.dialog_server_base_more_btn_return).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +177,7 @@ public class AlertDialogUtil {
     public static void showEditServerBaseDialog(final Context context, final ServerBase base, final ServerBaseEditListener listener) {
         //init view
         View rootView=View.inflate(context, R.layout.dialog_edit_base_server,null);
+        final EditText edt_FormCode=rootView.findViewById(R.id.dialog_config_server_base_edt_form_code);
         final EditText edt_qamType=rootView.findViewById(R.id.dialog_config_server_base_edt_qam_type);
         final EditText edt_ldcpNum=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_num);
         final EditText edt_ldcpSize=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_size);
@@ -193,6 +195,8 @@ public class AlertDialogUtil {
         Button btn_confirm=rootView.findViewById(R.id.dialog_config_server_base_btn_confirm);
         Button btn_cancel=rootView.findViewById(R.id.dialog_config_server_base_btn_cancel);
         //init data
+        String formCode = String.valueOf(base.getFormCode());
+        assignValueToEditText(edt_FormCode,formCode);
         String type=String.valueOf(base.getQamType());
         assignValueToEditText(edt_qamType,type);
         String rate = String.valueOf(base.getLdpcRate());
@@ -220,6 +224,11 @@ public class AlertDialogUtil {
         btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String str_formCode = edt_FormCode.getText().toString().trim();
+                if(TextUtils.isEmpty(str_formCode)){
+                    showToast(context,"业务类型不能为空。");
+                    return;
+                }
                 String str_type = edt_qamType.getText().toString().trim();
                 if(TextUtils.isEmpty(str_type)){
                     showToast(context,"调制类型不能为空。");
@@ -227,17 +236,17 @@ public class AlertDialogUtil {
                 }
                 String str_num = edt_ldcpNum.getText().toString().trim();
                 if(TextUtils.isEmpty(str_num)){
-                    showToast(context,"LDCP码字个数不能为空。");
+                    showToast(context,"FEC码数不能为空。");
                     return;
                 }
                 String str_rate=edt_ldcpRate.getText().toString().trim();
                 if(TextUtils.isEmpty(str_rate)){
-                    showToast(context,"LDCP编码率不能为空。");
+                    showToast(context,"FEC码率不能为空。");
                     return;
                 }
                 String str_size = edt_ldcpSize.getText().toString().trim();
                 if(TextUtils.isEmpty(str_size)){
-                    showToast(context,"交织块大小不能为空。");
+                    showToast(context,"交织深度不能为空。");
                     return;
                 }
                 String str_ip = edt_ip.getText().toString().trim();
@@ -280,6 +289,7 @@ public class AlertDialogUtil {
                     showToast(context,"海拔高度不能为空。");
                     return;
                 }
+                base.setFormCode(Integer.valueOf(str_formCode));
                 base.setIp(str_ip);
                 base.setPw(str_pw);
                 base.setPort(str_port);

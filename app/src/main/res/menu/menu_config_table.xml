@@ -17,5 +17,15 @@
             android:id="@+id/menu_edit_config_table_abort"
             app:showAsAction="always"/>
 
+      <item android:title="重启激励器"
+            android:icon="@drawable/selector_ic_abort_edit_36dp"
+            android:id="@+id/menu_edit_config_table_reset_base"
+            app:showAsAction="never"/>
+
+      <item android:title="关闭激励器"
+            android:icon="@drawable/selector_ic_abort_edit_36dp"
+            android:id="@+id/menu_edit_config_table_turn_off_base"
+            app:showAsAction="never"/>
+
 
 </menu>

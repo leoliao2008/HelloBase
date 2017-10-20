@@ -156,14 +156,20 @@ public class ConfigActivity extends BaseActivity {
         MenuItem edit = menu.findItem(R.id.menu_edit_config_table_edit);
         MenuItem submit = menu.findItem(R.id.menu_edit_config_table_submit);
         MenuItem abort = menu.findItem(R.id.menu_edit_config_table_abort);
+        MenuItem powerOff = menu.findItem(R.id.menu_edit_config_table_turn_off_base);
+        MenuItem resetBase = menu.findItem(R.id.menu_edit_config_table_reset_base);
         if(isInEditMode.get()){
             edit.setVisible(false);
             submit.setVisible(true);
             abort.setVisible(true);
+            powerOff.setVisible(false);
+            resetBase.setVisible(false);
         }else {
             edit.setVisible(true);
             submit.setVisible(false);
             abort.setVisible(false);
+            powerOff.setVisible(true);
+            resetBase.setVisible(true);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -179,6 +185,12 @@ public class ConfigActivity extends BaseActivity {
                 break;
             case R.id.menu_edit_config_table_abort:
                 showAlertDialogAbortEdit();
+                break;
+            case R.id.menu_edit_config_table_reset_base:
+                mPresenter.resetBase();
+                break;
+            case R.id.menu_edit_config_table_turn_off_base:
+                mPresenter.turnOffBase();
                 break;
             default:
                 break;

@@ -146,6 +146,10 @@ public class ServerBase implements Parcelable {
         this.altitude = altitude;
     }
 
+    /**
+     * 深度克隆，声明一个新的对象，把当前的属性复制到新的对象中。
+     * @return 一个新的对象，属性跟当前这个对象一样，但地址是全新的。
+     */
     public ServerBase deepClone(){
         ServerBase sb=new ServerBase();
         sb.setId(id);
@@ -165,6 +169,10 @@ public class ServerBase implements Parcelable {
         return sb;
     }
 
+    /**
+     * 浅度克隆，只是把属性的值赋给目标对象，目标对象的地址还是原来那个。
+     * @param sb 目标对象
+     */
     public void lightClone(ServerBase sb){
         sb.setId(id);
         sb.setLdpcNum(ldpcNum);

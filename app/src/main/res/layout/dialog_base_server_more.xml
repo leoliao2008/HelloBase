@@ -44,20 +44,21 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="调制类型"
+                    android:text="业务类型"
                     android:layout_weight="1"
                     style="@style/TextViewStyle1"/>
 
                 <TextView
-                    android:id="@+id/dialog_server_base_more_tv_qam_type"
+                    android:id="@+id/dialog_server_base_more_tv_form_code"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
+
             <LinearLayout
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="LDCP码字个数"
+                    android:text="FEC码数"
                     style="@style/TextViewStyle1"/>
 
                 <TextView
@@ -69,7 +70,7 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="LDCP编码率"
+                    android:text="FEC码率"
                     style="@style/TextViewStyle1"/>
 
                 <TextView
@@ -81,11 +82,24 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="交织块大小"
+                    android:text="交织深度"
                     style="@style/TextViewStyle1"/>
 
                 <TextView
                     android:id="@+id/dialog_server_base_more_tv_ldcp_size"
+                    style="@style/EditTextStyle2"/>
+
+            </LinearLayout>
+            <LinearLayout
+                style="@style/LinearLayoutStyle1">
+
+                <TextView
+                    android:text="调制类型"
+                    android:layout_weight="1"
+                    style="@style/TextViewStyle1"/>
+
+                <TextView
+                    android:id="@+id/dialog_server_base_more_tv_qam_type"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>

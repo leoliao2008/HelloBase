@@ -41,21 +41,22 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="调制类型"
+                    android:text="业务类型"
                     android:layout_weight="1"
                     style="@style/TextViewStyle1"/>
 
                 <EditText
                     android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_qam_type"
+                    android:id="@+id/dialog_config_server_base_edt_form_code"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
+
             <LinearLayout
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="LDCP码字个数"
+                    android:text="FEC码数"
                     style="@style/TextViewStyle1"/>
 
                 <EditText
@@ -68,7 +69,7 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="LDCP编码率"
+                    android:text="FEC码率"
                     style="@style/TextViewStyle1"/>
 
                 <EditText
@@ -81,12 +82,26 @@
                 style="@style/LinearLayoutStyle1">
 
                 <TextView
-                    android:text="交织块大小"
+                    android:text="交织深度"
                     style="@style/TextViewStyle1"/>
 
                 <EditText
                     android:inputType="number"
                     android:id="@+id/dialog_config_server_base_edt_ldcp_size"
+                    style="@style/EditTextStyle2"/>
+
+            </LinearLayout>
+            <LinearLayout
+                style="@style/LinearLayoutStyle1">
+
+                <TextView
+                    android:text="调制类型"
+                    android:layout_weight="1"
+                    style="@style/TextViewStyle1"/>
+
+                <EditText
+                    android:inputType="number"
+                    android:id="@+id/dialog_config_server_base_edt_qam_type"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>

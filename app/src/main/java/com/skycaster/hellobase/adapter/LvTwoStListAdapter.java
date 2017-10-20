@@ -16,11 +16,11 @@ import java.util.Locale;
  * Created by 廖华凯 on 2017/10/11.
  */
 
-public class InnerStListAdapter extends BaseAdapter {
+public class LvTwoStListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<StateTable> mList;
 
-    public InnerStListAdapter(Context context, ArrayList<StateTable> list) {
+    public LvTwoStListAdapter(Context context, ArrayList<StateTable> list) {
         mContext = context;
         mList = list;
     }

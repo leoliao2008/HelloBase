@@ -406,4 +406,16 @@ public class ConfigTablePresenter {
         mConfigTable=mConfigTableBackUp.deepClone();
         updateUiByConfigTable(mConfigTable);
     }
+
+    public void resetBase(){
+        showProgressDialog();
+        mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
+        mMySqlModel.updateConfigTable(BaseApplication.getUser(),mConfigTable);
+    }
+
+    public void turnOffBase(){
+        showProgressDialog();
+        mConfigTable.setOpCode(StaticData.OP_POWER_OFF);
+        mMySqlModel.updateConfigTable(BaseApplication.getUser(),mConfigTable);
+    }
 }

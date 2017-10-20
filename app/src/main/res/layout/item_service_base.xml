@@ -53,7 +53,7 @@
             android:layout_below="@id/item1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LDCP码字个数："
+            android:text="FEC码数："
             />
         <TextView
             android:layout_toRightOf="@id/item2"
@@ -67,7 +67,7 @@
             android:layout_below="@id/item2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LDCP码率："
+            android:text="FEC码率："
             />
         <TextView
             android:layout_toRightOf="@id/item7"
@@ -81,7 +81,7 @@
             android:layout_below="@id/item7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="交织块大小："/>
+            android:text="交织深度："/>
         <TextView
             android:id="@+id/item_service_base_tv_ldpc_size"
             android:layout_width="wrap_content"
