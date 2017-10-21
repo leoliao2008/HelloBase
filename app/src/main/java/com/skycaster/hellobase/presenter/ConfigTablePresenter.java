@@ -408,14 +408,25 @@ public class ConfigTablePresenter {
     }
 
     public void resetBase(){
-        showProgressDialog();
-        mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
-        mMySqlModel.updateConfigTable(BaseApplication.getUser(),mConfigTable);
+        UserBean user = BaseApplication.getUser();
+        if(user!=null){
+            showProgressDialog();
+            mConfigTable.setOpCode(StaticData.OP_CODE_REBOOT);
+            mMySqlModel.updateConfigTable(user,mConfigTable);
+        }else {
+            mActivity.showToast("登陆信息已过期，请重新登陆。");
+        }
+
     }
 
     public void turnOffBase(){
-        showProgressDialog();
-        mConfigTable.setOpCode(StaticData.OP_POWER_OFF);
-        mMySqlModel.updateConfigTable(BaseApplication.getUser(),mConfigTable);
+        UserBean user = BaseApplication.getUser();
+        if(user!=null){
+            showProgressDialog();
+            mConfigTable.setOpCode(StaticData.OP_CODE_POWER_OFF);
+            mMySqlModel.updateConfigTable(user,mConfigTable);
+        }else {
+            mActivity.showToast("登陆信息已过期，请重新登陆。");
+        }
     }
 }

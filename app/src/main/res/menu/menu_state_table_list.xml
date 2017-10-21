@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_exit_log_in_state"
+        android:title="退出登陆"
+        android:icon="@drawable/ic_autorenew_grey600_36dp"
+        app:showAsAction="never"/>
+
+</menu>

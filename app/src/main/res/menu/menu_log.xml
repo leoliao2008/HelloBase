@@ -7,4 +7,16 @@
           android:id="@+id/menu_search"
         />
 
+    <item android:icon="@drawable/selector_ic_renew_36dp"
+          android:title="刷新"
+          app:showAsAction="always"
+          android:id="@+id/menu_renew"
+        />
+
+    <item android:icon="@drawable/selector_ic_import_export_36dp"
+          android:title="按日期升序排列"
+          app:showAsAction="never"
+          android:id="@+id/menu_toggle_log_order"
+        />
+
 </menu>

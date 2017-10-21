@@ -25,11 +25,16 @@ import java.util.Date;
 
 public class LogActivity extends BaseActivity {
 
-    private ArrayList<Log> mLogs;
+    private ArrayList<Log> mShowLogs =new ArrayList<>();
+    private ArrayList<Log> mLogsOrigin =new ArrayList<>();
     private RecyclerView mRecyclerView;
     private MySqlModel mMySqlModel;
     private String mHostId;
     private TextView tv_noData;
+    private LogListAdapter mAdapter;
+    private Date mDateFrom;
+    private Date mDateTo;
+    private boolean isMaxToMinOrder=true;
 
     public static void start(Context context,String hostId) {
         Intent starter = new Intent(context, LogActivity.class);
@@ -60,11 +65,18 @@ public class LogActivity extends BaseActivity {
             }
 
             @Override
-            public void onObtainLog(ArrayList<Log> list) {
+            public void onObtainLog(final ArrayList<Log> list) {
                 super.onObtainLog(list);
                 AlertDialogUtil.dismissProgressDialog();
-                mLogs=list;
-                initRecyclerView(mLogs);
+                mLogsOrigin.clear();
+                mLogsOrigin.addAll(list);
+                if(mDateFrom!=null&&mDateTo!=null){
+                    sortLogListByDate(mDateFrom,mDateTo);
+                }else {
+                    refreshRecyclerView(list);
+                }
+                showToast("日志更新完毕！");
+
             }
 
             @Override
@@ -75,39 +87,45 @@ public class LogActivity extends BaseActivity {
             }
         });
 
+        initRecyclerView();
+
     }
 
-    private void initRecyclerView(final ArrayList<Log> items){
+
+
+    private void initRecyclerView(){
+        RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(LogActivity.this,LinearLayoutManager.VERTICAL,false);
+        mAdapter = new LogListAdapter(mShowLogs,LogActivity.this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void refreshRecyclerView(final ArrayList<Log> newList) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(LogActivity.this,LinearLayoutManager.VERTICAL,false);
-                LogListAdapter adapter=new LogListAdapter(items,LogActivity.this);
-                mRecyclerView.setLayoutManager(layoutManager);
-                mRecyclerView.setAdapter(adapter);
-                if(mLogs.size()>0){
+                mShowLogs.clear();
+                mShowLogs.addAll(newList);
+                if(mShowLogs.size()>0){
                     tv_noData.setVisibility(View.GONE);
                 }else {
                     tv_noData.setVisibility(View.VISIBLE);
                 }
+                sortAndNotifyRecyclerView();
             }
         });
+    }
 
+    private void sortAndNotifyRecyclerView() {
+        mAdapter.sortAndNotifyDataSetChange(isMaxToMinOrder?LogListAdapter.FLAG_COMPARATOR_MAX_MIN:LogListAdapter.FLAG_COMPARATOR_MIN_MAX);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(mLogs==null&&mHostId!=null){
-            UserBean user = BaseApplication.getUser();
-            if(user==null){
-                showToast("登陆信息已过期，请重新登陆。");
-            }else {
-                AlertDialogUtil.showProgressDialog(this);
-                mMySqlModel.getLog(user,mHostId);
-            }
-        }
+        renewLogs();
     }
+
 
     @Override
     protected void initListener() {
@@ -117,6 +135,12 @@ public class LogActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_log,menu);
+        MenuItem item = menu.findItem(R.id.menu_toggle_log_order);
+        if(isMaxToMinOrder){
+            item.setTitle("按日期升序排列");
+        }else {
+            item.setTitle("按日期降序排列");
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -125,13 +149,37 @@ public class LogActivity extends BaseActivity {
         if(item.getItemId()==R.id.menu_search){
             showSearchDialog();
         }
+        if(item.getItemId()==R.id.menu_renew){
+            renewLogs();
+        }
+        if(item.getItemId()==R.id.menu_toggle_log_order){
+            toggleLogOrder();
+            supportInvalidateOptionsMenu();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleLogOrder() {
+        isMaxToMinOrder=!isMaxToMinOrder;
+        sortAndNotifyRecyclerView();
+    }
+
+    private void renewLogs() {
+        UserBean user = BaseApplication.getUser();
+        if(user==null){
+            showToast("登陆信息已过期，请重新登陆。");
+        }else {
+            AlertDialogUtil.showProgressDialog(this);
+            mMySqlModel.getLog(user,mHostId);
+        }
     }
 
     private void showSearchDialog() {
         AlertDialogUtil.showSortLogsDialog(this, new AlertDialogUtil.SortLogRangeListener() {
             @Override
             public void onRangeSelected(Date start, Date end) {
+                mDateFrom=start;
+                mDateTo=end;
                 sortLogListByDate(start,end);
             }
 
@@ -142,7 +190,9 @@ public class LogActivity extends BaseActivity {
 
             @Override
             public void onChooseToShowAll() {
-                initRecyclerView(mLogs);
+                mDateFrom=null;
+                mDateTo=null;
+                refreshRecyclerView(mLogsOrigin);
             }
         });
 
@@ -150,12 +200,12 @@ public class LogActivity extends BaseActivity {
 
     private void sortLogListByDate(Date start, Date end) {
         ArrayList<Log> logs=new ArrayList<>();
-        for (Log temp:mLogs){
+        for (Log temp: mLogsOrigin){
             Date date = temp.getRecordTime();
             if(date.compareTo(start)>=0&&date.compareTo(end)<=0){
                 logs.add(temp);
             }
         }
-        initRecyclerView(logs);
+        refreshRecyclerView(logs);
     }
 }

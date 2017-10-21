@@ -34,4 +34,5 @@
     <dimen name="sp_19">19sp</dimen>
     <dimen name="dp_400">400dp</dimen>
     <dimen name="dp_300">300dp</dimen>
+    <dimen name="sp_23">23sp</dimen>
 </resources>

@@ -2,6 +2,9 @@ package com.skycaster.hellobase.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
@@ -94,5 +97,25 @@ public class StateTableListActivity extends BaseActivity {
                 StateTableListActivity.super.onBackPressed();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_state_table_list,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.menu_exit_log_in_state){
+            LogInActivity.start(this);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            },500);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

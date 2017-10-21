@@ -168,8 +168,9 @@ public class ConfigActivity extends BaseActivity {
             edit.setVisible(true);
             submit.setVisible(false);
             abort.setVisible(false);
-            powerOff.setVisible(true);
-            resetBase.setVisible(true);
+            //还是不要这两个功能了。
+            powerOff.setVisible(false);
+            resetBase.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }

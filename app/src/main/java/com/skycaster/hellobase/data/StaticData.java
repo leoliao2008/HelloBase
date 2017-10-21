@@ -88,5 +88,5 @@ public interface StaticData {
     String EXTRA_STRING_HOST_ID = "EXTRA_STRING_HOST_ID";
     String DATE_START = "DATE_START";
     String DATE_END="DATE_END";
-    String OP_POWER_OFF = "shutdown";
+    String OP_CODE_POWER_OFF = "shutdown";
 }

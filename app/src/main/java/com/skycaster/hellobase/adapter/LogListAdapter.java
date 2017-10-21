@@ -23,18 +23,45 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     private ArrayList<Log> list;
     private Context mContext;
     private SimpleDateFormat mSimpleDateFormat;
+    private Comparator<Log> mComparatorMaxToMin=new Comparator<Log>() {
+        @Override
+        public int compare(Log o1, Log o2) {
+            return o2.getRecordTime().compareTo(o1.getRecordTime());
+        }
+    };
+    private Comparator<Log> mComparatorMinToMax=new Comparator<Log>() {
+        @Override
+        public int compare(Log o1, Log o2) {
+            return o1.getRecordTime().compareTo(o2.getRecordTime());
+        }
+    };
+    private Comparator<Log> mComparator;
+    public static final int FLAG_COMPARATOR_MAX_MIN=0;
+    public static final int FLAG_COMPARATOR_MIN_MAX=1;
+
 
     public LogListAdapter(ArrayList<Log> list, Context context) {
         this.list = list;
-        Collections.sort(this.list,new Comparator<Log>() {
-            @Override
-            public int compare(Log o1, Log o2) {
-                return o2.getRecordTime().compareTo(o1.getRecordTime());
-            }
-        });
         mContext = context;
         mSimpleDateFormat=new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒", Locale.CHINA);
+        mComparator=mComparatorMaxToMin;
+        sortList();
     }
+
+    private void sortList(){
+        Collections.sort(this.list,mComparator);
+    }
+
+    public void sortAndNotifyDataSetChange(int flag){
+        if(flag==FLAG_COMPARATOR_MIN_MAX){
+            mComparator=mComparatorMinToMax;
+        }else {
+            mComparator=mComparatorMaxToMin;
+        }
+        sortList();
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,7 +73,8 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         Log temp = list.get(position);
         holder.tv_record.setText(temp.getNotes());
         holder.tv_date.setText(mSimpleDateFormat.format(temp.getRecordTime()));
-        holder.tv_index.setText(String.format(Locale.CHINA,"%02d",getItemCount()-position));
+        int index=mComparator.equals(mComparatorMaxToMin)?getItemCount()-position:position+1;
+        holder.tv_index.setText(String.format(Locale.CHINA,"%02d",index));
     }
 
     @Override
