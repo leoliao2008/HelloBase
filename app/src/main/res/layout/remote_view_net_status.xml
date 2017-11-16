@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/item3"
-        android:text="正在持续监听服务器状态......"
+        android:text="正在持续监听激励器状态......"
         android:textColor="@color/colorWhite"
         android:paddingLeft="@dimen/dp_4"
         android:paddingTop="@dimen/dp_4"

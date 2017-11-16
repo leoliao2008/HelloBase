@@ -69,7 +69,7 @@ public class MySqlModel {
                     serviceBase.setQamType(Integer.parseInt(phyParas[4]));
                 }
                 String[] corsParas = resultSet.getString("s" + id + "_cors_para").split(Pattern.quote(","));
-//              '服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'
+//              '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
                 if(corsParas.length==8){
                     serviceBase.setIp(corsParas[0]);
                     serviceBase.setPort(corsParas[1]);
@@ -330,7 +330,7 @@ public class MySqlModel {
                                         .toString()
 
                                 );
-//                                #'服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'
+//                                #'服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
                                 statement.setString(index++,
                                         new StringBuilder()
                                         .append(temp.getIp())

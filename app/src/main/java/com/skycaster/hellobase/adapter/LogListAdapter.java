@@ -43,7 +43,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     public LogListAdapter(ArrayList<Log> list, Context context) {
         this.list = list;
         mContext = context;
-        mSimpleDateFormat=new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒", Locale.CHINA);
+        mSimpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         mComparator=mComparatorMaxToMin;
         sortList();
     }

@@ -172,7 +172,7 @@
                     style="@style/TextViewStyle1"/>
 
                 <TextView
-                    android:id="@+id/dialog_server_base_more_tv_latitude"
+                    android:id="@+id/dialog_server_base_more_tv_longitude"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
@@ -184,7 +184,7 @@
                     style="@style/TextViewStyle1"/>
 
                 <TextView
-                    android:id="@+id/dialog_server_base_more_tv_longitude"
+                    android:id="@+id/dialog_server_base_more_tv_latitude"
                     style="@style/EditTextStyle2"/>
 
             </LinearLayout>
