@@ -60,7 +60,7 @@ public class MySqlModel {
             while (id<8){
                 ServerBase serviceBase=new ServerBase();
                 serviceBase.setId(id);
-                String[] phyParas = resultSet.getString("s" + id + "_phy_para").split(Pattern.quote(","));
+                String[] phyParas = decipherPhyParas(resultSet.getString("s" + id + "_phy_para"));
                 if(phyParas.length==5){
                     serviceBase.setFormCode(Integer.parseInt(phyParas[0]));
                     serviceBase.setLdpcNum(Integer.parseInt(phyParas[1]));
@@ -68,7 +68,12 @@ public class MySqlModel {
                     serviceBase.setIntvSize(Integer.parseInt(phyParas[3]));
                     serviceBase.setQamType(Integer.parseInt(phyParas[4]));
                 }
-                String[] corsParas = resultSet.getString("s" + id + "_cors_para").split(Pattern.quote(","));
+//                String s = resultSet.getString("s" + id + "_cors_para");
+//                showLog("字符串："+s);
+                String[] corsParas = decipherCorsParas(resultSet.getString("s" + id + "_cors_para"));
+//                for (String temp:corsParas){
+//                    showLog(temp);
+//                }
 //              '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
                 if(corsParas.length==8){
                     serviceBase.setIp(corsParas[0]);
@@ -88,6 +93,38 @@ public class MySqlModel {
             throw e;
         }
         return list;
+    }
+
+    private String[] decipherPhyParas(String phyParas) {
+        String[] result=new String[5];
+        for(int i=0,len=result.length;i<len;i++){
+            result[i]="0";
+        }
+        String[] split = phyParas.split(Pattern.quote(","));
+        for(int i=0,len=split.length;i<len;i++){
+            String temp = split[i];
+            if(!TextUtils.isEmpty(temp)){
+                result[i]=split[i];
+            }
+        }
+        return result;
+    }
+
+    private String[] decipherCorsParas(String corsParas){
+//        '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
+        String[] result=new String[8];
+        for(int i=0,len=result.length;i<len;i++){
+            result[i]="null";
+        }
+        String[] split = corsParas.split(Pattern.quote(","));
+        for(int i=0,len=split.length;i<len;i++){
+            String temp = split[i];
+            if(!TextUtils.isEmpty(temp)){
+                result[i]=split[i];
+            }
+        }
+        return result;
+
     }
 
     public void getStateTables(final Connection con, @Nullable final String mac){
