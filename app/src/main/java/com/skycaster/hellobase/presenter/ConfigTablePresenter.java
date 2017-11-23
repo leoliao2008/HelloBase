@@ -184,20 +184,23 @@ public class ConfigTablePresenter {
             return;
         }
         String[] items=new String[]{
-                "左频36，右频45",
                 "左频26，右频45",
-                "左频46，右频60"
+                "左频36，右频45",
+                "左频46，右频60",
+                "单音测试模式"
         };
         int leftTune=Integer.valueOf(mActivity.getTv_leftTune().getText().toString().trim());
         int rightTune=Integer.valueOf(mActivity.getTv_rightTune().getText().toString().trim());
         int checkedItem;
         if(leftTune==36&&rightTune==45){
-            checkedItem=0;
-        }else if(leftTune==26&&rightTune==45){
             checkedItem=1;
+        }else if(leftTune==26&&rightTune==45){
+            checkedItem=0;
         }else if(leftTune==46&&rightTune==60){
             checkedItem=2;
-        }else {
+        }else if(leftTune==0&&rightTune==0){
+            checkedItem=3;
+        }else{
             checkedItem=-1;
         }
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
@@ -209,17 +212,21 @@ public class ConfigTablePresenter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which){
-                                    case 0:
+                                    case 1:
                                         mActivity.getTv_leftTune().setText("36");
                                         mActivity.getTv_rightTune().setText("45");
                                         break;
-                                    case 1:
+                                    case 0:
                                         mActivity.getTv_leftTune().setText("26");
                                         mActivity.getTv_rightTune().setText("45");
                                         break;
                                     case 2:
                                         mActivity.getTv_leftTune().setText("46");
                                         mActivity.getTv_rightTune().setText("60");
+                                        break;
+                                    case 3:
+                                        mActivity.getTv_leftTune().setText("0");
+                                        mActivity.getTv_rightTune().setText("0");
                                         break;
                                 }
                                 mAlertDialog.dismiss();

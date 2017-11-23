@@ -73,7 +73,7 @@ public class LogActivity extends BaseActivity {
                 if(mDateFrom!=null&&mDateTo!=null){
                     sortLogListByDate(mDateFrom,mDateTo);
                 }else {
-                    refreshRecyclerView(list);
+                    updateRecyclerView(list);
                 }
                 showToast("日志更新完毕！");
 
@@ -100,7 +100,7 @@ public class LogActivity extends BaseActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void refreshRecyclerView(final ArrayList<Log> newList) {
+    private void updateRecyclerView(final ArrayList<Log> newList) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -192,7 +192,7 @@ public class LogActivity extends BaseActivity {
             public void onChooseToShowAll() {
                 mDateFrom=null;
                 mDateTo=null;
-                refreshRecyclerView(mLogsOrigin);
+                updateRecyclerView(mLogsOrigin);
             }
         });
 
@@ -206,6 +206,6 @@ public class LogActivity extends BaseActivity {
                 logs.add(temp);
             }
         }
-        refreshRecyclerView(logs);
+        updateRecyclerView(logs);
     }
 }

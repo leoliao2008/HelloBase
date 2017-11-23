@@ -40,9 +40,9 @@ public class MySqlModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Connection con=null;
+                Connection con;
                 try {
-                    con=getConnection(new UserBean(userName,password,host,StaticData.DATA_BASE_NAME));
+                    con=getConnection(new UserBean(userName,password,host,dataBase));
                     showLog("连接成功！");
                     mCallBack.onGetSqlConnection(con);
                 } catch (SQLException e) {
@@ -336,7 +336,7 @@ public class MySqlModel {
                     con=getConnection(userBean);
                     PreparedStatement statement=null;
                     try {
-                        String sql= genUpdateCfTableSqlCommand();
+                        String sql= sqlCmdUpdateConfigTable();
                         statement = con.prepareStatement(sql);
                         statement.setString(1,configTable.getHostId());
                         statement.setInt(2,configTable.getSpecVer());
@@ -473,7 +473,7 @@ public class MySqlModel {
                     con=getConnection(userBean);
                     PreparedStatement statement=null;
                     try {
-                        String sql= genInsertCfTableSqlCommand();
+                        String sql= sqlCmdInsertConfigTable();
                         statement = con.prepareStatement(sql);
                         statement.setString(1,table.getHostId());
                         statement.setInt(2,table.getSpecVer());
@@ -636,7 +636,7 @@ public class MySqlModel {
         return list;
     }
 
-    private String genUpdateCfTableSqlCommand() {
+    private String sqlCmdUpdateConfigTable() {
         StringBuilder sb=new StringBuilder();
         sb.append("update ConfigTable set HostId=?,SpecVer=?,OpCode=?,TheOwner=?,center_freq=?,signal_amp=?,sign_fill=?,tone_index_left=?,tone_index_right=?,");
         for (int i=0;i<8;i++){
@@ -650,7 +650,7 @@ public class MySqlModel {
         return sb.toString();
     }
 
-    private String genInsertCfTableSqlCommand(){
+    private String sqlCmdInsertConfigTable(){
         StringBuilder sb=new StringBuilder();
         sb.append("insert into ConfigTable (HostId,SpecVer,OpCode,TheOwner,center_freq,signal_amp,sign_fill,tone_index_left,tone_index_right,");
         for(int i=0;i<8;i++){
