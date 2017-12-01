@@ -28,6 +28,13 @@
             android:gravity="center"
             android:padding="@dimen/dp_10"
             android:textSize="@dimen/sp_25"/>
+        <ImageView
+            android:id="@+id/dialog_config_server_base_iv_clear_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/selector_ic_renew_36dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="@dimen/dp_10"/>
     </FrameLayout>
 
     <ScrollView

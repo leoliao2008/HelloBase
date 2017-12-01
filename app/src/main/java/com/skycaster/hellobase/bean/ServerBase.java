@@ -20,14 +20,14 @@ public class ServerBase implements Parcelable {
     private int intvSize=0;
     private int qamType=0;
 //    '服务器IP, 端口号, 用户名, 密码, 数据格式, 经度, 纬度, 高度'      ----新增属性
-    private String ip="null";
-    private String port="null";
-    private String userName="null";
-    private String pw="null";
-    private String dataFormat="null";
-    private String latitude="null";
-    private String longitude="null";
-    private String altitude ="null";
+    private String ip="";
+    private String port="";
+    private String userName="";
+    private String pw="";
+    private String dataFormat="";
+    private String latitude="";
+    private String longitude="";
+    private String altitude ="";
 
 
     public ServerBase() {

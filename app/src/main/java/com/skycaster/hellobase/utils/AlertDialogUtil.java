@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -177,6 +178,7 @@ public class AlertDialogUtil {
     public static void showEditServerBaseDialog(final Context context, final ServerBase base, final ServerBaseEditListener listener) {
         //init view
         View rootView=View.inflate(context, R.layout.dialog_edit_base_server,null);
+        ImageView iv_clearData=rootView.findViewById(R.id.dialog_config_server_base_iv_clear_data);
         final EditText edt_FormCode=rootView.findViewById(R.id.dialog_config_server_base_edt_form_code);
         final EditText edt_qamType=rootView.findViewById(R.id.dialog_config_server_base_edt_qam_type);
         final EditText edt_ldcpNum=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_num);
@@ -215,6 +217,19 @@ public class AlertDialogUtil {
         assignValueToEditText(edt_lng,base.getLongitude());
         assignValueToEditText(edt_alt,base.getAltitude());
         //int listeners
+        iv_clearData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edt_ip.setText("");
+                edt_port.setText("");
+                edt_userName.setText("");
+                edt_pw.setText("");
+                edt_dataFormat.setText("");
+                edt_lat.setText("");
+                edt_lng.setText("");
+                edt_alt.setText("");
+            }
+        });
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,43 +266,51 @@ public class AlertDialogUtil {
                 }
                 String str_ip = edt_ip.getText().toString().trim();
                 if(TextUtils.isEmpty(str_ip)){
-                    showToast(context,"IP不能为空。");
-                    return;
+//                    showToast(context,"IP不能为空。");
+//                    return;
+                    str_ip="";
                 }
                 String str_port = edt_port.getText().toString().trim();
                 if(TextUtils.isEmpty(str_port)){
-                    showToast(context,"端口不能为空。");
-                    return;
+//                    showToast(context,"端口不能为空。");
+//                    return;
+                    str_port="";
                 }
                 String str_userName = edt_userName.getText().toString().trim();
                 if(TextUtils.isEmpty(str_userName)){
-                    showToast(context,"用户名不能为空。");
-                    return;
+//                    showToast(context,"用户名不能为空。");
+//                    return;
+                    str_userName="";
                 }
                 String str_pw = edt_pw.getText().toString().trim();
                 if(TextUtils.isEmpty(str_pw)){
-                    showToast(context,"密码不能为空。");
-                    return;
+//                    showToast(context,"密码不能为空。");
+//                    return;
+                    str_pw="";
                 }
                 String str_dataFormat = edt_dataFormat.getText().toString().trim();
                 if(TextUtils.isEmpty(str_dataFormat)){
-                    showToast(context,"数据格式不能为空。");
-                    return;
+//                    showToast(context,"数据格式不能为空。");
+//                    return;
+                    str_dataFormat="";
                 }
                 String str_lat = edt_lat.getText().toString().trim();
                 if(TextUtils.isEmpty(str_lat)){
-                    showToast(context,"纬度不能为空。");
-                    return;
+//                    showToast(context,"纬度不能为空。");
+//                    return;
+                    str_lat="";
                 }
                 String str_lng = edt_lng.getText().toString().trim();
                 if(TextUtils.isEmpty(str_lng)){
-                    showToast(context,"经度不能为空。");
-                    return;
+//                    showToast(context,"经度不能为空。");
+//                    return;
+                    str_lng="";
                 }
                 String str_alt = edt_alt.getText().toString().trim();
                 if(TextUtils.isEmpty(str_alt)){
-                    showToast(context,"海拔高度不能为空。");
-                    return;
+//                    showToast(context,"海拔高度不能为空。");
+//                    return;
+                    str_alt="";
                 }
                 base.setFormCode(Integer.valueOf(str_formCode));
                 base.setIp(str_ip);

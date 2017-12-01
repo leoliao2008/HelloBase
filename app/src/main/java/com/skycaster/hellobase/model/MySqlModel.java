@@ -68,8 +68,8 @@ public class MySqlModel {
                     serviceBase.setIntvSize(Integer.parseInt(phyParas[3]));
                     serviceBase.setQamType(Integer.parseInt(phyParas[4]));
                 }
-//                String s = resultSet.getString("s" + id + "_cors_para");
-//                showLog("字符串："+s);
+                String s = resultSet.getString("s" + id + "_cors_para");
+                showLog("字符串："+s);
                 String[] corsParas = decipherCorsParas(resultSet.getString("s" + id + "_cors_para"));
 //                for (String temp:corsParas){
 //                    showLog(temp);
@@ -114,7 +114,7 @@ public class MySqlModel {
 //        '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
         String[] result=new String[8];
         for(int i=0,len=result.length;i<len;i++){
-            result[i]="null";
+            result[i]="";
         }
         String[] split = corsParas.split(Pattern.quote(","));
         for(int i=0,len=split.length;i<len;i++){
