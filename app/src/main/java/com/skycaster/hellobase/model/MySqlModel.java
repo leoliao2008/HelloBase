@@ -1,11 +1,10 @@
 package com.skycaster.hellobase.model;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.skycaster.hellobase.bean.ConfigTable;
-import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.bean.ReferentialStation;
 import com.skycaster.hellobase.bean.StateTable;
 import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
@@ -36,13 +35,13 @@ public class MySqlModel {
         mCallBack = callBack;
     }
 
-    public void connectMySql(final String host, final String dataBase, final String userName, final String password) {
+    public void connectMySql(final String host, final String userName, final String password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Connection con;
                 try {
-                    con=getConnection(new UserBean(userName,password,host,dataBase));
+                    con=getConnection(new UserBean(userName,password,host,StaticData.DATA_BASE_NAME_CLIENT,null));
                     showLog("连接成功！");
                     mCallBack.onGetSqlConnection(con);
                 } catch (SQLException e) {
@@ -53,81 +52,31 @@ public class MySqlModel {
         }).start();
     }
 
-    private ArrayList<ServerBase> getServiceBasesByResultSet(ResultSet resultSet) throws SQLException {
-        ArrayList<ServerBase> list=new ArrayList<>();
-        int id=0;
-        try {
-            while (id<8){
-                ServerBase serviceBase=new ServerBase();
-                serviceBase.setId(id);
-                String[] phyParas = decipherPhyParas(resultSet.getString("s" + id + "_phy_para"));
-                if(phyParas.length==5){
-                    serviceBase.setFormCode(Integer.parseInt(phyParas[0]));
-                    serviceBase.setLdpcNum(Integer.parseInt(phyParas[1]));
-                    serviceBase.setLdpcRate(Integer.parseInt(phyParas[2]));
-                    serviceBase.setIntvSize(Integer.parseInt(phyParas[3]));
-                    serviceBase.setQamType(Integer.parseInt(phyParas[4]));
+    public void getUserToken(final Connection con){
+//        select TABLE_NAME from  information_schema.VIEWS where TABLE_SCHEMA = 'state_views_db'
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Statement statement = con.createStatement();
+                    showLog("exe cmd to get token...");
+                    ResultSet resultSet = statement.executeQuery("select TABLE_NAME from information_schema.VIEWS where TABLE_SCHEMA = 'state_views_db'");
+                    ArrayList<String> list=new ArrayList<>();
+                    while (resultSet.next()){
+                        list.add(resultSet.getString("TABLE_NAME"));
+                    }
+                    showLog("tokens get:"+list.toString());
+                    mCallBack.onGetPermissionTokens(list);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    showLog("Fail to get tokes :"+e.getMessage());
+                    mCallBack.onGetPermissionTokensFail(e.getMessage());
                 }
-                String s = resultSet.getString("s" + id + "_cors_para");
-                showLog("字符串："+s);
-                String[] corsParas = decipherCorsParas(resultSet.getString("s" + id + "_cors_para"));
-//                for (String temp:corsParas){
-//                    showLog(temp);
-//                }
-//              '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
-                if(corsParas.length==8){
-                    serviceBase.setIp(corsParas[0]);
-                    serviceBase.setPort(corsParas[1]);
-                    serviceBase.setUserName(corsParas[2]);
-                    serviceBase.setPw(corsParas[3]);
-                    serviceBase.setDataFormat(corsParas[4]);
-                    serviceBase.setLatitude(corsParas[5]);
-                    serviceBase.setLongitude(corsParas[6]);
-                    serviceBase.setAltitude(corsParas[7]);
-                }
-                list.add(serviceBase);
-                id++;
             }
-        } catch (SQLException e) {
-            showLog("error during getServiceBasesByResultSet(ResultSet resultSet) "+e.getMessage());
-            throw e;
-        }
-        return list;
+        }).start();
     }
 
-    private String[] decipherPhyParas(String phyParas) {
-        String[] result=new String[5];
-        for(int i=0,len=result.length;i<len;i++){
-            result[i]="0";
-        }
-        String[] split = phyParas.split(Pattern.quote(","));
-        for(int i=0,len=split.length;i<len;i++){
-            String temp = split[i];
-            if(!TextUtils.isEmpty(temp)){
-                result[i]=split[i];
-            }
-        }
-        return result;
-    }
-
-    private String[] decipherCorsParas(String corsParas){
-//        '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
-        String[] result=new String[8];
-        for(int i=0,len=result.length;i<len;i++){
-            result[i]="";
-        }
-        String[] split = corsParas.split(Pattern.quote(","));
-        for(int i=0,len=split.length;i<len;i++){
-            String temp = split[i];
-            if(!TextUtils.isEmpty(temp)){
-                result[i]=split[i];
-            }
-        }
-        return result;
-
-    }
-
-    public void getStateTables(final Connection con, @Nullable final String mac){
+    public void getStateTables(final Connection con, final ArrayList<String> tokens){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,10 +85,20 @@ public class MySqlModel {
                     ResultSet resultSet=null;
                     try {
                         statement =con.createStatement();
-                        if(mac!=null){
-                            resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
+                        if(tokens.size()==1){
+                            resultSet=statement.executeQuery("SELECT * FROM state_views_db."+tokens.get(0));
                         }else {
-                            resultSet=statement.executeQuery("SELECT * FROM StateTable");
+                            StringBuilder sb=new StringBuilder();
+//                            select * from ( (select * from  state_views_db.武汉 )UNION (select * from  state_views_db.深圳)) as abc
+                            sb.append("select * from ((select * from  state_views_db.");
+                            for(int i=0;i<tokens.size();i++){
+                                sb.append(tokens.get(i));
+                                if(i!=tokens.size()-1){
+                                    sb.append(")UNION (select * from  state_views_db.");
+                                }
+                            }
+                            sb.append(")) as abc");
+                            resultSet=statement.executeQuery(sb.toString());
                         }
                         ArrayList<StateTable> tableList = getStateTablesByResultSet(resultSet);
                         mCallBack.onGetStateTablesSuccess(tableList);
@@ -173,100 +132,7 @@ public class MySqlModel {
         }).start();
     }
 
-
-    private ArrayList<StateTable> getStateTablesByResultSet(ResultSet resultSet) throws SQLException {
-        ArrayList<StateTable> list=new ArrayList<>();
-        try {
-            while (resultSet.next()){
-                StateTable st=new StateTable();
-                String hostId = resultSet.getString("HostId");
-                hostId= TextUtils.isEmpty(hostId)?"unknown":hostId;
-                st.setHostId(hostId);
-                String theOwner = resultSet.getString("TheOwner");
-                st.setTheOwner(theOwner);
-                Timestamp timestamp = resultSet.getTimestamp("FeedbackTime");
-                if(timestamp==null){
-                    timestamp=new Timestamp(0);
-                }
-                st.setDateTime(timestamp.getTime());
-                st.setCurVer(resultSet.getInt("CurVer"));
-                String runningState = resultSet.getString("StateCode");
-                runningState=TextUtils.isEmpty(runningState)?"unknown":runningState;
-                st.setRunningState(runningState);
-                String notes = resultSet.getString("Notes");
-                notes=TextUtils.isEmpty(notes)?"unknown":notes;
-                st.setNotes(notes);
-                list.add(st);
-            }
-        } catch (SQLException e) {
-            showLog("error while running getStateTablesByResultSet(ResultSet resultSet): "+e.getMessage());
-            throw e;
-        }
-        return list;
-    }
-
-
-
-    public void getStateTables(final UserBean userBean,@Nullable final String mac){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Connection con=null;
-                try {
-                    con=getConnection(userBean);
-                    Statement statement=null;
-                    ResultSet resultSet=null;
-                    try {
-                        statement =con.createStatement();
-                        if(mac!=null){
-                            resultSet=statement.executeQuery("SELECT * FROM StateTable WHERE HostId='"+mac+"'");
-                        }else {
-                            resultSet=statement.executeQuery("SELECT * FROM StateTable");
-                        }
-                        ArrayList<StateTable> tableList = getStateTablesByResultSet(resultSet);
-                        mCallBack.onGetStateTablesSuccess(tableList);
-                    } catch (SQLException e) {
-                        showLog("error while running getStateTables(final UserBean userBean,@Nullable final String mac):"+e.getMessage());
-                        mCallBack.onGetStateTablesError(e.getMessage());
-                    }finally {
-                        if(resultSet!=null){
-                            try {
-                                resultSet.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            } finally {
-                                resultSet=null;
-                            }
-                        }
-                        if(statement!=null){
-                            try {
-                                statement.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            } finally {
-                                statement=null;
-                            }
-
-                        }
-                    }
-
-                } catch (SQLException e) {
-                    mCallBack.onSqlConnectionFail(e.getMessage());
-                } finally {
-                    if(con!=null){
-                        try {
-                            con.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        con=null;
-                    }
-                }
-            }
-        }).start();
-    }
-
-    public void getConfigTable(final UserBean userBean, final String mac){
+    public void getConfigTable(final UserBean userBean, final String hostId){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -277,12 +143,27 @@ public class MySqlModel {
                     ResultSet resultSet=null;
                     try {
                         statement = con.createStatement();
-                        if(mac!=null){
-                            resultSet = statement.executeQuery("SELECT * FROM ConfigTable WHERE HostId='"+mac+"'");
-                        }else {
-                            resultSet =statement.executeQuery("SELECT * FROM ConfigTable");
+                        ArrayList<String> tokens = userBean.getTokens();
+//                        select * from  config_views_db.武汉
+                        if(tokens.size()==0){
+                            mCallBack.onGetConfigTableError("user is not authorized to access config table.");
+                            return;
                         }
-
+                        StringBuilder sb=new StringBuilder();
+                        if(tokens.size()==1){
+                            sb.append("select * from  config_views_db.").append(tokens.get(0)).append(" where HostId = '").append(hostId).append("'");
+                        }else {
+//                            select * from ( (select * from  config_views_db.武汉 where hostid = '' )UNION (select * from  config_views_db.深圳)) as abc
+                            sb.append("select * from ( (select * from  config_views_db.");
+                            for(int i=0;i<tokens.size();i++){
+                                sb.append(tokens.get(i)).append(" where HostId = '").append(hostId).append("'");
+                                if(i!=tokens.size()-1){
+                                    sb.append(" )UNION (select * from  config_views_db.");
+                                }
+                            }
+                            sb.append(")) as efg");
+                        }
+                        resultSet=statement.executeQuery(sb.toString());
                         ArrayList<ConfigTable> configTables = getConfigTableByResultSet(resultSet);
                         if(!configTables.isEmpty()){
                             mCallBack.onGetConfigTableSuccess(configTables);
@@ -336,7 +217,7 @@ public class MySqlModel {
                     con=getConnection(userBean);
                     PreparedStatement statement=null;
                     try {
-                        String sql= sqlCmdUpdateConfigTable();
+                        String sql= getUpdateConfigTableCmd(getConfigTableNameByHostId(con,userBean.getTokens(),configTable.getHostId()));
                         statement = con.prepareStatement(sql);
                         statement.setString(1,configTable.getHostId());
                         statement.setInt(2,configTable.getSpecVer());
@@ -348,11 +229,11 @@ public class MySqlModel {
                         statement.setInt(8,configTable.getToneLeft());
                         statement.setInt(9,configTable.getToneRight());
                         int index=10;
-                        int size = configTable.getServiceBases().size();
+                        int size = configTable.getStations().size();
                         for (int i=0;i<8;i++){
                             if(i<size){
 //                                #'form_code, ldpc_num, ldpc_rate, intv_size, qam_type'
-                                ServerBase temp = configTable.getServiceBases().get(i);
+                                ReferentialStation temp = configTable.getStations().get(i);
                                 statement.setString(index++,
                                         new StringBuffer()
                                         .append(temp.getFormCode())
@@ -473,7 +354,7 @@ public class MySqlModel {
                     con=getConnection(userBean);
                     PreparedStatement statement=null;
                     try {
-                        String sql= sqlCmdInsertConfigTable();
+                        String sql= sqlCmdInsertConfigTable(getConfigTableNameByHostId(con,userBean.getTokens(),table.getHostId()));
                         statement = con.prepareStatement(sql);
                         statement.setString(1,table.getHostId());
                         statement.setInt(2,table.getSpecVer());
@@ -546,7 +427,8 @@ public class MySqlModel {
                             statement = connection.createStatement();
                             ResultSet resultSet=null;
                             try {
-                                resultSet = statement.executeQuery("SELECT * FROM RecordTable WHERE HostId='" + hostId + "'");
+//                                SELECT * FROM record_views_db.views_record where HostId = 'b827eb14f70d'
+                                resultSet = statement.executeQuery("SELECT * FROM record_views_db.views_record WHERE HostId='" + hostId + "'");
                                 ArrayList<com.skycaster.hellobase.bean.Log> list = obtainLogByResultSet(resultSet);
                                 mCallBack.onObtainLog(list);
                             } catch (SQLException e) {
@@ -626,7 +508,7 @@ public class MySqlModel {
                 tb.setSignFill(resultSet.getInt("sign_fill"));
                 tb.setToneLeft(resultSet.getInt("tone_index_left"));
                 tb.setToneRight(resultSet.getInt("tone_index_right"));
-                tb.setServiceBases(getServiceBasesByResultSet(resultSet));
+                tb.setStations(getReferStationsByResultSet(resultSet));
                 list.add(tb);
             }
         } catch (SQLException e) {
@@ -636,9 +518,30 @@ public class MySqlModel {
         return list;
     }
 
-    private String sqlCmdUpdateConfigTable() {
+    public String getConfigTableNameByHostId(Connection con,ArrayList<String> tokens,String hostId) {
+        String tableName=null;
+        for(String token:tokens){
+//            select * from  config_views_db.武汉
+            ResultSet resultSet=null;
+            try {
+                resultSet = con.createStatement().executeQuery("select 1 from  config_views_db." + token + " where HostId = '" + hostId + "'");
+                if(resultSet.next()){
+                    tableName="config_views_db." + token;
+                    showLog("table name is found "+tableName);
+                    break;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return tableName;
+    }
+
+    private String getUpdateConfigTableCmd(String tableName) {
         StringBuilder sb=new StringBuilder();
-        sb.append("update ConfigTable set HostId=?,SpecVer=?,OpCode=?,TheOwner=?,center_freq=?,signal_amp=?,sign_fill=?,tone_index_left=?,tone_index_right=?,");
+        sb.append("update ")
+          .append(tableName)
+          .append(" set HostId=?,SpecVer=?,OpCode=?,TheOwner=?,center_freq=?,signal_amp=?,sign_fill=?,tone_index_left=?,tone_index_right=?,");
         for (int i=0;i<8;i++){
             sb.append("s").append(i).append("_phy_para=?,");
             sb.append("s").append(i).append("_cors_para=?");
@@ -650,9 +553,9 @@ public class MySqlModel {
         return sb.toString();
     }
 
-    private String sqlCmdInsertConfigTable(){
+    private String sqlCmdInsertConfigTable(String tableName){
         StringBuilder sb=new StringBuilder();
-        sb.append("insert into ConfigTable (HostId,SpecVer,OpCode,TheOwner,center_freq,signal_amp,sign_fill,tone_index_left,tone_index_right,");
+        sb.append("insert into ").append(tableName).append(" (HostId,SpecVer,OpCode,TheOwner,center_freq,signal_amp,sign_fill,tone_index_left,tone_index_right,");
         for(int i=0;i<8;i++){
             sb.append("s").append(i).append("_phy_para=?,");
             sb.append("s").append(i).append("_cors_para=?");
@@ -672,6 +575,7 @@ public class MySqlModel {
     }
 
     private Connection getConnection(UserBean userBean) throws SQLException {
+        //"jdbc:mysql://168.121.121.12:9527/state_views_db?user=admin&password=123456"
         return DriverManager.getConnection(PREFIX+userBean.getHost()+"/"
                 +userBean.getDataBaseName()+"?user="+userBean.getUserName()
                 +"&password="+userBean.getPassword());
@@ -680,6 +584,116 @@ public class MySqlModel {
 
     private void showLog(String msg){
         Log.e(getClass().getSimpleName(),msg);
+    }
+
+    /**
+     * 获取基站清单
+     * @param resultSet
+     * @return
+     * @throws SQLException
+     */
+    private ArrayList<ReferentialStation> getReferStationsByResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<ReferentialStation> list=new ArrayList<>();
+        int id=0;
+        try {
+            while (id<8){
+                ReferentialStation station=new ReferentialStation();
+                station.setId(id);
+                String[] phyParas = getPhyParas(resultSet.getString("s" + id + "_phy_para"));
+                if(phyParas.length==5){
+                    station.setFormCode(Integer.parseInt(phyParas[0]));
+                    station.setLdpcNum(Integer.parseInt(phyParas[1]));
+                    station.setLdpcRate(Integer.parseInt(phyParas[2]));
+                    station.setIntvSize(Integer.parseInt(phyParas[3]));
+                    station.setQamType(Integer.parseInt(phyParas[4]));
+                }
+                String s = resultSet.getString("s" + id + "_cors_para");
+                showLog("字符串："+s);
+                String[] corsParas = getCorsParas(resultSet.getString("s" + id + "_cors_para"));
+//                for (String temp:corsParas){
+//                    showLog(temp);
+//                }
+//              '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
+                if(corsParas.length==8){
+                    station.setIp(corsParas[0]);
+                    station.setPort(corsParas[1]);
+                    station.setUserName(corsParas[2]);
+                    station.setPw(corsParas[3]);
+                    station.setDataFormat(corsParas[4]);
+                    station.setLatitude(corsParas[5]);
+                    station.setLongitude(corsParas[6]);
+                    station.setAltitude(corsParas[7]);
+                }
+                list.add(station);
+                id++;
+            }
+        } catch (SQLException e) {
+            showLog("error during getReferStationsByResultSet(ResultSet resultSet) "+e.getMessage());
+            throw e;
+        }
+        return list;
+    }
+
+    private String[] getPhyParas(String phyParas) {
+        String[] result=new String[5];
+        for(int i=0,len=result.length;i<len;i++){
+            result[i]="0";
+        }
+        String[] split = phyParas.split(Pattern.quote(","));
+        for(int i=0,len=split.length;i<len;i++){
+            String temp = split[i];
+            if(!TextUtils.isEmpty(temp)){
+                result[i]=split[i];
+            }
+        }
+        return result;
+    }
+
+    private String[] getCorsParas(String corsParas){
+//        '服务器IP, 端口号, 用户名, 密码, 数据格式, 纬度,经度， 高度'
+        String[] result=new String[8];
+        for(int i=0,len=result.length;i<len;i++){
+            result[i]="";
+        }
+        String[] split = corsParas.split(Pattern.quote(","));
+        for(int i=0,len=split.length;i<len;i++){
+            String temp = split[i];
+            if(!TextUtils.isEmpty(temp)){
+                result[i]=split[i];
+            }
+        }
+        return result;
+    }
+
+    private ArrayList<StateTable> getStateTablesByResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<StateTable> list=new ArrayList<>();
+        try {
+            while (resultSet.next()){
+                StateTable st=new StateTable();
+                String hostId = resultSet.getString("HostId");
+                hostId= TextUtils.isEmpty(hostId)?"unknown":hostId;
+                st.setHostId(hostId);
+                String theOwner = resultSet.getString("TheOwner");
+                st.setTheOwner(theOwner);
+                Timestamp timestamp = resultSet.getTimestamp("FeedbackTime");
+                if(timestamp==null){
+                    timestamp=new Timestamp(0);
+                }
+                st.setDateTime(timestamp.getTime());
+                st.setCurVer(resultSet.getInt("CurVer"));
+                String runningState = resultSet.getString("StateCode");
+                runningState=TextUtils.isEmpty(runningState)?"unknown":runningState;
+                st.setRunningState(runningState);
+                String notes = resultSet.getString("Notes");
+                notes=TextUtils.isEmpty(notes)?"unknown":notes;
+                st.setNotes(notes);
+                list.add(st);
+            }
+        } catch (SQLException e) {
+            showLog("error while running getStateTablesByResultSet(ResultSet resultSet): "+e.getMessage());
+            throw e;
+        }
+        return list;
     }
 
 

@@ -46,11 +46,13 @@ public class ServerConStatusMonitor extends Service {
     private NotificationCompat.Builder mNotiBuilder;
     private int mNetState =StaticData.EXTRA_INT_NET_STATUS_MONITOR_CLOSE;
     private Thread mLoopThread;
+    private ArrayList<String> mTokens;
     private MySqlModelCallBack mCallback=new MySqlModelCallBack(){
         @Override
         public void onGetSqlConnection(Connection con) {
             mConnection=con;
-            startLooping();
+//            startLooping();
+            mMySqlModel.getUserToken(mConnection);
         }
 
         @Override
@@ -61,6 +63,13 @@ public class ServerConStatusMonitor extends Service {
             stopSelf();
         }
 
+        @Override
+        public void onGetPermissionTokens(ArrayList<String> tokens) {
+            mTokens=tokens;
+            if(tokens.size()>0){
+                startLooping();
+            }
+        }
 
         @Override
         public void onGetStateTablesSuccess(ArrayList<StateTable> stateTables) {
@@ -104,7 +113,7 @@ public class ServerConStatusMonitor extends Service {
     private void connectMySql(){
         UserBean user = BaseApplication.getUser();
         if(user!=null){
-            mMySqlModel.connectMySql(user.getHost(),StaticData.DATA_BASE_NAME,user.getUserName(),user.getPassword());
+            mMySqlModel.connectMySql(user.getHost(),user.getUserName(),user.getPassword());
         }else {
             Toast.makeText(this,"登陆信息过期，请重新登陆。",Toast.LENGTH_SHORT).show();
         }
@@ -244,8 +253,8 @@ public class ServerConStatusMonitor extends Service {
                     if(Thread.currentThread().isInterrupted()){
                         break;
                     }
-                    mMySqlModel.getStateTables(mConnection, mStateTable.getHostId());
-                    SystemClock.sleep(6000);
+                    mMySqlModel.getStateTables(mConnection, mTokens);
+                    SystemClock.sleep(10000);
                 }
             }
         });

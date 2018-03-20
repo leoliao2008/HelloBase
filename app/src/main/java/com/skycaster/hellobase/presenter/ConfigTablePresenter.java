@@ -9,10 +9,10 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.skycaster.hellobase.activity.ConfigActivity;
-import com.skycaster.hellobase.adapter.ServiceBaseAdapter;
+import com.skycaster.hellobase.adapter.ReferStationAdapter;
 import com.skycaster.hellobase.base.BaseApplication;
 import com.skycaster.hellobase.bean.ConfigTable;
-import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.bean.ReferentialStation;
 import com.skycaster.hellobase.bean.UserBean;
 import com.skycaster.hellobase.data.StaticData;
 import com.skycaster.hellobase.interf.MySqlModelCallBack;
@@ -35,8 +35,8 @@ import java.util.ArrayList;
 public class ConfigTablePresenter {
     private ConfigActivity mActivity;
     private ConfigTable mConfigTable;
-    private ArrayList<ServerBase> mServerBases=new ArrayList<>();
-    private ServiceBaseAdapter mAdapter;
+    private ArrayList<ReferentialStation> mReferentialStations =new ArrayList<>();
+    private ReferStationAdapter mAdapter;
     private Handler mHandler;
     private AlertDialog mAlertDialog;
     private MySqlModel mMySqlModel;
@@ -105,14 +105,14 @@ public class ConfigTablePresenter {
     }
 
     private void initListView() {
-        mAdapter=new ServiceBaseAdapter(mServerBases, mActivity, new ServiceBaseAdapter.CallBack() {
+        mAdapter=new ReferStationAdapter(mReferentialStations, mActivity, new ReferStationAdapter.CallBack() {
             @Override
-            public void onPressMoreIcon(int position, ServerBase serverBase) {
-                AlertDialogUtil.showServerBaseDetails(mActivity,serverBase,position);
+            public void onPressMoreIcon(int position, ReferentialStation referentialStation) {
+                AlertDialogUtil.showServerBaseDetails(mActivity, referentialStation,position);
             }
 
             @Override
-            public void onPressSettingIcon(int position, ServerBase serverBase) {
+            public void onPressSettingIcon(int position, ReferentialStation referentialStation) {
                 showEditServerBaseDialog(position);
             }
         });
@@ -160,9 +160,9 @@ public class ConfigTablePresenter {
         String right = String.valueOf(tb.getToneRight());
         mActivity.getTv_rightTune().setText(right);
 
-        ArrayList<ServerBase> bases = tb.getServiceBases();
-        mServerBases.clear();
-        mServerBases.addAll(bases);
+        ArrayList<ReferentialStation> bases = tb.getStations();
+        mReferentialStations.clear();
+        mReferentialStations.addAll(bases);
         mAdapter.notifyDataSetChanged();
 
         toggleUIByMode(mActivity.getIsInEditMode().get());
@@ -241,12 +241,12 @@ public class ConfigTablePresenter {
 
 
     public void showEditServerBaseDialog(final int position) {
-        AlertDialogUtil.showEditServerBaseDialog(mActivity, mServerBases.get(position), new AlertDialogUtil.ServerBaseEditListener() {
+        AlertDialogUtil.showEditServerBaseDialog(mActivity, mReferentialStations.get(position), new AlertDialogUtil.ServerBaseEditListener() {
             @Override
-            public void onConfirmEdit(ServerBase confirm) {
-                confirm.lightClone(mServerBases.get(position));
+            public void onConfirmEdit(ReferentialStation confirm) {
+                confirm.lightClone(mReferentialStations.get(position));
                 //同步更新数据
-                confirm.lightClone(mConfigTable.getServiceBases().get(position));
+                confirm.lightClone(mConfigTable.getStations().get(position));
                 mAdapter.notifyDataSetChanged();
             }
         });

@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by 廖华凯 on 2017/9/12.
  */
 
-public class ServerBase implements Parcelable {
+public class ReferentialStation implements Parcelable {
     private int id=0;
 //    s0_form_code	  integer not null default 33,-- 此项不用翻译
 //    s0_ldpc_num		  integer not null default 15, -- 业务0 LDCP码字个数
@@ -30,7 +30,7 @@ public class ServerBase implements Parcelable {
     private String altitude ="";
 
 
-    public ServerBase() {
+    public ReferentialStation() {
     }
 
 
@@ -150,8 +150,8 @@ public class ServerBase implements Parcelable {
      * 深度克隆，声明一个新的对象，把当前的属性复制到新的对象中。
      * @return 一个新的对象，属性跟当前这个对象一样，但地址是全新的。
      */
-    public ServerBase deepClone(){
-        ServerBase sb=new ServerBase();
+    public ReferentialStation deepClone(){
+        ReferentialStation sb=new ReferentialStation();
         sb.setId(id);
         sb.setLdpcNum(ldpcNum);
         sb.setFormCode(formCode);
@@ -173,7 +173,7 @@ public class ServerBase implements Parcelable {
      * 浅度克隆，只是把属性的值赋给目标对象，目标对象的地址还是原来那个。
      * @param sb 目标对象
      */
-    public void lightClone(ServerBase sb){
+    public void lightClone(ReferentialStation sb){
         sb.setId(id);
         sb.setLdpcNum(ldpcNum);
         sb.setFormCode(formCode);
@@ -214,7 +214,7 @@ public class ServerBase implements Parcelable {
         dest.writeString(this.altitude);
     }
 
-    protected ServerBase(Parcel in) {
+    protected ReferentialStation(Parcel in) {
         this.id = in.readInt();
         this.formCode = in.readInt();
         this.ldpcNum = in.readInt();
@@ -231,15 +231,15 @@ public class ServerBase implements Parcelable {
         this.altitude = in.readString();
     }
 
-    public static final Creator<ServerBase> CREATOR = new Creator<ServerBase>() {
+    public static final Creator<ReferentialStation> CREATOR = new Creator<ReferentialStation>() {
         @Override
-        public ServerBase createFromParcel(Parcel source) {
-            return new ServerBase(source);
+        public ReferentialStation createFromParcel(Parcel source) {
+            return new ReferentialStation(source);
         }
 
         @Override
-        public ServerBase[] newArray(int size) {
-            return new ServerBase[size];
+        public ReferentialStation[] newArray(int size) {
+            return new ReferentialStation[size];
         }
     };
 }

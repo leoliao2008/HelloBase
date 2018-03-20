@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 
 import com.skycaster.hellobase.R;
 import com.skycaster.hellobase.activity.LogInActivity;
@@ -38,22 +39,31 @@ public class LogInPresenter {
     private boolean mIsPwVisible;
     private ProgressDialog mProgressDialog;
     private MySqlModel mMySqlModel;
+    private Connection mConnection;
     private MySqlModelCallBack mCallBack=new MySqlModelCallBack(){
         @Override
         public void onGetSqlConnection(Connection con) {
-            UserBean user=new UserBean();
-            user.setUserName(mUserName);
-            user.setPassword(mPw);
-            user.setHost(mIp+":"+mPort);
-            user.setDataBaseName(StaticData.DATA_BASE_NAME);
-            BaseApplication.setUser(user);
-            mMySqlModel.getStateTables(con,null);
+            mConnection=con;
+            mMySqlModel.getUserToken(con);
+            showLog("Start to get tokens....");
         }
 
         @Override
         public void onSqlConnectionFail(String msg) {
             dismissProgressDialog();
             showToast("连接失败，请确保IP地址、端口地址、用户名及密码都正确；如果仍然失败，请联系思凯微电子有限公司。");
+        }
+
+        @Override
+        public void onGetPermissionTokens(ArrayList<String> tokens) {
+            UserBean user=new UserBean();
+            user.setUserName(mUserName);
+            user.setPassword(mPw);
+            user.setHost(mIp+":"+mPort);
+            user.setDataBaseName(StaticData.DATA_BASE_NAME_CLIENT);
+            user.setTokens(tokens);
+            BaseApplication.setUser(user);
+            mMySqlModel.getStateTables(mConnection,tokens);
         }
 
         @Override
@@ -66,7 +76,12 @@ public class LogInPresenter {
                     mActivity.finish();
                 }
             });
+        }
 
+        @Override
+        public void onGetPermissionTokensFail(String error) {
+            dismissProgressDialog();
+            showToast(error);
         }
 
         @Override
@@ -180,7 +195,7 @@ public class LogInPresenter {
             editor.apply();
         }
         showProgressDialog();
-        mMySqlModel.connectMySql(mIp+":"+mPort,StaticData.DATA_BASE_NAME,mUserName,mPw);
+        mMySqlModel.connectMySql(mIp+":"+mPort,mUserName,mPw);
     }
 
     private void showProgressDialog() {
@@ -251,5 +266,9 @@ public class LogInPresenter {
                wipeLoginRecord();
             }
         }
+    }
+
+    private void showLog(String msg){
+        Log.e(getClass().getSimpleName(),msg);
     }
 }

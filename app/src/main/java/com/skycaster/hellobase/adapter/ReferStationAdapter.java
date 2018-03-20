@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.bean.ReferentialStation;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -19,14 +19,14 @@ import java.util.Locale;
  * Created by 廖华凯 on 2017/9/13.
  */
 
-public class ServiceBaseAdapter extends BaseAdapter {
-    private ArrayList<ServerBase> list;
+public class ReferStationAdapter extends BaseAdapter {
+    private ArrayList<ReferentialStation> list;
     private Context mContext;
     private int[] mColors =new int[]{Color.parseColor("#FFFF00"),Color.parseColor("#0E7038"),Color.parseColor("#FFAA25")};
-    private ServiceBaseAdapter.CallBack mCallBack;
+    private ReferStationAdapter.CallBack mCallBack;
     private boolean isEditMode =false;
 
-    public ServiceBaseAdapter(ArrayList<ServerBase> list, Context context,CallBack callBack) {
+    public ReferStationAdapter(ArrayList<ReferentialStation> list, Context context, CallBack callBack) {
         this.list = list;
         mContext = context;
         mCallBack=callBack;
@@ -72,7 +72,7 @@ public class ServiceBaseAdapter extends BaseAdapter {
             vh.tv_maskNoData.setVisibility(View.GONE);
             vh.tv_id.setVisibility(View.VISIBLE);
             vh.mRelativeLayout.setVisibility(View.VISIBLE);
-            final ServerBase temp = list.get(position);
+            final ReferentialStation temp = list.get(position);
             vh.tv_id.setText(String.format(Locale.CHINA,"%02d",temp.getId()));
             vh.tv_id.setBackgroundColor(mColors[position%3]);
             vh.tv_num.setText(String.valueOf(temp.getLdpcNum()));
@@ -100,9 +100,9 @@ public class ServiceBaseAdapter extends BaseAdapter {
     }
 
     public interface CallBack{
-        void onPressMoreIcon(int position,ServerBase serverBase);
+        void onPressMoreIcon(int position,ReferentialStation referentialStation);
 
-        void onPressSettingIcon(int position, ServerBase serverBase);
+        void onPressSettingIcon(int position, ReferentialStation referentialStation);
     }
 
     private class ViewHolder{

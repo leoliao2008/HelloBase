@@ -19,7 +19,7 @@ public class ConfigTable implements Parcelable{
     private int signFill=0;
     private int toneLeft=0;
     private int toneRight=0;
-    private ArrayList<ServerBase> mServiceBases=new ArrayList<>();
+    private ArrayList<ReferentialStation> mStations =new ArrayList<>();
 
     public void setHostId(String hostId) {
         this.hostId = hostId;
@@ -57,10 +57,10 @@ public class ConfigTable implements Parcelable{
         this.toneRight = toneRight;
     }
 
-    public void setServiceBases(ArrayList<ServerBase> serviceBases) {
-        mServiceBases.clear();
-        for (ServerBase temp:serviceBases){
-            mServiceBases.add(temp.deepClone());
+    public void setStations(ArrayList<ReferentialStation> stations) {
+        mStations.clear();
+        for (ReferentialStation temp: stations){
+            mStations.add(temp.deepClone());
         }
     }
 
@@ -100,8 +100,8 @@ public class ConfigTable implements Parcelable{
         return toneRight;
     }
 
-    public ArrayList<ServerBase> getServiceBases() {
-        return mServiceBases;
+    public ArrayList<ReferentialStation> getStations() {
+        return mStations;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ConfigTable implements Parcelable{
                 ", signFill=" + signFill +
                 ", toneLeft=" + toneLeft +
                 ", toneRight=" + toneRight +
-                ", mServiceBases=" + mServiceBases +
+                ", mStations=" + mStations +
                 '}';
     }
 
@@ -136,7 +136,7 @@ public class ConfigTable implements Parcelable{
         dest.writeInt(this.signFill);
         dest.writeInt(this.toneLeft);
         dest.writeInt(this.toneRight);
-        dest.writeTypedList(this.mServiceBases);
+        dest.writeTypedList(this.mStations);
     }
 
     public ConfigTable() {}
@@ -151,7 +151,7 @@ public class ConfigTable implements Parcelable{
         this.signFill = in.readInt();
         this.toneLeft = in.readInt();
         this.toneRight = in.readInt();
-        this.mServiceBases = in.createTypedArrayList(ServerBase.CREATOR);
+        this.mStations = in.createTypedArrayList(ReferentialStation.CREATOR);
     }
 
     public static final Creator<ConfigTable> CREATOR = new Creator<ConfigTable>() {
@@ -177,7 +177,7 @@ public class ConfigTable implements Parcelable{
         tb.setTheOwner(theOwner);
         tb.setToneLeft(toneLeft);
         tb.setToneRight(toneRight);
-        tb.setServiceBases(mServiceBases);
+        tb.setStations(mStations);
         return tb;
     }
 }

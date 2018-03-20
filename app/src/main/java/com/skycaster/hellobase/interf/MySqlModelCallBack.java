@@ -51,4 +51,16 @@ public class MySqlModelCallBack {
     public void onObtainLog(ArrayList<Log> list) {
 
     }
+
+    /**
+     * 2018.3.20更新
+     * @param tokens
+     */
+    public void onGetPermissionTokens(ArrayList<String> tokens) {
+
+    }
+
+    public void onGetPermissionTokensFail(String error) {
+
+    }
 }

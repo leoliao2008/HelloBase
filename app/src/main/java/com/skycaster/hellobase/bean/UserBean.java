@@ -3,6 +3,8 @@ package com.skycaster.hellobase.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 /**
  * Created by 廖华凯 on 2017/10/10.
  */
@@ -12,15 +14,17 @@ public class UserBean implements Parcelable {
     private String password;
     private String host;
     private String dataBaseName;
+    private ArrayList<String> tokens;
 
     public UserBean() {
     }
 
-    public UserBean(String userName, String password, String host, String dataBaseName) {
+    public UserBean(String userName, String password, String host, String dataBaseName, ArrayList<String> tokens) {
         this.userName = userName;
         this.password = password;
         this.host = host;
         this.dataBaseName = dataBaseName;
+        this.tokens = tokens;
     }
 
     public String getUserName() {
@@ -55,6 +59,14 @@ public class UserBean implements Parcelable {
         this.dataBaseName = dataBaseName;
     }
 
+    public ArrayList<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(ArrayList<String> tokens) {
+        this.tokens = tokens;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -66,6 +78,7 @@ public class UserBean implements Parcelable {
         dest.writeString(this.password);
         dest.writeString(this.host);
         dest.writeString(this.dataBaseName);
+        dest.writeStringList(this.tokens);
     }
 
     protected UserBean(Parcel in) {
@@ -73,9 +86,10 @@ public class UserBean implements Parcelable {
         this.password = in.readString();
         this.host = in.readString();
         this.dataBaseName = in.readString();
+        this.tokens = in.createStringArrayList();
     }
 
-    public static final Parcelable.Creator<UserBean> CREATOR = new Parcelable.Creator<UserBean>() {
+    public static final Creator<UserBean> CREATOR = new Creator<UserBean>() {
         @Override
         public UserBean createFromParcel(Parcel source) {
             return new UserBean(source);

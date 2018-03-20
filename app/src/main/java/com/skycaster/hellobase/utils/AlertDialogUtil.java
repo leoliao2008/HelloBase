@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skycaster.hellobase.R;
-import com.skycaster.hellobase.bean.ServerBase;
+import com.skycaster.hellobase.bean.ReferentialStation;
 import com.skycaster.hellobase.data.StaticData;
 
 import java.text.ParseException;
@@ -142,7 +142,7 @@ public class AlertDialogUtil {
         alertDialog.show();
     }
 
-    public static void showServerBaseDetails(Context context, ServerBase base,int position) {
+    public static void showServerBaseDetails(Context context, ReferentialStation base, int position) {
         View rootView = View.inflate(context, R.layout.dialog_base_server_more, null);
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_order)).setText(String.format(Locale.CHINA,"%02d",position));
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_qam_type)).setText(base.getQamType()+"");
@@ -172,10 +172,10 @@ public class AlertDialogUtil {
     }
 
     public interface ServerBaseEditListener {
-        void onConfirmEdit(ServerBase confirm);
+        void onConfirmEdit(ReferentialStation confirm);
     }
 
-    public static void showEditServerBaseDialog(final Context context, final ServerBase base, final ServerBaseEditListener listener) {
+    public static void showEditServerBaseDialog(final Context context, final ReferentialStation base, final ServerBaseEditListener listener) {
         //init view
         View rootView=View.inflate(context, R.layout.dialog_edit_base_server,null);
         ImageView iv_clearData=rootView.findViewById(R.id.dialog_config_server_base_iv_clear_data);

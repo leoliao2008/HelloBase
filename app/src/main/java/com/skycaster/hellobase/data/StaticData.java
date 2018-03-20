@@ -8,7 +8,7 @@ import com.skycaster.hellobase.R;
 
 public interface StaticData {
 //    String HOST_ADDRESS="183.56.182.140:9527";
-    String DATA_BASE_NAME="KinHoodCloud";
+    String DATA_BASE_NAME_ADMIN ="KinHoodCloud";
 //    String USER_NAME="admin";
 //    String PASSWORD="skycaster";
     String EXTRA_DATA_STATE_TABLE="EXTRA_DATA_STATE_TABLE";
@@ -89,4 +89,5 @@ public interface StaticData {
     String DATE_START = "DATE_START";
     String DATE_END="DATE_END";
     String OP_CODE_POWER_OFF = "shutdown";
+    String DATA_BASE_NAME_CLIENT = "state_views_db";
 }
