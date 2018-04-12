@@ -113,7 +113,7 @@ public class ConfigTablePresenter {
 
             @Override
             public void onPressSettingIcon(int position, ReferentialStation referentialStation) {
-                showEditServerBaseDialog(position);
+                showEditReferSatationDialog(position);
             }
         });
         mActivity.getListView().setAdapter(mAdapter);
@@ -187,6 +187,7 @@ public class ConfigTablePresenter {
                 "左频26，右频45",
                 "左频36，右频45",
                 "左频46，右频60",
+                "左频51，右频60",
                 "单音测试模式"
         };
         int leftTune=Integer.valueOf(mActivity.getTv_leftTune().getText().toString().trim());
@@ -199,8 +200,10 @@ public class ConfigTablePresenter {
         }else if(leftTune==46&&rightTune==60){
             checkedItem=2;
         }else if(leftTune==0&&rightTune==0){
+            checkedItem=4;
+        }else if(leftTune==51&&rightTune==60){
             checkedItem=3;
-        }else{
+        } else {
             checkedItem=-1;
         }
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
@@ -225,6 +228,10 @@ public class ConfigTablePresenter {
                                         mActivity.getTv_rightTune().setText("60");
                                         break;
                                     case 3:
+                                        mActivity.getTv_leftTune().setText("51");
+                                        mActivity.getTv_rightTune().setText("60");
+                                        break;
+                                    case 4:
                                         mActivity.getTv_leftTune().setText("0");
                                         mActivity.getTv_rightTune().setText("0");
                                         break;
@@ -240,7 +247,7 @@ public class ConfigTablePresenter {
 
 
 
-    public void showEditServerBaseDialog(final int position) {
+    public void showEditReferSatationDialog(final int position) {
         AlertDialogUtil.showEditServerBaseDialog(mActivity, mReferentialStations.get(position), new AlertDialogUtil.ServerBaseEditListener() {
             @Override
             public void onConfirmEdit(ReferentialStation confirm) {

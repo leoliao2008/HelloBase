@@ -74,6 +74,7 @@ public class StateTablePresenter {
             @Override
             public void onGetConfigTableSuccess(final ArrayList<ConfigTable> tables) {
                 dismissProgressDialog();
+                showLog("config tables get:"+tables.toString());
                 toConfigTableActivity(tables.get(0));
             }
 
@@ -330,6 +331,7 @@ public class StateTablePresenter {
         UserBean user = BaseApplication.getUser();
         if(user!=null){
             showProgressDialog();
+            showLog("target host id: "+mStateTable.getHostId());
             mMySqlModel.getConfigTable(user,mStateTable.getHostId());
         }else {
             mActivity.showToast("登陆信息已过期，请重新登陆。");

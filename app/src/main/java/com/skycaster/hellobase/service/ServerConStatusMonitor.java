@@ -253,7 +253,7 @@ public class ServerConStatusMonitor extends Service {
                     if(Thread.currentThread().isInterrupted()){
                         break;
                     }
-                    mMySqlModel.getStateTables(mConnection, mTokens);
+                    mMySqlModel.getStateTables(mConnection, mTokens,mStateTable.getHostId());
                     SystemClock.sleep(10000);
                 }
             }

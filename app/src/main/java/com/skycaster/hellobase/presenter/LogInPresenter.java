@@ -63,7 +63,7 @@ public class LogInPresenter {
             user.setDataBaseName(StaticData.DATA_BASE_NAME_CLIENT);
             user.setTokens(tokens);
             BaseApplication.setUser(user);
-            mMySqlModel.getStateTables(mConnection,tokens);
+            mMySqlModel.getStateTables(mConnection,tokens,null);
         }
 
         @Override

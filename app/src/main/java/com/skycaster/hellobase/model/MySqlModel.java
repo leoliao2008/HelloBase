@@ -1,5 +1,6 @@
 package com.skycaster.hellobase.model;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -76,7 +77,13 @@ public class MySqlModel {
         }).start();
     }
 
-    public void getStateTables(final Connection con, final ArrayList<String> tokens){
+    /**
+     * 获得该用户权限下的特定基站的状态表
+     * @param con 数据库连接对象
+     * @param tokens 口令，为字符串，口令越多，获得的权限越多
+     * @param hostId 特定基站的hostId，如果为空，则获取所有基站的数据，否则将获取特定hostId的基站的数据。
+     */
+    public void getStateTables(final Connection con, final ArrayList<String> tokens, @Nullable final String hostId){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,10 +92,12 @@ public class MySqlModel {
                     ResultSet resultSet=null;
                     try {
                         statement =con.createStatement();
+                        StringBuilder sb=new StringBuilder();
                         if(tokens.size()==1){
-                            resultSet=statement.executeQuery("SELECT * FROM state_views_db."+tokens.get(0));
+                            sb.append("SELECT * FROM state_views_db.").append(tokens.get(0));
+//                            resultSet=statement.executeQuery("SELECT * FROM state_views_db."+tokens.get(0));
                         }else {
-                            StringBuilder sb=new StringBuilder();
+//                            StringBuilder sb=new StringBuilder();
 //                            select * from ( (select * from  state_views_db.武汉 )UNION (select * from  state_views_db.深圳)) as abc
                             sb.append("select * from ((select * from  state_views_db.");
                             for(int i=0;i<tokens.size();i++){
@@ -98,8 +107,11 @@ public class MySqlModel {
                                 }
                             }
                             sb.append(")) as abc");
-                            resultSet=statement.executeQuery(sb.toString());
                         }
+                        if(hostId!=null){
+                            sb.append(" where HostId = '").append(hostId).append("'");
+                        }
+                        resultSet=statement.executeQuery(sb.toString());
                         ArrayList<StateTable> tableList = getStateTablesByResultSet(resultSet);
                         mCallBack.onGetStateTablesSuccess(tableList);
                     } catch (SQLException e) {
