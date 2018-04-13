@@ -3,14 +3,19 @@ package com.skycaster.hellobase.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -157,7 +162,7 @@ public class AlertDialogUtil {
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_user_name)).setText(base.getUserName());
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_pw)).setText(base.getPw());
         ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_longitude)).setText(base.getLongitude());
-        ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_form_code)).setText(String.valueOf(base.getFormCode()));
+        ((TextView)rootView.findViewById(R.id.dialog_server_base_more_tv_form_code)).setText(base.getFormCode()==1?"测试模式":(base.getFormCode()==33?"CORS数据模式":"其它模式"));
         rootView.findViewById(R.id.dialog_server_base_more_btn_return).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +184,8 @@ public class AlertDialogUtil {
         //init view
         View rootView=View.inflate(context, R.layout.dialog_edit_base_server,null);
         ImageView iv_clearData=rootView.findViewById(R.id.dialog_config_server_base_iv_clear_data);
-        final EditText edt_FormCode=rootView.findViewById(R.id.dialog_config_server_base_edt_form_code);
+//        final EditText edt_FormCode=rootView.findViewById(R.id.dialog_config_server_base_edt_form_code);
+        final Spinner spn_formCode=rootView.findViewById(R.id.dialog_config_server_base_spin_form_code);
         final EditText edt_qamType=rootView.findViewById(R.id.dialog_config_server_base_edt_qam_type);
         final EditText edt_ldcpNum=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_num);
         final EditText edt_ldcpSize=rootView.findViewById(R.id.dialog_config_server_base_edt_ldcp_size);
@@ -197,8 +203,34 @@ public class AlertDialogUtil {
         Button btn_confirm=rootView.findViewById(R.id.dialog_config_server_base_btn_confirm);
         Button btn_cancel=rootView.findViewById(R.id.dialog_config_server_base_btn_cancel);
         //init data
-        String formCode = String.valueOf(base.getFormCode());
-        assignValueToEditText(edt_FormCode,formCode);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(
+                context,
+                android.R.layout.simple_list_item_1,
+                new String[]{"测试模式","CORS数据模式","其它模式"}
+        ){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                TextView view = (TextView) super.getView(position, convertView, parent);
+                view.setGravity(Gravity.CENTER);
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+        spn_formCode.setAdapter(adapter);
+        switch (base.getFormCode()){
+            case 1://测试模式
+                spn_formCode.setSelection(0);
+                break;
+            case 33://CORS数据模式
+                spn_formCode.setSelection(1);
+                break;
+            default://其它模式
+                spn_formCode.setSelection(2);
+                break;
+        }
+//        String formCode = String.valueOf(base.getFormCode());
+//        assignValueToEditText(edt_FormCode,formCode);
         String type=String.valueOf(base.getQamType());
         assignValueToEditText(edt_qamType,type);
         String rate = String.valueOf(base.getLdpcRate());
@@ -239,9 +271,14 @@ public class AlertDialogUtil {
         btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str_formCode = edt_FormCode.getText().toString().trim();
-                if(TextUtils.isEmpty(str_formCode)){
-                    showToast(context,"业务类型不能为空。");
+//                String str_formCode = edt_FormCode.getText().toString().trim();
+//                if(TextUtils.isEmpty(str_formCode)){
+//                    showToast(context,"业务类型不能为空。");
+//                    return;
+//                }
+                int selectIndex = spn_formCode.getSelectedItemPosition();
+                if(selectIndex>1){
+                    showToast(context,"只能选择测试模式或CORS数据模式。");
                     return;
                 }
                 String str_type = edt_qamType.getText().toString().trim();
@@ -312,7 +349,18 @@ public class AlertDialogUtil {
 //                    return;
                     str_alt="";
                 }
-                base.setFormCode(Integer.valueOf(str_formCode));
+                switch (spn_formCode.getSelectedItemPosition()){
+                    case 0://测试模式
+                        base.setFormCode(1);
+                        break;
+                    case 1://CORS数据模式
+                        base.setFormCode(33);
+                        break;
+                    default://绝对不会出现这种情况，但以防万一。。。
+                        base.setFormCode(-1);
+                        break;
+                }
+//                base.setFormCode(Integer.valueOf(str_formCode));
                 base.setIp(str_ip);
                 base.setPw(str_pw);
                 base.setPort(str_port);

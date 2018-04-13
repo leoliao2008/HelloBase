@@ -17,7 +17,7 @@
             android:text="修改业务配置清单"
             android:gravity="center"
             android:padding="@dimen/dp_10"
-            android:textSize="@dimen/sp_25"/>
+            android:textSize="@dimen/sp_18"/>
 
         <TextView
             android:id="@+id/dialog_config_server_base_tv_order"
@@ -27,7 +27,7 @@
             android:text="00"
             android:gravity="center"
             android:padding="@dimen/dp_10"
-            android:textSize="@dimen/sp_25"/>
+            android:textSize="@dimen/sp_18"/>
         <ImageView
             android:id="@+id/dialog_config_server_base_iv_clear_data"
             android:layout_width="wrap_content"
@@ -52,10 +52,15 @@
                     android:layout_weight="1"
                     style="@style/TextViewStyle1"/>
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/dialog_config_server_base_edt_form_code"
-                    style="@style/EditTextStyle2"/>
+                <!--<EditText-->
+                    <!--android:inputType="number"-->
+                    <!--android:id="@+id/dialog_config_server_base_edt_form_code"-->
+                    <!--style="@style/EditTextStyle2"/>-->
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/dialog_config_server_base_spin_form_code"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"/>
 
             </LinearLayout>
 

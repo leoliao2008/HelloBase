@@ -184,10 +184,10 @@ public class ConfigTablePresenter {
             return;
         }
         String[] items=new String[]{
-                "左频26，右频45",
-                "左频36，右频45",
-                "左频46，右频60",
-                "左频51，右频60",
+                "模式1",
+                "模式2",
+                "模式3",
+                "模式4",
                 "单音测试模式"
         };
         int leftTune=Integer.valueOf(mActivity.getTv_leftTune().getText().toString().trim());
@@ -207,7 +207,7 @@ public class ConfigTablePresenter {
             checkedItem=-1;
         }
         AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
-        mAlertDialog = builder.setTitle("请选择左频及右频参数")
+        mAlertDialog = builder.setTitle("请选择接收模式")
                 .setSingleChoiceItems(
                         items,
                         checkedItem,
