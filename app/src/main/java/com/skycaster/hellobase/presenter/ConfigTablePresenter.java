@@ -113,7 +113,7 @@ public class ConfigTablePresenter {
 
             @Override
             public void onPressSettingIcon(int position, ReferentialStation referentialStation) {
-                showEditReferSatationDialog(position);
+                showEditReferStationDialog(position);
             }
         });
         mActivity.getListView().setAdapter(mAdapter);
@@ -247,7 +247,7 @@ public class ConfigTablePresenter {
 
 
 
-    public void showEditReferSatationDialog(final int position) {
+    public void showEditReferStationDialog(final int position) {
         AlertDialogUtil.showEditServerBaseDialog(mActivity, mReferentialStations.get(position), new AlertDialogUtil.ServerBaseEditListener() {
             @Override
             public void onConfirmEdit(ReferentialStation confirm) {

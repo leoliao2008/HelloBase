@@ -81,7 +81,7 @@ public class ConfigActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(isInEditMode.get()){
-                    mPresenter.showEditReferSatationDialog(position);
+                    mPresenter.showEditReferStationDialog(position);
                 }
             }
         });
